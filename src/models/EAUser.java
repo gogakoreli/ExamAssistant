@@ -9,6 +9,7 @@ import helper.DBConnector.SqlQueryResult;
 
 public class EAUser {
 	private int userID;
+	//alfnjhsvdjahsvd
 	public static final int NO_ROLE = -1;
 	public static final int STUDENT = 0;
 	public static final int LECTURER = 1;
@@ -18,7 +19,7 @@ public class EAUser {
 	
 	public EAUser(int userID) {
 		this.userID = userID;
-		
+		int x =17;
 	}
 
 	public int getRole() {
