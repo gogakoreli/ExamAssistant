@@ -133,12 +133,6 @@ public class DBConnector {
 		public String getErrorMsg() {
 			return errorMsg;
 		}
-
-		public void setError(String errorMsg, int errorId) {
-			isSuccess = false;
-			this.errorId = errorId;
-			this.errorMsg = errorMsg;
-		}
 	}
 
 }
