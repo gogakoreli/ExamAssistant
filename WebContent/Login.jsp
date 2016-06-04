@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+    <%@ page import="java.util.*, servlets.LoginServlet"%>
+    
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -47,19 +49,17 @@ p {
 	font-size: 18px;
 	margin: 0px 0px;
 }
-
 </style>
-
 <body>
 	<form action="LoginServlet" method="post">
 		<div>
-		<img src="freeuni.GIF" style="width:180px;height:130px;">
-			<br /> <br />
+			<img src="freeuni.GIF" style="width: 180px; height: 130px;"> <br />
+			<br />
 			<p>Email:</p>
 			<input type="text" name="username"> <br /> <br />
 			<p>Password:</p>
-			<input type="text" name="password"> <br /> <br /> 
-			<input type="submit" value="Log In"> <br /> <br />
+			<input type="text" name="password"> <br /> <br /> <input
+				type="submit" value="Log In"> <br /> <br />
 		</div>
 	</form>
 </head>

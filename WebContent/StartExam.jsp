@@ -8,7 +8,6 @@
 </head>
 <style>
 
-
 body {
  background-color: #f2f2f2;
  text-align: center;
@@ -38,7 +37,7 @@ p {
   font-family: "Arial";
   font-size: 20px; 
   text-align: left;
-  margin: 14px 90px;
+  margin: 13px 90px;
   font-weight: light;
 }
 

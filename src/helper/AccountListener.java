@@ -25,7 +25,6 @@ public class AccountListener implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent arg0)  {
     	ServletContext ctx = arg0.getServletContext();
     	AccountManager manager = (AccountManager) ctx.getAttribute("Manager");
-    	//manager.clear();
     }
 
 	/**
