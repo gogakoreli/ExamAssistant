@@ -6,38 +6,56 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/** main class responsible for connection with database */
 public class DBConnector {
 	private Connection connection;
 
+	/**
+	 * Creates DBConnector Object and automatically initializes new connection
+	 * with database. This connection will be alive until class dies and will
+	 * automatically be disposed. Closing this connection manually is not
+	 * recommended.
+	 * 
+	 * If single connection is needed use static getNewDbConnection function
+	 * instead.
+	 */
 	public DBConnector() {
-		connection = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql://" + DBInfo.MYSQL_DATABASE_SERVER,
-					DBInfo.MYSQL_USERNAME, DBInfo.MYSQL_PASSWORD);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		connection = getNewDbConnection();
 	}
 
 	/**
-	 * returns new Connection to Database Shoud be closed after using
+	 * Creates and returns new Connection with database. 
+	 * Connection should be closed Manually after using with conn.Close() 
+	 * method.
+	 * 
+	 * Null will be returned if Error occurs while create connection 
 	 */
-	public Connection getConnection() {
+	public static Connection getNewDbConnection() {
 		Connection connection = null;
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			connection = DriverManager.getConnection("jdbc:mysql://" + DBInfo.MYSQL_DATABASE_SERVER,
 					DBInfo.MYSQL_USERNAME, DBInfo.MYSQL_PASSWORD);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LogManager.logErrorException(1000, "Error Connection to Database ", e);
+			return null;
 		}
 		return connection;
+	}
+	
+	/** checks if database connection is still alive */
+	public boolean isDBConnection(){
+		try {
+			return (connection != null) && (connection.isValid(0));
+		} catch (SQLException e) {
+			//error validation connection 
+			return false;
+		}
 	}
 
 	public SqlQueryResult getQueryResult(String query) {
 		SqlQueryResult queryResult = null;
-		if (connection != null) {
+		if (isDBConnection()) {
 			try {
 				Statement stmt = connection.createStatement();
 				stmt.executeQuery("USE " + DBInfo.MYSQL_DATABASE_NAME);
@@ -51,7 +69,7 @@ public class DBConnector {
 	}
 
 	public void updateDatabase(String query) {
-		if (connection != null) {
+		if (isDBConnection()) {
 			try {
 				Statement stmt = connection.createStatement();
 				stmt.executeQuery("USE " + DBInfo.MYSQL_DATABASE_NAME);
