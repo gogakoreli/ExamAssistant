@@ -33,7 +33,7 @@ input {
 }
 
 div {
-	heigth: 280px;
+	heigth: 260px;
 	width: 470px;
 	text-align: center;
 	border: 3px solid #ffaa00;
@@ -48,20 +48,25 @@ p {
 	margin: 0px 0px;
 }
 
+p.error {
+	font-size: 15px;
+	color: red;
+}
 </style>
 
 <body>
 	<form action="LoginServlet" method="post">
 		<div>
 		<img src="freeuni.GIF" style="width:180px;height:130px;">
+		<p class = "error">Either your user name or password is incorrect. Please try
+			again.</p>
 			<br /> <br />
 			<p>Email:</p>
 			<input type="text" name="username"> <br /> <br />
 			<p>Password:</p>
-			<input type="text" name="password"> <br /> <br /> 
-			<input type="submit" value="Log In"> <br /> <br />
+			<input type="text" name="password"> <br /> <br /> <input
+				type="submit" value="Log In"> <br /> <br />
 		</div>
 	</form>
 </head>
-</body>
 </html>
