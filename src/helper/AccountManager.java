@@ -1,5 +1,7 @@
 package helper;
 
+import models.EAUser;
+
 public class AccountManager {
 
 	public AccountManager() {
@@ -15,5 +17,10 @@ public class AccountManager {
 	public boolean checkPassword (String arg0, String arg1) {
 		
 		return false;
+	}
+	
+	
+	public EAUser getEAUserForCreditials(){
+		return null;
 	}
 }
