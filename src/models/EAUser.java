@@ -18,6 +18,7 @@ public class EAUser {
 	
 	public EAUser(int userID) {
 		this.userID = userID;
+		
 	}
 
 	public int getRole() {
