@@ -2,6 +2,7 @@ package models;
 
 import java.sql.ResultSet;
 import helper.DBConnector;
+import helper.LogManager;
 import helper.DBConnector.SqlQueryResult;
 
 public class EAUser {
@@ -25,7 +26,6 @@ public class EAUser {
 
 	public EAUser(String username) {
 		this.mail = username;
-
 		ResultSet rs = getUserResultSet(username);
 		parseUserResultSet(rs);
 	}
@@ -34,6 +34,10 @@ public class EAUser {
 		parseUserResultSet(rs);
 	}
 
+	/*
+	 * Select data from database and return result set from the according query
+	 * or log the error
+	 */
 	private ResultSet getUserResultSet(String username) {
 		ResultSet result = null;
 		String getUserQuery = "SELECT * FROM user WHERE Mail =" + username;
@@ -43,11 +47,14 @@ public class EAUser {
 		if (queryResult != null && queryResult.isSuccess()) {
 			result = queryResult.getResultSet();
 		} else {
-			// TODO: log error in db or in file
+			LogManager.logInfoMessage("QueryResult is null OR " + queryResult.getErrorMsg());
 		}
 		return result;
 	}
 
+	/*
+	 * parse result set which contains data about user
+	 */
 	private void parseUserResultSet(ResultSet rs) {
 		if (rs != null) {
 			try {
@@ -61,11 +68,15 @@ public class EAUser {
 					this.googleID = rs.getString("GoogleID");
 				}
 			} catch (Exception e) {
-				// TODO: log error in db or in file
+				LogManager.logErrorException(3000, "Error parsing ResultSet ", e);
 			}
 		}
 	}
 
+	/*
+	 * get the object of EAUserRole type from the roleString; convert string to
+	 * enum
+	 */
 	private EAUserRole getRoleByString(String roleString) {
 		switch (roleString) {
 		case "board":
