@@ -19,7 +19,7 @@ public class EAUser {
 	
 	public EAUser(int userID) {
 		this.userID = userID;
-		int x =17;
+		int x =19;
 	}
 
 	public int getRole() {
