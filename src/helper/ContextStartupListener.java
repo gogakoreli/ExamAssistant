@@ -12,10 +12,10 @@ import javax.servlet.annotation.WebListener;
 public class ContextStartupListener implements ServletContextListener {
 	
 	/** name which will be attribute name for AccountManager in Context */
-	public static final String ACCOUNT_MANEGER_ATTRIBUTE_NAME = "ContextStartupListener.DataManegerClassInstance";
+	public static final String ACCOUNT_MANEGER_ATTRIBUTE_NAME = "ContextStartupListener.AccountManagerAttribute";
 	
 	/** name which will be attribute name for ExamManager in Context */
-	public static final String EXAM_MANEGER_ATTRIBUTE_NAME = "ContextStartupListener.DataManegerClassInstance";
+	public static final String EXAM_MANEGER_ATTRIBUTE_NAME = "ContextStartupListener.ExamManagerAttribute";
 	
 	
 	

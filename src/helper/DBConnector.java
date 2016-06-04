@@ -24,11 +24,10 @@ public class DBConnector {
 	}
 
 	/**
-	 * Creates and returns new Connection with database. 
-	 * Connection should be closed Manually after using with conn.Close() 
-	 * method.
+	 * Creates and returns new Connection with database. Connection should be
+	 * closed Manually after using with conn.Close() method.
 	 * 
-	 * Null will be returned if Error occurs while create connection 
+	 * Null will be returned if Error occurs while create connection
 	 */
 	public static Connection getNewDbConnection() {
 		Connection connection = null;
@@ -42,14 +41,39 @@ public class DBConnector {
 		}
 		return connection;
 	}
-	
+
 	/** checks if database connection is still alive */
-	public boolean isDBConnection(){
+	public boolean isDBConnection() {
 		try {
 			return (connection != null) && (connection.isValid(0));
 		} catch (SQLException e) {
-			//error validation connection 
+			// error validation connection
 			return false;
+		}
+	}
+
+	/**
+	 * occures before object is destroyed by gb if connection is not closed at
+	 * this time its
+	 */
+	@Override
+	public void finalize() {
+		if (isDBConnection()) {
+			try {
+				connection.close();
+			} catch (SQLException ignored) {
+			}
+			LogManager.logErrorException(1001, "Db connection not closed properly ", new Exception("Db Not Closed"));
+		}
+	}
+
+	/** closes database connection */
+	public void dispose() {
+		try {
+			if (isDBConnection())
+				connection.close();
+		} catch (Exception e) {
+			LogManager.logErrorException(1002, "Error Closing db Connection", new Exception("Error"));
 		}
 	}
 
@@ -77,14 +101,6 @@ public class DBConnector {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-	}
-
-	public void dispose() {
-		try {
-			connection.close();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
