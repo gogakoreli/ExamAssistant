@@ -18,4 +18,9 @@ public class AccountManager {
 		
 		return  null;
 	}
+	
+	
+	public EAUser getEAUserForCreditials(){
+		return null;
+	}
 }
