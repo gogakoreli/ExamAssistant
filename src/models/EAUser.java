@@ -11,8 +11,12 @@ public class EAUser {
 	public static final int BOARD = 2;
 	public static final int ADMIN = 3;
 
+	public enum EAUserRole {
+		NO_ROLE, ADMIN, STUDENT, LECTURER, BOARD
+	}
+
 	private int userID;
-	private String role;
+	private EAUserRole role;
 	private String mail;
 	private String firstName;
 	private String lastName;
@@ -23,6 +27,10 @@ public class EAUser {
 		this.mail = username;
 
 		ResultSet rs = getUserResultSet(username);
+		parseUserResultSet(rs);
+	}
+
+	public EAUser(ResultSet rs) {
 		parseUserResultSet(rs);
 	}
 
@@ -45,7 +53,8 @@ public class EAUser {
 			try {
 				while (rs.next()) {
 					this.userID = rs.getInt("UserID");
-					this.role = rs.getString("Role");
+					this.role = getRoleByString(rs.getString("Role"));
+					this.mail = rs.getString("Mail");
 					this.firstName = rs.getString("FirstName");
 					this.lastName = rs.getString("LastName");
 					this.image = rs.getString("Image");
@@ -57,51 +66,24 @@ public class EAUser {
 		}
 	}
 
-	public String getRole() {
-		return this.role;
+	private EAUserRole getRoleByString(String roleString) {
+		switch (roleString) {
+		case "board":
+			return EAUserRole.valueOf("BOARD");
+		case "student":
+			return EAUserRole.valueOf("STUDENT");
+		case "lecturer":
+			return EAUserRole.valueOf("LECTURER");
+		case "admin":
+			return EAUserRole.valueOf("ADMIN");
+		default:
+			return EAUserRole.valueOf("NO_ROLE");
+		}
 	}
 
-	// public int getRole()
-	// {
-	// String role = (String) getUserInfo("role");
-	// switch (role)
-	// {
-	// case "board":
-	// return BOARD;
-	// case "student":
-	// return STUDENT;
-	// case "Lecturer":
-	// return LECTURER;
-	// case "Admin":
-	// return ADMIN;
-	// default:
-	// return NO_ROLE;
-	// }
-	// }
-
-	// private Object getUserInfo(String userColumn)
-	// {
-	// Object res = "";
-	// String getRole = "SELECT " + userColumn + " from user where UserId=" +
-	// userID;
-	// DBConnector connector = new DBConnector();
-	// SqlQueryResult queryResult = connector.getQueryResult(getRole);
-	// if (queryResult != null && queryResult.isSuccess())
-	// {
-	// try
-	// {
-	// while (queryResult.getResultSet().next())
-	// {
-	// res = queryResult.getResultSet().getString(userColumn);
-	// }
-	// } catch (SQLException e)
-	// {
-	// e.printStackTrace();
-	// }
-	// }
-	// connector.dispose();
-	// return res;
-	// }
+	public EAUserRole getRole() {
+		return this.role;
+	}
 
 	public String getMail() {
 		return this.mail;
