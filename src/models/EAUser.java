@@ -6,11 +6,11 @@ import helper.LogManager;
 import helper.DBConnector.SqlQueryResult;
 
 public class EAUser {
-	public static final int NO_ROLE = -1;
-	public static final int STUDENT = 0;
-	public static final int LECTURER = 1;
-	public static final int BOARD = 2;
-	public static final int ADMIN = 3;
+//	public static final int NO_ROLE = -1;
+//	public static final int STUDENT = 0;
+//	public static final int LECTURER = 1;
+//	public static final int BOARD = 2;
+//	public static final int ADMIN = 3;
 
 	public enum EAUserRole {
 		NO_ROLE, ADMIN, STUDENT, LECTURER, BOARD

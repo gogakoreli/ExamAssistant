@@ -8,8 +8,6 @@
 <title>Student Page</title>
 </head>
 <body>
-	<%
-		Student student = (Student) request.getAttribute("student");
-	%>
+	<p>test student page</p>
 </body>
 </html>

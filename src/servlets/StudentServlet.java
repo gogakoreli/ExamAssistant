@@ -34,12 +34,12 @@ public class StudentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		if (isUserLogedIn(request)) {
-			Student student = getStudent(request);
-			Exam exam = getExamForStudent(student);
-
-			request.setAttribute("student", student);
-			request.setAttribute("exam", exam);
+		if (LoginServlet.isUserLogedIn(request)) {
+			// Student student = getStudent(request);
+			// Exam exam = getExamForStudent(student);
+			//
+			// request.setAttribute("student", student);
+			// request.setAttribute("exam", exam);
 
 			RequestDispatcher dispatch = request.getRequestDispatcher("Student.jsp");
 			dispatch.forward(request, response);
@@ -52,18 +52,6 @@ public class StudentServlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		// TODO: Not yet defined
-	}
-
-	/*
-	 * Check if user is loged in or not : take isLogedIn attribute from session
-	 * and check if it is null or value is true/false
-	 */
-	public boolean isUserLogedIn(HttpServletRequest request) {
-		boolean result = false;
-		HttpSession session = request.getSession();
-		Object isLogedIn = session.getAttribute("isLogedIn");
-		result = isLogedIn != null ? (boolean) isLogedIn : result;
-		return result;
 	}
 
 	/*

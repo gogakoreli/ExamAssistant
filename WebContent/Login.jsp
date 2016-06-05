@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-    
+	pageEncoding="ISO-8859-1"%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -49,17 +49,28 @@ p {
 	font-size: 18px;
 	margin: 0px 0px;
 }
+
+p.error {
+	font-size: 15px;
+	color: red;
+}
 </style>
 <body>
-	<form action="LogIn" method="post">
+	<form action="Login" method="post">
 		<div>
 			<img src="freeuni.GIF" style="width: 180px; height: 130px;"> <br />
+			<%
+				String errorString = (String) request.getAttribute("errorString");
+				if (errorString != null) {
+					out.print("<p class = \"error\">" + errorString + "</p>");
+				}
+			%>
 			<br />
 			<p>Email:</p>
 			<input type="text" name="username"> <br /> <br />
 			<p>Password:</p>
-			<input type="text" name="password"> <br /> <br />
-			<input type="submit" value="Log In"> <br /> <br />
+			<input type="text" name="password"> <br /> <br /> <input
+				type="submit" value="Log In"> <br /> <br />
 		</div>
 	</form>
 </head>
