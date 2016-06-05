@@ -1,3 +1,3 @@
 *.class
 *.orig
-*.classpath
+.classpath
