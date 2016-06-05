@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-    <%@ page import="java.util.*, servlets.LoginServlet"%>
     
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -10,7 +9,7 @@
 <style>
 body {
 	background-color: #f2f2f2;
-	text-align: center;
+	text-align: centre;
 }
 
 input[type=submit] {
@@ -35,13 +34,14 @@ input {
 }
 
 div {
+	text-align: center;
 	heigth: 280px;
 	width: 470px;
-	text-align: center;
 	border: 3px solid #ffaa00;
 	border-radius: 5px;
 	background-color: white;
 	padding: 25px;
+	margin: auto;
 }
 
 p {

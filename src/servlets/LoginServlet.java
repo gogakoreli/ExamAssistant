@@ -16,7 +16,9 @@ import helper.AccountManager;
 /**
  * Servlet implementation class LoginServlet
  */
-@WebServlet("/Login")
+
+@WebServlet(name = "LoginServlet")
+
 public class LoginServlet extends HttpServlet
 {
 	private static int NO_USER_FOUND_ID = -1;
@@ -61,7 +63,7 @@ public class LoginServlet extends HttpServlet
 //
 //		}
 		
-		RequestDispatcher rd = request.getRequestDispatcher("UserWelcome.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("ErrorPage.jsp");
 		rd.forward(request,response); 
 		
 	}

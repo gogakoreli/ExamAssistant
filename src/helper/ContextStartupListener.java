@@ -1,5 +1,6 @@
 package helper;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -38,7 +39,7 @@ public class ContextStartupListener implements ServletContextListener {
      */
     public void contextInitialized(ServletContextEvent servletContextEvent)  { 
     	initLogginSystem(servletContextEvent);
-         initAccountManager();
+         initAccountManager(servletContextEvent);
          initExamManager();
     }
     
@@ -48,8 +49,10 @@ public class ContextStartupListener implements ServletContextListener {
     }
     
     
-    private void initAccountManager(){
-    	
+    private void initAccountManager(ServletContextEvent arg0){
+    	ServletContext ctx = arg0.getServletContext();
+    	AccountManager manager = new AccountManager();
+    	ctx.setAttribute("Manager", manager); // Sets AccountManager to the ServletContext.
     }
     
     private void initExamManager(){

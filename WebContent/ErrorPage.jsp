@@ -40,6 +40,7 @@ div {
 	border-radius: 5px;
 	background-color: white;
 	padding: 25px;
+	margin: auto;
 }
 
 p {
