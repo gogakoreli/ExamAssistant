@@ -25,7 +25,7 @@ import models.Student;
  * Servlet implementation class LogInServlet
  */
 @WebServlet("/Login")
-public class LogInServlet extends HttpServlet {
+public class LoginServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	public static final String ACCOUNT_MANEGER_ATTRIBUTE_NAME = "ContextStartupListener.AccountManagerAttribute";
@@ -34,7 +34,7 @@ public class LogInServlet extends HttpServlet {
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public LogInServlet() {
+    public LoginServlet() {
         super();
     }
 
