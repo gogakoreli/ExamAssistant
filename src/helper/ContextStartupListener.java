@@ -52,7 +52,7 @@ public class ContextStartupListener implements ServletContextListener {
     private void initAccountManager(ServletContextEvent arg0){
     	ServletContext ctx = arg0.getServletContext();
     	AccountManager manager = new AccountManager();
-    	ctx.setAttribute("Manager", manager); // Sets AccountManager to the ServletContext.
+    	ctx.setAttribute(ACCOUNT_MANEGER_ATTRIBUTE_NAME, manager); // Sets AccountManager to the ServletContext.
     }
     
     private void initExamManager(){

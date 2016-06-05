@@ -8,7 +8,7 @@ public class AccountManager {
 
 	}
 
-	public EAUser getEAUserForCreditials() {
+	public EAUser getEAUserForCreditials(String userName, String password) {
 		return null;
 	}
 }

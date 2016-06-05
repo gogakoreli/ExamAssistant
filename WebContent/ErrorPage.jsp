@@ -56,7 +56,7 @@ p.error {
 </style>
 
 <body>
-	<form action="LoginServlet" method="post">
+	<form action="LogInServlet" method="post">
 		<div>
 		<img src="freeuni.GIF" style="width:180px;height:130px;">
 		<p class = "error">Either your user name or password is incorrect. Please try

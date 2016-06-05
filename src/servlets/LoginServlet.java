@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -10,84 +11,94 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import models.EAUser;
 import helper.AccountManager;
+import helper.DBConnector;
+import helper.LogManager;
+import helper.DBConnector.SqlQueryResult;
+import models.EAUser;
+import models.Exam;
+import models.ExamBoard;
+import models.Lecturer;
+import models.Student;
 
 /**
- * Servlet implementation class LoginServlet
+ * Servlet implementation class LogInServlet
  */
-
-@WebServlet(name = "LoginServlet")
-
-public class LoginServlet extends HttpServlet
-{
-	private static int NO_USER_FOUND_ID = -1;
+@WebServlet("/Login")
+public class LogInServlet extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
+	public static final String ACCOUNT_MANEGER_ATTRIBUTE_NAME = "ContextStartupListener.AccountManagerAttribute";
+
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public LogInServlet() {
+        super();
+    }
 
 	/**
-	 * Default constructor.
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	public LoginServlet()
-	{
-		// TODO Auto-generated constructor stub
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		response.getOutputStream().println("<html>  <body> Mushaobs </body> </html>"); 
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
-	{
-		System.out.println("aaaaaa");
-//		ServletContext ctx = request.getServletContext();
-//		AccountManager manager = (AccountManager) ctx.getAttribute("Manager");
-//		//Gets information from the user.
-//		String userName = request.getParameter("username"); 
-//		String password = request.getParameter("password");
-//		request.setAttribute("username", userName); // Sets attribute in the request to see in later in the jsp files.
-		//EAUser currentUser = manager.checkPassword(userName, password);
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("aaa");
+		ServletContext ctx = request.getServletContext();
+		AccountManager manager = (AccountManager) ctx.getAttribute(ACCOUNT_MANEGER_ATTRIBUTE_NAME);
 		
-		//if (currentUser == null) { // Checks if user's password is correct.
-//		} else {
-//			//If entered information is incorrect webpage shows up try again window.
-//			rd = request.getRequestDispatcher("StartExam.jsp");
-//
-//		}
+		String userName = request.getParameter("username"); 
+		String password = request.getParameter("password");
 		
-		RequestDispatcher rd = request.getRequestDispatcher("ErrorPage.jsp");
-		rd.forward(request,response); 
-		
+		//Checks if the user's name and password is valid.
+		checkUserCreditials(request, response, manager, userName, password);
 	}
 	
 	
+	/* Checks if the user is valid and  if it's so by its type sends it to the correct servlet. 
+	 * If user isn't valid sends him to the ErrorPage.*/
+	private void checkUserCreditials(HttpServletRequest request, HttpServletResponse response,
+			AccountManager manager, String userName, String password) throws ServletException, IOException{
+		EAUser user = manager.getEAUserForCreditials(userName, password);
+		RequestDispatcher rd;
 	
-	private int checkUserCreditials(String userame, String password){
-		return NO_USER_FOUND_ID;
+		if (user == null) {
+			rd = request.getRequestDispatcher("ErrorPage.jsp"); 
+			rd.forward(request,response);
+			return;
+		} 
+		if (user.getRole().equals(user.STUDENT)) { 
+			loggedInStudent(request, response, user);
+		} else if (user.getRole().equals(user.LECTURER)) {
+			loggedInLecturer(request, response, user);
+		} else if (user.getRole().equals(user.BOARD)){
+			loggedInBoard(request, response, user);
+		}		
 	}
 	
-	private EAUser getEAUserById(int userId){
-		return null;
+	
+	/* Sets the student to the request and passes it to the StudentServlet. */
+	private void loggedInStudent(HttpServletRequest request, HttpServletResponse response, EAUser user) throws IOException {
+		request.setAttribute("student", (Student)user); 
+		response.sendRedirect("/ExamAssistant/Student");
 	}
 	
-	private void loggedInStudent(RequestDispatcher rd){
-		
+	/* Sets the board to the request and passes it to the BoardServlet. */
+	private void loggedInBoard(HttpServletRequest request, HttpServletResponse response, EAUser user) throws IOException {
+		request.setAttribute("board", (ExamBoard)user); 
+		response.sendRedirect("/ExamAssistant/Board");		
 	}
 	
-	private void loggedInLecturer(){
-	
-	}
-	
-	private void loggedInBoard(){
-		 
+	/* Sets the lecturer to the request and passes it to the LecturerServlet. */
+	private void loggedInLecturer(HttpServletRequest request, HttpServletResponse response, EAUser user) throws IOException {
+		request.setAttribute("lecturer", (Lecturer)user); 
+		response.sendRedirect("/ExamAssistant/Lecturer");		
 	}
 
 }

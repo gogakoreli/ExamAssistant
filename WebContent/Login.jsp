@@ -51,7 +51,7 @@ p {
 }
 </style>
 <body>
-	<form action="LoginServlet" method="post">
+	<form action="Login" method="post">
 		<div>
 			<img src="freeuni.GIF" style="width: 180px; height: 130px;"> <br />
 			<br />

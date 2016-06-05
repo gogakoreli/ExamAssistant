@@ -50,7 +50,7 @@ public class StudentServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		// TODO: Not yet defined
 	}
 
