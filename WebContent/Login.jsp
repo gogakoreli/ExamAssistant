@@ -51,7 +51,7 @@ p {
 }
 </style>
 <body>
-	<form action="Login" method="post">
+	<form action="LogIn" method="post">
 		<div>
 			<img src="freeuni.GIF" style="width: 180px; height: 130px;"> <br />
 			<br />
@@ -59,6 +59,7 @@ p {
 			<input type="text" name="username"> <br /> <br />
 			<p>Password:</p>
 			<input type="text" name="password"> <br /> <br /> <input
+			
 				type="submit" value="Log In"> <br /> <br />
 		</div>
 	</form>
