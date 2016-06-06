@@ -2,8 +2,9 @@ package helper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import helper.DBConnector;
@@ -21,13 +22,34 @@ public class AccountManager {
 	/** if retuned EAUser == NO_USER_FOUND_CONSTANT that means user wasnot found
 	 *  in db*/
 	public static final EAUser NO_USER_FOUND_CONSTANT = new Student(null); 
+	public static final String USER_ID_IN_SESSION = "AccountManager.USERID"; 
+	
+	//hashmap storing logedinusers 
+	private Map<String, EAUser> logedUsers = new HashMap<String, EAUser>();
 	
 	public AccountManager() {
 
 	}
+	
+	
+	/******************************/
+	/******** get user  ***********/
+	/******************************/
 
+
+	/** returns EAUser for given httpsession */
+	public EAUser getCurrentUser(HttpSession httpSession) {
+		return (EAUser)httpSession.getAttribute(USER_ID_IN_SESSION);
+	}
+	
+	/** removes user for given httpsession from loged in system */
+	public void removeCurrentUser(HttpSession httpSession) {
+		httpSession.removeAttribute(USER_ID_IN_SESSION);
+		logedUsers.remove(httpSession.getId());
+	}
+	
 	/**************************/
-	/******** Login *******/
+	/******** Login ***********/
 	/**************************/
 
 	/**
@@ -52,6 +74,7 @@ public class AccountManager {
 			} else {
 				EAUser user = getEAUserType(rs);//get user
 				result.setResultObject(user);//set return object 
+				saveUserInLocalCache(user, httpSession);
 			}
 		} else {
 			//set error its same sqlqueryresult has 
@@ -59,6 +82,12 @@ public class AccountManager {
 		}
 		connector.dispose();
 		return result;
+	}
+	
+	/* saves user in local cache by its session */
+	private void saveUserInLocalCache(EAUser user, HttpSession httpSession){
+		httpSession.setAttribute(USER_ID_IN_SESSION, user); 
+		logedUsers.put(httpSession.getId(), user);
 	}
 
 	/*
@@ -111,11 +140,6 @@ public class AccountManager {
 			LogManager.logErrorException(1010, "Error checking resultset empty", e);
 		}
 		return result;
-	}
-
-	public EAUser getCurrentUser(HttpSession httpSession) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

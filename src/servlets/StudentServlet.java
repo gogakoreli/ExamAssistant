@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,10 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import helper.AccountManager;
+import helper.ContextStartupListener;
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
 import helper.DBInfo;
 import helper.LogManager;
+import models.EAUser;
 import models.Exam;
 import models.Student;
 
@@ -34,8 +38,11 @@ public class StudentServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		if (LoginServlet.isUserLogedIn(request)) {
-			// Student student = getStudent(request);
+		HttpSession session = request.getSession();
+		ServletContext context = request.getServletContext();
+		AccountManager manager = (AccountManager) context.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
+		if (LoginServlet.isUserLogedIn(session, manager)) {
+			Student student = getStudent(manager, session);
 			// Exam exam = getExamForStudent(student);
 			//
 			// request.setAttribute("student", student);
@@ -57,12 +64,11 @@ public class StudentServlet extends HttpServlet {
 	/*
 	 * get student which is passed to the servlet from the request
 	 */
-	public Student getStudent(HttpServletRequest request) {
-		Student result = null;
-		HttpSession session = request.getSession();
-		Object student = session.getAttribute("student");
-		result = student != null ? (Student) student : result;
-		return result;
+	public Student getStudent(AccountManager manager, HttpSession session) {
+//		Object currentUser = manager.getCurrentUser(session);
+//		Student result = currentUser instanceof Student ? (Student) currentUser : null;
+//		return result;
+		return null;
 	}
 
 	/*
@@ -70,22 +76,6 @@ public class StudentServlet extends HttpServlet {
 	 * by start time ascending and then pass the queryResult to the exam
 	 * constructor to retrieve exam
 	 */
-	public Exam getExamForStudent(Student student) {
-		Exam result = null;
-		String getExamQuery = "SELECT e.* FROM user as u LEFT JOIN "
-				+ "userexam as ue on ue.UserID = u.UserID LEFT JOIN "
-				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + student.getUserID()
-				+ " ORDER BY e.StartTime asc LIMIT 1";
-		DBConnector connector = new DBConnector();
-		SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
-		connector.dispose();
-		if (queryResult != null && queryResult.isSuccess()) {
-			ResultSet rs = queryResult.getResultSet();
-			result = new Exam(rs);
-		} else {
-			LogManager.logInfoMessage("QueryResult is null OR " + queryResult.getErrorMsg());
-		}
-		return result;
-	}
+	
 
 }

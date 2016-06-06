@@ -18,7 +18,7 @@ public class Exam {
 	public Exam(ResultSet rs) {
 		if (rs != null) {
 			try {
-				while (rs.next()) {
+				if (rs.next()) {
 					this.examID = rs.getInt("ExamID");
 					this.name = rs.getString("Name");
 					this.type = rs.getString("Type");
