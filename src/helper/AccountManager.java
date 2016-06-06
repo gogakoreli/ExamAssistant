@@ -10,6 +10,7 @@ import models.Admin;
 import models.EAUser;
 import models.Lecturer;
 import models.EAUser.EAUserRole;
+import models.ExamBoard;
 import models.Student;
 
 /** main class responsible for all operations over Accounts */
@@ -22,9 +23,14 @@ public class AccountManager {
 	public AccountManager() {
 
 	}
+	
+	
+	/******************************/
+	/******** get user  ***********/
+	/******************************/
 
 	/**************************/
-	/******** Login *******/
+	/******** Login ***********/
 	/**************************/
 
 	/**
@@ -48,6 +54,7 @@ public class AccountManager {
 			} else {
 				EAUser user = getEAUserType(rs);//get user
 				result.setResultObject(user);//set return object 
+				//saveUserInLocalCache();
 			}
 		} else {
 			//set error its same sqlqueryresult has 
@@ -86,8 +93,8 @@ public class AccountManager {
 	/* returns EAUser instance based on its role */
 	private EAUser getUserByRole(EAUserRole role, ResultSet rs) {
 		switch (role) {
-		case ADMIN:
-			return new Admin(rs);
+		case BOARD:
+			return new ExamBoard(rs);
 		case LECTURER:
 			return new Lecturer(rs);
 		case STUDENT:
