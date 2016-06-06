@@ -69,7 +69,7 @@ p.error {
 			<p>Email:</p>
 			<input type="text" name="username"> <br /> <br />
 			<p>Password:</p>
-			<input type="text" name="password"> <br /> <br /> <input
+			<input type="password" name="password"> <br /> <br /> <input
 				type="submit" value="Log In"> <br /> <br />
 		</div>
 	</form>

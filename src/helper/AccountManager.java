@@ -2,14 +2,18 @@ package helper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
 
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
 import helper.LogManager;
-import models.Admin;
 import models.EAUser;
 import models.Lecturer;
 import models.EAUser.EAUserRole;
+import models.ExamBoard;
 import models.Student;
 
 /** main class responsible for all operations over Accounts */
@@ -18,13 +22,28 @@ public class AccountManager {
 	/** if retuned EAUser == NO_USER_FOUND_CONSTANT that means user wasnot found
 	 *  in db*/
 	public static final EAUser NO_USER_FOUND_CONSTANT = new Student(null); 
+	public static final String USER_ID_IN_SESSION = "AccountManager.USERID"; 
+	
+	//hashmap storing logedinusers 
+	private Map<String, EAUser> logedUsers = new HashMap<String, EAUser>();
 	
 	public AccountManager() {
 
 	}
+	
+	
+	/******************************/
+	/******** get user  ***********/
+	/******************************/
 
+
+	/** returns EAUser for given httpsession */
+	public EAUser getCurrentUser(HttpSession httpSession) {
+		return (EAUser)httpSession.getAttribute(USER_ID_IN_SESSION);
+	}
+	
 	/**************************/
-	/******** Login *******/
+	/******** Login ***********/
 	/**************************/
 
 	/**
@@ -34,8 +53,9 @@ public class AccountManager {
 	 * as an result EAUser.
 	 * 
 	 * In case of Falture error is saved in OpResult
+	 * @param httpSession 
 	 */
-	public OpResult<EAUser> getEAUserForCreditials(String userName, String password) {
+	public OpResult<EAUser> getEAUserForCreditials(String userName, String password, HttpSession httpSession) {
 
 		OpResult<EAUser> result = new OpResult<EAUser>();
 		DBConnector connector = new DBConnector();
@@ -48,6 +68,7 @@ public class AccountManager {
 			} else {
 				EAUser user = getEAUserType(rs);//get user
 				result.setResultObject(user);//set return object 
+				saveUserInLocalCache(user, httpSession);
 			}
 		} else {
 			//set error its same sqlqueryresult has 
@@ -55,6 +76,12 @@ public class AccountManager {
 		}
 		connector.dispose();
 		return result;
+	}
+	
+	/* saves user in local cache by its session */
+	private void saveUserInLocalCache(EAUser user, HttpSession httpSession){
+		httpSession.setAttribute(USER_ID_IN_SESSION, user); 
+		logedUsers.put(httpSession.getId(), user);
 	}
 
 	/*
@@ -67,7 +94,7 @@ public class AccountManager {
 	}
 
 	/* for given resultset @rs returns EAUser type of instance of its 
-	 *  Role. Admin/Lecturer/Student */
+	 *  Role. Admin/ExamBoard/Lecturer/Student */
 	private EAUser getEAUserType(ResultSet rs) {
 		EAUser user = null;
 		try {
@@ -86,8 +113,8 @@ public class AccountManager {
 	/* returns EAUser instance based on its role */
 	private EAUser getUserByRole(EAUserRole role, ResultSet rs) {
 		switch (role) {
-		case ADMIN:
-			return new Admin(rs);
+		case BOARD:
+			return new ExamBoard(rs);
 		case LECTURER:
 			return new Lecturer(rs);
 		case STUDENT:
@@ -107,11 +134,6 @@ public class AccountManager {
 			LogManager.logErrorException(1010, "Error checking resultset empty", e);
 		}
 		return result;
-	}
-
-	public EAUser getCurrentUser() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

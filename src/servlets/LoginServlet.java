@@ -1,7 +1,6 @@
 package servlets;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -12,16 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.hamcrest.core.IsInstanceOf;
 
 import helper.AccountManager;
-import helper.DBConnector;
-import helper.LogManager;
 import helper.OpResult;
-import helper.DBConnector.SqlQueryResult;
 import models.EAUser;
-import models.EAUser.EAUserRole;
-import models.Exam;
 import models.ExamBoard;
 import models.Lecturer;
 import models.Student;
@@ -51,18 +44,22 @@ public class LoginServlet extends HttpServlet {
 		if (isUserLogedIn(request)) {
 			ServletContext ctx = request.getServletContext();
 			AccountManager manager = (AccountManager) ctx.getAttribute(ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-			EAUser user = manager.getCurrentUser();
-
-			if (user instanceof Student) {
-				response.sendRedirect("/ExamAssistant/Student"); 
-			} else if (user instanceof Lecturer) {
-				response.sendRedirect("/ExamAssistant/Lecturer"); 
-			} else if (user  instanceof ExamBoard) {
-				response.sendRedirect("/ExamAssistant/Board"); 
-			} 
+			EAUser user = manager.getCurrentUser( request.getSession());
+			loggedUser(request, response, user);
 		} else {
 			request.getRequestDispatcher("Login.jsp").forward(request, response);
 		}
+	}
+	
+	/* Simply checks which type of user is logged in and sends it to the correct servlet.*/
+	private void loggedUser(HttpServletRequest request, HttpServletResponse response, EAUser user) throws IOException{
+		if (user instanceof Student) {
+			response.sendRedirect("/ExamAssistant/Student"); 
+		} else if (user instanceof Lecturer) {
+			response.sendRedirect("/ExamAssistant/Lecturer"); 
+		} else if (user  instanceof ExamBoard) {
+			response.sendRedirect("/ExamAssistant/Board"); 
+		} 
 	}
 
 	/**
@@ -82,58 +79,71 @@ public class LoginServlet extends HttpServlet {
 	}
 
 	/*
-	 * Checks if the user is valid and if it's so by its type sends it to the
-	 * correct servlet. If user isn't valid sends him to the ErrorPage.
-	 */
+	 * Checks if the error happens while getting information from the base,
+	 *  if it's so sends user to the correct error page. */
 	private void checkUserCreditials(HttpServletRequest request, HttpServletResponse response, AccountManager manager,
 			String userName, String password) throws ServletException, IOException {
-		OpResult<EAUser> result = manager.getEAUserForCreditials(userName, password);
+		OpResult<EAUser> result = manager.getEAUserForCreditials(userName, password, request.getSession());
 		
-		RequestDispatcher rd;
-		EAUser user = null;
+		RequestDispatcher rd = null;
 		if (!result.isSuccess()) {
 			rd = request.getRequestDispatcher("ErrorPage.jsp");
 			rd.forward(request, response);
 		} else {
-			user = result.getOpResult();
-			if (user == manager.NO_USER_FOUND_CONSTANT) {
-				String errorString = "Either your user name or password is incorrect. Please try again.";
-				request.setAttribute("errorString", errorString);
-				rd = request.getRequestDispatcher("Login.jsp");
-				rd.forward(request, response);
-			} else {
-				HttpSession session = request.getSession();
-				session.setAttribute("isLogedIn", true);
-				if (user instanceof Student) {
-					loggedInStudent(request, response, user);
-				} else if (user instanceof Lecturer) {
-					loggedInLecturer(request, response, user);
-				} else if (user  instanceof ExamBoard) {
-					loggedInBoard(request, response, user);
-				} 
-			}
+			checkUser(result, manager, rd, request, response );
 		}	
+	}
+	
+	
+	/*
+	 * Checks if user's name and password is valid and if it's calls the method which sends user by it's type to the
+	 * correct servlet. Else sends it again to the Login to try log again.*/
+	private void checkUser(OpResult<EAUser> result, AccountManager manager, RequestDispatcher rd,
+			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		EAUser user = result.getOpResult();
+		if (user == AccountManager.NO_USER_FOUND_CONSTANT) {
+			String errorString = "Either your user name or password is incorrect. Please try again.";
+			request.setAttribute("errorString", errorString);
+			rd = request.getRequestDispatcher("Login.jsp");
+			rd.forward(request, response);
+		} else {
+			loggedInUser(request, response, user);
+		}
+	}
+	
+	
+	/* Simply calls the correct method for the EAUser by it's type.*/
+	private void loggedInUser(HttpServletRequest request, HttpServletResponse response, EAUser user) throws IOException{
+		HttpSession session = request.getSession();
+		session.setAttribute("isLogedIn", true);
+		if (user instanceof Student) {
+			loggedInStudent(request, response, user);
+		} else if (user instanceof Lecturer) {
+			loggedInLecturer(request, response, user);
+		} else if (user  instanceof ExamBoard) {
+			loggedInBoard(request, response, user);
+		} 
 	}
 	
 
 	/* Sets the student to the request and passes it to the StudentServlet. */
 	private void loggedInStudent(HttpServletRequest request, HttpServletResponse response, EAUser user)
 			throws IOException {
-		request.setAttribute("student", user);
+		//request.setAttribute("student", (Student)user);
 		response.sendRedirect("/ExamAssistant/Student");
 	}
 
 	/* Sets the board to the request and passes it to the BoardServlet. */
 	private void loggedInBoard(HttpServletRequest request, HttpServletResponse response, EAUser user)
 			throws IOException {
-		request.setAttribute("board", (ExamBoard) user);
+		//request.setAttribute("board", (ExamBoard) user);
 		response.sendRedirect("/ExamAssistant/Board");
 	}
 
 	/* Sets the lecturer to the request and passes it to the LecturerServlet. */
 	private void loggedInLecturer(HttpServletRequest request, HttpServletResponse response, EAUser user)
 			throws IOException {
-		request.setAttribute("lecturer", (Lecturer) user);
+		//request.setAttribute("lecturer", (Lecturer) user);
 		response.sendRedirect("/ExamAssistant/Lecturer");
 	}
 
