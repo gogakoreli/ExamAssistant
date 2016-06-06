@@ -9,6 +9,7 @@ public class AccountManagerTester {
 
 	@Before
 	public void setUp() throws Exception {
+		
 	}
 
 	@Test
