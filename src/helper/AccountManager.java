@@ -21,6 +21,8 @@ public class AccountManager {
 	/** if retuned EAUser == NO_USER_FOUND_CONSTANT that means user wasnot found
 	 *  in db*/
 	public static final EAUser NO_USER_FOUND_CONSTANT = new Student(null); 
+	//public static final String USER_ID_IN_SESSION = "AccountManager.USERID"; 
+	
 	
 	public AccountManager() {
 
@@ -31,6 +33,13 @@ public class AccountManager {
 	/******** get user  ***********/
 	/******************************/
 
+
+	/** returns EAUser for given httpsession */
+	public EAUser getCurrentUser(HttpSession httpSession) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	/**************************/
 	/******** Login ***********/
 	/**************************/
@@ -57,7 +66,7 @@ public class AccountManager {
 			} else {
 				EAUser user = getEAUserType(rs);//get user
 				result.setResultObject(user);//set return object 
-				//saveUserInLocalCache();
+				saveUserInLocalCache(user, httpSession);
 			}
 		} else {
 			//set error its same sqlqueryresult has 
@@ -65,6 +74,11 @@ public class AccountManager {
 		}
 		connector.dispose();
 		return result;
+	}
+	
+	/* saves user in local cache by its session */
+	private void saveUserInLocalCache(EAUser user, HttpSession httpSession){
+		
 	}
 
 	/*
@@ -117,11 +131,6 @@ public class AccountManager {
 			LogManager.logErrorException(1010, "Error checking resultset empty", e);
 		}
 		return result;
-	}
-
-	public EAUser getCurrentUser() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
