@@ -19,7 +19,7 @@ public class AccountManagerTester {
 
 	@Test
 	public void test1() {
-		OpResult<EAUser> res = am.getEAUserForCreditials("patrick@freeuni.edu.ge", "1234");
+		OpResult<EAUser> res = am.getEAUserForCreditials("patrick@freeuni.edu.ge", "1234", null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
 		assertEquals(user.getFirstName(), "Patrick");
@@ -30,7 +30,7 @@ public class AccountManagerTester {
 	
 	@Test
 	public void test2() {
-		OpResult<EAUser> res = am.getEAUserForCreditials("Molly@freeuni.edu.ge", "FloPup");
+		OpResult<EAUser> res = am.getEAUserForCreditials("Molly@freeuni.edu.ge", "FloPup", null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
 		assertEquals(user.getFirstName(), "Molly");
@@ -41,7 +41,7 @@ public class AccountManagerTester {
 	
 	@Test
 	public void test3() {
-		OpResult<EAUser> res = am.getEAUserForCreditials("natela@freeuni.edu.ge", "natinati");
+		OpResult<EAUser> res = am.getEAUserForCreditials("natela@freeuni.edu.ge", "natinati", null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
 		assertEquals(user.getFirstName(), "Natela");
@@ -52,7 +52,7 @@ public class AccountManagerTester {
 	
 	@Test
 	public void test4() {
-		OpResult<EAUser> res = am.getEAUserForCreditials("Shalva", "Natelashvili");
+		OpResult<EAUser> res = am.getEAUserForCreditials("Shalva", "Natelashvili", null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
 		assertTrue(user == AccountManager.NO_USER_FOUND_CONSTANT);
