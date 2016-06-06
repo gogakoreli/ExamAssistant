@@ -3,6 +3,8 @@ package helper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.servlet.http.HttpSession;
+
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
 import helper.LogManager;
@@ -40,8 +42,9 @@ public class AccountManager {
 	 * as an result EAUser.
 	 * 
 	 * In case of Falture error is saved in OpResult
+	 * @param httpSession 
 	 */
-	public OpResult<EAUser> getEAUserForCreditials(String userName, String password) {
+	public OpResult<EAUser> getEAUserForCreditials(String userName, String password, HttpSession httpSession) {
 
 		OpResult<EAUser> result = new OpResult<EAUser>();
 		DBConnector connector = new DBConnector();

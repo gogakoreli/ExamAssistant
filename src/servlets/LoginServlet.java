@@ -87,7 +87,7 @@ public class LoginServlet extends HttpServlet {
 	 */
 	private void checkUserCreditials(HttpServletRequest request, HttpServletResponse response, AccountManager manager,
 			String userName, String password) throws ServletException, IOException {
-		OpResult<EAUser> result = manager.getEAUserForCreditials(userName, password);
+		OpResult<EAUser> result = manager.getEAUserForCreditials(userName, password, request.getSession());
 		
 		RequestDispatcher rd;
 		EAUser user = null;
