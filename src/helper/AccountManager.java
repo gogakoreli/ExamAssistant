@@ -42,6 +42,12 @@ public class AccountManager {
 		return (EAUser)httpSession.getAttribute(USER_ID_IN_SESSION);
 	}
 	
+	/** removes user for given httpsession from loged in system */
+	public void removeCurrentUser(HttpSession httpSession) {
+		httpSession.removeAttribute(USER_ID_IN_SESSION);
+		logedUsers.remove(httpSession.getId());
+	}
+	
 	/**************************/
 	/******** Login ***********/
 	/**************************/
