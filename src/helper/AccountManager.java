@@ -86,7 +86,7 @@ public class AccountManager {
 	/* returns EAUser instance based on its role */
 	private EAUser getUserByRole(EAUserRole role, ResultSet rs) {
 		switch (role) {
-		case ADMIN:
+		case BOARD:
 			return new Admin(rs);
 		case LECTURER:
 			return new Lecturer(rs);
