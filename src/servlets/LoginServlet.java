@@ -76,7 +76,7 @@ public class LoginServlet extends HttpServlet {
 	 */
 	private void checkUserCreditials(HttpServletRequest request, HttpServletResponse response, AccountManager manager,
 			String userName, String password) throws ServletException, IOException {
-		EAUser user = manager.getEAUserForCreditials(userName, password);
+		/* EAUser user = manager.getEAUserForCreditials(userName, password);
 		RequestDispatcher rd;
 
 		if (user == null) {
@@ -95,7 +95,7 @@ public class LoginServlet extends HttpServlet {
 			loggedInLecturer(request, response, user);
 		} else if (user.getRole().equals(EAUserRole.BOARD)) {
 			loggedInBoard(request, response, user);
-		}
+		} */
 	}
 
 	/* Sets the student to the request and passes it to the StudentServlet. */

@@ -1,3 +1,4 @@
 *.class
 *.orig
 .classpath
+/bin

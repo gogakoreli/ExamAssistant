@@ -1,17 +1,11 @@
 package models;
 
 import java.sql.ResultSet;
-import helper.DBConnector;
 import helper.LogManager;
-import helper.DBConnector.SqlQueryResult;
 
-public class EAUser {
-//	public static final int NO_ROLE = -1;
-//	public static final int STUDENT = 0;
-//	public static final int LECTURER = 1;
-//	public static final int BOARD = 2;
-//	public static final int ADMIN = 3;
-
+public abstract class EAUser {
+	
+	/** enum for roles of Ea User*/
 	public enum EAUserRole {
 		NO_ROLE, ADMIN, STUDENT, LECTURER, BOARD
 	}
@@ -24,48 +18,36 @@ public class EAUser {
 	private String image;
 	private String googleID;
 
-	public EAUser(String username) {
-		this.mail = username;
-		ResultSet rs = getUserResultSet(username);
-		parseUserResultSet(rs);
-	}
-
+	/** Downlaods additional information based on what kind of user it is 
+	 *  For Example for Leqturer it may be phone number and so and for 
+	 *  Student single exam he needs to Attand  */
+	public abstract void downloadAditionalInfo();
+	
+	
+	/** for given resultset fills its inside paramethers using them 
+	 * this is common data same for all kinds of users like username, mail 
+	 * and so. 
+	 * if null passed creates simple instance */
 	public EAUser(ResultSet rs) {
-		parseUserResultSet(rs);
+		if (rs != null)
+			parseUserResultSet(rs);
 	}
 
 	/*
-	 * Select data from database and return result set from the according query
-	 * or log the error
-	 */
-	private ResultSet getUserResultSet(String username) {
-		ResultSet result = null;
-		String getUserQuery = "SELECT * FROM user WHERE Mail =" + username;
-		DBConnector connector = new DBConnector();
-		SqlQueryResult queryResult = connector.getQueryResult(getUserQuery);
-		connector.dispose();
-		if (queryResult != null && queryResult.isSuccess()) {
-			result = queryResult.getResultSet();
-		} else {
-			LogManager.logInfoMessage("QueryResult is null OR " + queryResult.getErrorMsg());
-		}
-		return result;
-	}
-
-	/*
+	 * if null isnot returned 
 	 * parse result set which contains data about user
 	 */
 	private void parseUserResultSet(ResultSet rs) {
 		if (rs != null) {
 			try {
 				while (rs.next()) {
-					this.userID = rs.getInt("UserID");
-					this.role = getRoleByString(rs.getString("Role"));
-					this.mail = rs.getString("Mail");
-					this.firstName = rs.getString("FirstName");
-					this.lastName = rs.getString("LastName");
-					this.image = rs.getString("Image");
-					this.googleID = rs.getString("GoogleID");
+					setFirstName(rs.getString("FirstName"));
+					setGoogleID(rs.getString("GoogleID"));
+					setImage(rs.getString("Image"));
+					setLastName(rs.getString("LastName"));
+					setMail(rs.getString("Mail"));
+					setRole(getRoleByString(rs.getString("Role")));
+					setUserID(rs.getInt("UserID"));
 				}
 			} catch (Exception e) {
 				LogManager.logErrorException(3000, "Error parsing ResultSet ", e);
@@ -73,11 +55,11 @@ public class EAUser {
 		}
 	}
 
-	/*
+	/**
 	 * get the object of EAUserRole type from the roleString; convert string to
 	 * enum
 	 */
-	private EAUserRole getRoleByString(String roleString) {
+	public static EAUserRole getRoleByString(String roleString) {
 		switch (roleString) {
 		case "board":
 			return EAUserRole.valueOf("BOARD");
@@ -91,31 +73,78 @@ public class EAUser {
 			return EAUserRole.valueOf("NO_ROLE");
 		}
 	}
+	
+	/*****************************/
+	/*****  getters/setters ******/
+	/*****************************/
 
+	
+	/** set EaUserId for EaUser */
+	public void setUserID(int userID) {
+		this.userID = userID;
+	}
+
+	/** setRole for EaUser */
+	public void setRole(EAUserRole role) {
+		this.role = role;
+	}
+
+	/** set Mail for EaUser */
+	public void setMail(String mail) {
+		this.mail = mail;
+	}
+
+	/** set First Name for EaUser */
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	/** set Last Name for EaUser */
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	/** set Image for EaUser */
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	/** setGoogleId for EaUser */
+	public void setGoogleID(String googleID) {
+		this.googleID = googleID;
+	}
+	
+	/** gets role of EaUser */
 	public EAUserRole getRole() {
 		return this.role;
 	}
 
+	/** gets Mail of EaUser */
 	public String getMail() {
 		return this.mail;
 	}
 
+	/** gets First Name of EaUser */
 	public String getFirstName() {
 		return this.firstName;
 	}
 
+	/** gets Last Name  of EaUser */
 	public String getLastName() {
 		return this.lastName;
 	}
 
+	/** gets id of EaUser */
 	public int getUserID() {
 		return this.userID;
 	}
 
+	/** gets imagePath of EaUser */
 	public String getImage() {
 		return this.image;
 	}
 
+	/** gets googleId of EaUser */
 	public String getGoogleID() {
 		return this.googleID;
 	}

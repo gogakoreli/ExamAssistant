@@ -1,0 +1,9 @@
+//error id - description 
+
+1000 - Error Connection to Database in DbConnector
+1001 - Db connection of DBConnector not closed before finalize properly.
+1002 - Error Closing DB Connection in DBConnector.
+1003 - Error making update request in db
+1004 - Error making execute request in db 
+1005 - connection wasnot esabilished when requestion execution of query in dbConnector.
+1010 - Error while validating  for resultset to contain data 

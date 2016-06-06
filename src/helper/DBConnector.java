@@ -77,21 +77,32 @@ public class DBConnector {
 		}
 	}
 
+	/**
+	 * executes given query over database and returns its result as
+	 * SqlQueryresult if connecion was not estabilished or error happended
+	 * success of result is set to false
+	 */
 	public SqlQueryResult getQueryResult(String query) {
-		SqlQueryResult queryResult = null;
+		SqlQueryResult queryResult = new SqlQueryResult();
 		if (isDBConnection()) {
 			try {
 				Statement stmt = connection.createStatement();
 				stmt.executeQuery("USE " + DBInfo.MYSQL_DATABASE_NAME);
 				ResultSet rs = stmt.executeQuery(query);
-				queryResult = new SqlQueryResult(rs);
+				queryResult.setResultObject(rs);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LogManager.logErrorException(1004, "Error Executing Query in db", e);
+				queryResult.setError(1004, "Error during execution of sqlProcedure");
 			}
+		}else{
+			queryResult.setError(1005, "No Connection with db");
 		}
 		return queryResult;
 	}
 
+	/**
+	 * runs update query in database in case of falture writes info in log
+	 */
 	public void updateDatabase(String query) {
 		if (isDBConnection()) {
 			try {
@@ -99,39 +110,16 @@ public class DBConnector {
 				stmt.executeQuery("USE " + DBInfo.MYSQL_DATABASE_NAME);
 				stmt.executeUpdate(query);
 			} catch (Exception e) {
-				e.printStackTrace();
+				LogManager.logErrorException(1003, "Error making update in db", e);
 			}
-		}
+		}//case when connection wasnot esabilished.
 	}
 
-	public class SqlQueryResult {
-
-		boolean isSuccess = true;
-		String errorMsg = "";
-		int errorId = 0;
-		ResultSet resultSet;
-
-		public SqlQueryResult(ResultSet resultSet) {
-			this.resultSet = resultSet;
-			isSuccess = true;
-		}
-
-		public SqlQueryResult(String errorMsg) {
-			this.errorMsg = errorMsg;
-			this.isSuccess = false;
-			this.errorId = 404;
-		}
-
-		public boolean isSuccess() {
-			return isSuccess;
-		}
-
+	/** class used for storing result during communication with database */
+	public class SqlQueryResult extends OpResult<ResultSet> {
+		/** returns result set of sql procedure in case of success */
 		public ResultSet getResultSet() {
-			return resultSet;
-		}
-
-		public String getErrorMsg() {
-			return errorMsg;
+			return (ResultSet) getOpResult();
 		}
 	}
 
