@@ -113,7 +113,7 @@ public class AccountManager {
 		return result;
 	}
 
-	public EAUser getCurrentUser() {
+	public EAUser getCurrentUser(HttpSession httpSession) {
 		// TODO Auto-generated method stub
 		return null;
 	}

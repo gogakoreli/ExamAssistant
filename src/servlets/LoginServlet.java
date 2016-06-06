@@ -51,7 +51,7 @@ public class LoginServlet extends HttpServlet {
 		if (isUserLogedIn(request)) {
 			ServletContext ctx = request.getServletContext();
 			AccountManager manager = (AccountManager) ctx.getAttribute(ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-			EAUser user = manager.getCurrentUser();
+			EAUser user = manager.getCurrentUser( request.getSession());
 			loggedUser(request, response, user);
 		} else {
 			request.getRequestDispatcher("Login.jsp").forward(request, response);
