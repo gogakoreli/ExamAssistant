@@ -8,10 +8,10 @@ import javax.servlet.http.HttpSession;
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
 import helper.LogManager;
-import models.Admin;
 import models.EAUser;
 import models.Lecturer;
 import models.EAUser.EAUserRole;
+import models.ExamBoard;
 import models.Student;
 
 /** main class responsible for all operations over Accounts */
@@ -70,7 +70,7 @@ public class AccountManager {
 	}
 
 	/* for given resultset @rs returns EAUser type of instance of its 
-	 *  Role. Admin/Lecturer/Student */
+	 *  Role. Admin/ExamBoard/Lecturer/Student */
 	private EAUser getEAUserType(ResultSet rs) {
 		EAUser user = null;
 		try {
@@ -90,7 +90,7 @@ public class AccountManager {
 	private EAUser getUserByRole(EAUserRole role, ResultSet rs) {
 		switch (role) {
 		case BOARD:
-			return new Admin(rs);
+			return new ExamBoard(rs);
 		case LECTURER:
 			return new Lecturer(rs);
 		case STUDENT:
