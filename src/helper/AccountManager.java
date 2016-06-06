@@ -3,12 +3,12 @@ package helper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
 import helper.LogManager;
-import models.Admin;
 import models.EAUser;
 import models.Lecturer;
 import models.EAUser.EAUserRole;
@@ -91,7 +91,7 @@ public class AccountManager {
 	}
 
 	/* for given resultset @rs returns EAUser type of instance of its 
-	 *  Role. Admin/Lecturer/Student */
+	 *  Role. Admin/ExamBoard/Lecturer/Student */
 	private EAUser getEAUserType(ResultSet rs) {
 		EAUser user = null;
 		try {
