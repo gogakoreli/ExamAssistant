@@ -37,9 +37,9 @@ public class AccountManager {
 	 * as an result EAUser.
 	 * 
 	 * In case of Falture error is saved in OpResult
-	 * @param request 
+	 * @param httpSession 
 	 */
-	public OpResult<EAUser> getEAUserForCreditials(String userName, String password, HttpServletRequest request) {
+	public OpResult<EAUser> getEAUserForCreditials(String userName, String password, HttpSession httpSession) {
 
 		OpResult<EAUser> result = new OpResult<EAUser>();
 		DBConnector connector = new DBConnector();

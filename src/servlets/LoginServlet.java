@@ -90,7 +90,7 @@ public class LoginServlet extends HttpServlet {
 	 *  if it's so sends user to the correct error page. */
 	private void checkUserCreditials(HttpServletRequest request, HttpServletResponse response, AccountManager manager,
 			String userName, String password) throws ServletException, IOException {
-		OpResult<EAUser> result = manager.getEAUserForCreditials(userName, password, request);
+		OpResult<EAUser> result = manager.getEAUserForCreditials(userName, password, request.getSession());
 		
 		RequestDispatcher rd = null;
 		if (!result.isSuccess()) {
