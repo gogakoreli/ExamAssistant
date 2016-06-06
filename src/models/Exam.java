@@ -19,20 +19,83 @@ public class Exam {
 		if (rs != null) {
 			try {
 				if (rs.next()) {
-					this.examID = rs.getInt("ExamID");
-					this.name = rs.getString("Name");
-					this.type = rs.getString("Type");
-					this.startTime = rs.getDate("StartTime");
-					this.duration = rs.getInt("Duration");
-					this.resourceType = rs.getString("ResourceType");
-					this.numVariants = rs.getInt("NumVariants");
-					this.status = rs.getString("Status");
+					this.setExamID(rs.getInt("ExamID"));
+					this.setName(rs.getString("Name"));
+					this.setType(rs.getString("Type"));
+					this.setStartTime(rs.getDate("StartTime"));
+					this.setDuration(rs.getInt("Duration"));
+					this.setResourceType(rs.getString("ResourceType"));
+					this.setNumVariants(rs.getInt("NumVariants"));
+					this.setStatus(rs.getString("Status"));
 				}
 			} catch (Exception e) {
 				LogManager.logErrorException(3000, "Error parsing ResultSet ", e);
 			}
 		}
 	}
-	
+
+	public int getExamID() {
+		return examID;
+	}
+
+	public void setExamID(int examID) {
+		this.examID = examID;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Date getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
+
+	public String getResourceType() {
+		return resourceType;
+	}
+
+	public void setResourceType(String resourceType) {
+		this.resourceType = resourceType;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public int getNumVariants() {
+		return numVariants;
+	}
+
+	public void setNumVariants(int numVariants) {
+		this.numVariants = numVariants;
+	}
 
 }

@@ -45,7 +45,7 @@ public class LoginServlet extends HttpServlet {
 		AccountManager manager = (AccountManager) context
 				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
 		HttpSession session = request.getSession();
-		if (isUserLogedIn(session, manager)) {
+		if (isUserLogedIn(manager, session)) {
 			EAUser user = manager.getCurrentUser(request.getSession());
 			loggedUser(request, response, user);
 		} else {
@@ -156,7 +156,7 @@ public class LoginServlet extends HttpServlet {
 	 * Check if user is loged in or not : take isLogedIn attribute from session
 	 * and check if it is null or value is true/false
 	 */
-	public static boolean isUserLogedIn(HttpSession session, AccountManager manager) {
+	public static boolean isUserLogedIn(AccountManager manager, HttpSession session) {
 		boolean result = false;
 		result = manager.getCurrentUser(session) == null ? false : true;
 		return result;

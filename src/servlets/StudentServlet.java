@@ -17,6 +17,7 @@ import helper.ContextStartupListener;
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
 import helper.DBInfo;
+import helper.ExamManager;
 import helper.LogManager;
 import models.EAUser;
 import models.Exam;
@@ -31,22 +32,25 @@ public class StudentServlet extends HttpServlet {
 	}
 
 	/*
-	 * Check if user is loged in otherwise send him back to the login page Then,
+	 * Check if user is loged in otherwise send him back to the login page then,
 	 * extract student variable from the session and extract his latest exam
-	 * from the database Then, pass student and his exam to the jsp to draw
+	 * from the database then, pass student and his exam to the jsp to draw
 	 * according page
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		ServletContext context = request.getServletContext();
-		AccountManager manager = (AccountManager) context.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-		if (LoginServlet.isUserLogedIn(session, manager)) {
-			Student student = getStudent(manager, session);
-			// Exam exam = getExamForStudent(student);
-			//
-			// request.setAttribute("student", student);
-			// request.setAttribute("exam", exam);
+		AccountManager accountManager = (AccountManager) context
+				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
+		ExamManager examManager = (ExamManager) context
+				.getAttribute(ContextStartupListener.EXAM_MANEGER_ATTRIBUTE_NAME);
+		Student student = getStudent(accountManager, session);
+		if (student != null) {
+			Exam exam = examManager.getExamForStudent(student);
+
+			request.setAttribute("student", student);
+			request.setAttribute("exam", exam);
 
 			RequestDispatcher dispatch = request.getRequestDispatcher("Student.jsp");
 			dispatch.forward(request, response);
@@ -58,24 +62,15 @@ public class StudentServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		// TODO: Not yet defined
 	}
 
 	/*
 	 * get student which is passed to the servlet from the request
 	 */
 	public Student getStudent(AccountManager manager, HttpSession session) {
-//		Object currentUser = manager.getCurrentUser(session);
-//		Student result = currentUser instanceof Student ? (Student) currentUser : null;
-//		return result;
-		return null;
+		Object currentUser = manager.getCurrentUser(session);
+		Student result = currentUser instanceof Student ? (Student) currentUser : null;
+		return result;
 	}
-
-	/*
-	 * get exam for the student according to the query: take latest exam ordered
-	 * by start time ascending and then pass the queryResult to the exam
-	 * constructor to retrieve exam
-	 */
-	
 
 }
