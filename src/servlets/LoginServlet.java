@@ -1,7 +1,6 @@
 package servlets;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -12,16 +11,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.hamcrest.core.IsInstanceOf;
 
 import helper.AccountManager;
-import helper.DBConnector;
-import helper.LogManager;
 import helper.OpResult;
-import helper.DBConnector.SqlQueryResult;
 import models.EAUser;
-import models.EAUser.EAUserRole;
-import models.Exam;
 import models.ExamBoard;
 import models.Lecturer;
 import models.Student;
@@ -51,7 +44,7 @@ public class LoginServlet extends HttpServlet {
 		if (isUserLogedIn(request)) {
 			ServletContext ctx = request.getServletContext();
 			AccountManager manager = (AccountManager) ctx.getAttribute(ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-			EAUser user = manager.getCurrentUser();
+			EAUser user = manager.getCurrentUser( request.getSession());
 			loggedUser(request, response, user);
 		} else {
 			request.getRequestDispatcher("Login.jsp").forward(request, response);
@@ -108,7 +101,7 @@ public class LoginServlet extends HttpServlet {
 	private void checkUser(OpResult<EAUser> result, AccountManager manager, RequestDispatcher rd,
 			HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		EAUser user = result.getOpResult();
-		if (user == manager.NO_USER_FOUND_CONSTANT) {
+		if (user == AccountManager.NO_USER_FOUND_CONSTANT) {
 			String errorString = "Either your user name or password is incorrect. Please try again.";
 			request.setAttribute("errorString", errorString);
 			rd = request.getRequestDispatcher("Login.jsp");

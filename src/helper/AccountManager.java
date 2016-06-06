@@ -2,6 +2,8 @@ package helper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -20,8 +22,10 @@ public class AccountManager {
 	/** if retuned EAUser == NO_USER_FOUND_CONSTANT that means user wasnot found
 	 *  in db*/
 	public static final EAUser NO_USER_FOUND_CONSTANT = new Student(null); 
-	//public static final String USER_ID_IN_SESSION = "AccountManager.USERID"; 
+	public static final String USER_ID_IN_SESSION = "AccountManager.USERID"; 
 	
+	//hashmap storing logedinusers 
+	private Map<String, EAUser> logedUsers = new HashMap<String, EAUser>();
 	
 	public AccountManager() {
 
@@ -35,8 +39,7 @@ public class AccountManager {
 
 	/** returns EAUser for given httpsession */
 	public EAUser getCurrentUser(HttpSession httpSession) {
-		// TODO Auto-generated method stub
-		return null;
+		return (EAUser)httpSession.getAttribute(USER_ID_IN_SESSION);
 	}
 	
 	/**************************/
@@ -77,7 +80,8 @@ public class AccountManager {
 	
 	/* saves user in local cache by its session */
 	private void saveUserInLocalCache(EAUser user, HttpSession httpSession){
-		
+		httpSession.setAttribute(USER_ID_IN_SESSION, user); 
+		logedUsers.put(httpSession.getId(), user);
 	}
 
 	/*
