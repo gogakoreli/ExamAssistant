@@ -8,7 +8,9 @@
 <title>Student Page</title>
 </head>
 <body>
-	<form action="Logout" method="post"></form>
+	<form action="Logout" method="post">
+		<input type="submit" value="Log Out">
+	</form>
 	<p>This is student page</p>
 </body>
 </html>

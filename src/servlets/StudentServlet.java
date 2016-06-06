@@ -40,9 +40,8 @@ public class StudentServlet extends HttpServlet {
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		ServletContext context = request.getServletContext();
-		AccountManager manager = (AccountManager) context
-				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-		if (LoginServlet.isUserLogedIn(request)) {
+		AccountManager manager = (AccountManager) context.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
+		if (LoginServlet.isUserLogedIn(session, manager)) {
 			Student student = getStudent(manager, session);
 			// Exam exam = getExamForStudent(student);
 			//

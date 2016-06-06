@@ -1,11 +1,16 @@
 package servlets;
 
 import java.io.IOException;
+
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import helper.AccountManager;
+import helper.ContextStartupListener;
 
 /**
  * Servlet implementation class LogoutServlet
@@ -38,7 +43,10 @@ public class LogoutServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+		ServletContext context = request.getServletContext();
+		AccountManager manager = (AccountManager) context
+				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
+		manager.removeCurrentUser(request.getSession());
 		response.sendRedirect("/ExamAssistant/Login");
 	}
 
