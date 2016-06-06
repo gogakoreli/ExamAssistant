@@ -109,4 +109,9 @@ public class AccountManager {
 		return result;
 	}
 
+	public EAUser getCurrentUser() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
