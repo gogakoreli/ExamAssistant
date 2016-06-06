@@ -12,9 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.hamcrest.core.IsInstanceOf;
+
 import helper.AccountManager;
 import helper.DBConnector;
 import helper.LogManager;
+import helper.OpResult;
 import helper.DBConnector.SqlQueryResult;
 import models.EAUser;
 import models.EAUser.EAUserRole;
@@ -46,9 +49,17 @@ public class LoginServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		if (isUserLogedIn(request)) {
-			// TODO: gadaiyvane tavis shesabmis pageze
-			// TODO: switch caset rolebis mixedvit gadaiyvane shesabmis gverdze
-			response.sendRedirect("/ExamAssistant/Student"); // studentis gverdi
+			ServletContext ctx = request.getServletContext();
+			AccountManager manager = (AccountManager) ctx.getAttribute(ACCOUNT_MANEGER_ATTRIBUTE_NAME);
+			EAUser user = manager.getCurrentUser();
+
+			if (user instanceof Student) {
+				response.sendRedirect("/ExamAssistant/Student"); 
+			} else if (user instanceof Lecturer) {
+				response.sendRedirect("/ExamAssistant/Lecturer"); 
+			} else if (user  instanceof ExamBoard) {
+				response.sendRedirect("/ExamAssistant/Board"); 
+			} 
 		} else {
 			request.getRequestDispatcher("Login.jsp").forward(request, response);
 		}
@@ -76,27 +87,34 @@ public class LoginServlet extends HttpServlet {
 	 */
 	private void checkUserCreditials(HttpServletRequest request, HttpServletResponse response, AccountManager manager,
 			String userName, String password) throws ServletException, IOException {
-		/* EAUser user = manager.getEAUserForCreditials(userName, password);
+		OpResult<EAUser> result = manager.getEAUserForCreditials(userName, password);
+		
 		RequestDispatcher rd;
-
-		if (user == null) {
-			String errorString = "Either your user name or password is incorrect. Please try again.";
-			request.setAttribute("errorString", errorString);
-			rd = request.getRequestDispatcher("Login.jsp");
+		EAUser user = null;
+		if (!result.isSuccess()) {
+			rd = request.getRequestDispatcher("ErrorPage.jsp");
 			rd.forward(request, response);
-			return;
-		}
-		HttpSession session = request.getSession();
-		session.setAttribute("isLogedIn", true);
-		if (user.getRole().equals(EAUserRole.STUDENT)) {
-
-			loggedInStudent(request, response, user);
-		} else if (user.getRole().equals(EAUserRole.LECTURER)) {
-			loggedInLecturer(request, response, user);
-		} else if (user.getRole().equals(EAUserRole.BOARD)) {
-			loggedInBoard(request, response, user);
-		} */
+		} else {
+			user = result.getOpResult();
+			if (user == manager.NO_USER_FOUND_CONSTANT) {
+				String errorString = "Either your user name or password is incorrect. Please try again.";
+				request.setAttribute("errorString", errorString);
+				rd = request.getRequestDispatcher("Login.jsp");
+				rd.forward(request, response);
+			} else {
+				HttpSession session = request.getSession();
+				session.setAttribute("isLogedIn", true);
+				if (user instanceof Student) {
+					loggedInStudent(request, response, user);
+				} else if (user instanceof Lecturer) {
+					loggedInLecturer(request, response, user);
+				} else if (user  instanceof ExamBoard) {
+					loggedInBoard(request, response, user);
+				} 
+			}
+		}	
 	}
+	
 
 	/* Sets the student to the request and passes it to the StudentServlet. */
 	private void loggedInStudent(HttpServletRequest request, HttpServletResponse response, EAUser user)
