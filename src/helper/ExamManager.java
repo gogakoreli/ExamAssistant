@@ -48,7 +48,7 @@ public class ExamManager {
 
 	public ArrayList<Exam> getAllExamsForBoard(Lecturer lecturer) {
 		ArrayList<Exam> result = new ArrayList<Exam>();
-
+ 
 		return result;
 	}
 
