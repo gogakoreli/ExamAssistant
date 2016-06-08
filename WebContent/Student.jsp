@@ -48,7 +48,7 @@ p.title {
 	font-weight: 600;
 }
 
-#startExam{
+#startExam {
 	text-align: center;
 	margin-left: 20ox;
 }
@@ -56,9 +56,9 @@ p.title {
 </head>
 
 <body>
-	<form action="Logout" method="post">
-		<input type="submit" value="Log Out">
-	</form>
+	<jsp:include page="includes/LogoutButton.jsp"></jsp:include>
+
+
 	<h1>This is student page</h1>
 	<%
 		Student student = (Student) request.getAttribute("student");
@@ -66,12 +66,13 @@ p.title {
 	%>
 	<form action="Student" method="post">
 		<div id="startExam">
-			<p class="title">${exam.getType() } გამოცდა</p>
+			<p class="title">${exam.getType() }გამოცდა</p>
 			<br>
 			<p>სტუდენტი : ${student.getFirstName()} ${student.getLastName() }</p>
 			<p>გამოცდა : ${exam.getName() }</p>
 			<p>ხანგრძლივობა : ${exam.getDuration()} წუთი</p>
-			<br /> <br /> <input class="start" type="submit" value="გამოცდის დაწყება">
+			<br /> <br /> <input class="start" type="submit"
+				value="გამოცდის დაწყება">
 		</div>
 	</form>
 </body>

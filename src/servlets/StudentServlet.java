@@ -63,7 +63,7 @@ public class StudentServlet extends HttpServlet {
 
 	}
 
-	/*
+	/**
 	 * get student which is stored in the accountManager based on the session
 	 */
 	public Student getStudent(AccountManager manager, HttpSession session) {

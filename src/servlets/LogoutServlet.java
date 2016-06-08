@@ -33,8 +33,11 @@ public class LogoutServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		ServletContext context = request.getServletContext();
+		AccountManager manager = (AccountManager) context
+				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
+		manager.removeCurrentUser(request.getSession());
+		response.sendRedirect("/ExamAssistant/Login");
 	}
 
 	/**
@@ -43,11 +46,7 @@ public class LogoutServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		ServletContext context = request.getServletContext();
-		AccountManager manager = (AccountManager) context
-				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-		manager.removeCurrentUser(request.getSession());
-		response.sendRedirect("/ExamAssistant/Login");
+
 	}
 
 }
