@@ -1,11 +1,13 @@
 package helper;
 
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import helper.DBConnector.SqlQueryResult;
 import models.Exam;
+import models.Lecturer;
 import models.Student;
 
 public class ExamManager {
@@ -34,17 +36,36 @@ public class ExamManager {
 		return result;
 	}
 
-//	public Exam getExamQuery(Student student) {
-//
-//		DBConnector connector = new DBConnector();
-//		SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
-//		connector.dispose();
-//		if (queryResult != null && queryResult.isSuccess()) {
-//			ResultSet rs = queryResult.getResultSet();
-//			result = new Exam(rs);
-//		} else {
-//			LogManager.logInfoMessage("QueryResult is null OR " + queryResult.getErrorMsg());
-//		}
-//		return result;
-//	}
+	private synchronized void addExamToMap(Exam exam) {
+		
+	}
+	
+	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer)
+	{
+		ArrayList<Exam> result = new ArrayList<Exam>();
+		
+		return result;
+	}
+	
+	public ArrayList<Exam> getAllExamsForBoard(Lecturer lecturer)
+	{
+		ArrayList<Exam> result = new ArrayList<Exam>();
+		
+		return result;
+	}
+
+	// public Exam getExamQuery(Student student) {
+	//
+	// DBConnector connector = new DBConnector();
+	// SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
+	// connector.dispose();
+	// if (queryResult != null && queryResult.isSuccess()) {
+	// ResultSet rs = queryResult.getResultSet();
+	// result = new Exam(rs);
+	// } else {
+	// LogManager.logInfoMessage("QueryResult is null OR " +
+	// queryResult.getErrorMsg());
+	// }
+	// return result;
+	// }
 }
