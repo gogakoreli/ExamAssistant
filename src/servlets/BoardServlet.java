@@ -38,7 +38,7 @@ public class BoardServlet extends HttpServlet {
 		ServletContext context = request.getServletContext();
 		AccountManager manager = (AccountManager) context.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
 
-		if (LoginServlet.isUserLogedIn(session, manager)) {
+		if (LoginServlet.isUserLogedIn(manager, session)) {
 			RequestDispatcher dispatch = request.getRequestDispatcher("Board.jsp");
 			dispatch.forward(request, response);
 		} else {

@@ -152,7 +152,7 @@ public class LoginServlet extends HttpServlet {
 		response.sendRedirect("/ExamAssistant/Lecturer");
 	}
 
-	/*
+	/**
 	 * Check if user is loged in or not : take isLogedIn attribute from session
 	 * and check if it is null or value is true/false
 	 */
