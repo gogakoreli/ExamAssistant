@@ -40,15 +40,13 @@ public class StudentServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		ServletContext context = request.getServletContext();
+		ServletContext context = session.getServletContext();
 		AccountManager accountManager = (AccountManager) context
 				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-		ExamManager examManager = (ExamManager) context
-				.getAttribute(ContextStartupListener.EXAM_MANEGER_ATTRIBUTE_NAME);
+		ExamManager examManager = ExamManager.getExamManager(session);
 		Student student = getStudent(accountManager, session);
 		if (student != null) {
-			examManager.setExamForStudent(student);
-			Exam exam = student.getExam();
+			Exam exam = examManager.getExamForStudent(student);
 
 			request.setAttribute("student", student);
 			request.setAttribute("exam", exam);
@@ -66,7 +64,7 @@ public class StudentServlet extends HttpServlet {
 	}
 
 	/*
-	 * get student which is passed to the servlet from the request
+	 * get student which is stored in the accountManager based on the session
 	 */
 	public Student getStudent(AccountManager manager, HttpSession session) {
 		Object currentUser = manager.getCurrentUser(session);

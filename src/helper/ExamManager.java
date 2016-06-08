@@ -20,7 +20,8 @@ public class ExamManager {
 		exams = new HashMap<Integer, Exam>();
 	}
 
-	public void setExamForStudent(Student student) {
+	public Exam getExamForStudent(Student student) {
+		Exam result = null;
 		String getExamQuery = "SELECT e.* FROM user as u LEFT JOIN "
 				+ "userexam as ue on ue.UserID = u.UserID LEFT JOIN "
 				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + student.getUserID()
@@ -30,10 +31,11 @@ public class ExamManager {
 		if (queryResult.isSuccess()) {
 			Exam tmpExam = new Exam(queryResult.getResultSet());
 			if (tmpExam != null) {
-				student.setExam(tmpExam);
+				result = tmpExam;
 			}
 		}
 		connector.dispose();
+		return result;
 	}
 
 	private synchronized void addExamToMap(Exam exam) {
@@ -42,13 +44,13 @@ public class ExamManager {
 
 	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer) {
 		ArrayList<Exam> result = new ArrayList<Exam>();
-		
+
 		return result;
 	}
 
 	public ArrayList<Exam> getAllExamsForBoard(Lecturer lecturer) {
 		ArrayList<Exam> result = new ArrayList<Exam>();
- 
+
 		return result;
 	}
 
