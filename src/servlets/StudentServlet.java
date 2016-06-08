@@ -47,7 +47,8 @@ public class StudentServlet extends HttpServlet {
 				.getAttribute(ContextStartupListener.EXAM_MANEGER_ATTRIBUTE_NAME);
 		Student student = getStudent(accountManager, session);
 		if (student != null) {
-			Exam exam = examManager.getExamForStudent(student);
+			examManager.setExamForStudent(student);
+			Exam exam = student.getExam();
 
 			request.setAttribute("student", student);
 			request.setAttribute("exam", exam);
