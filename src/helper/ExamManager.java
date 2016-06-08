@@ -73,20 +73,32 @@ public class ExamManager {
 	 */
 	private String getExamForStudentQuery(int userID) {
 		String result = "SELECT e.* FROM user as u LEFT JOIN userexam as ue on ue.UserID = u.UserID LEFT JOIN "
-				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + userID + " ORDER BY e.StartTime asc LIMIT 1";
+				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + userID
+				+ " AND Status != 'Processing' ORDER BY e.StartTime asc LIMIT 1";
 		return result;
 	}
 
 	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer) {
 		ArrayList<Exam> result = new ArrayList<Exam>();
-		
+
 		return result;
 	}
 
 	public ArrayList<Exam> getAllExamsForBoard(Lecturer lecturer) {
 		ArrayList<Exam> result = new ArrayList<Exam>();
-		
+
 		return result;
+	}
+
+	/**
+	 * Start exam : update info in the database that user clicked start exam
+	 * button so timer begins from now
+	 * 
+	 * @param student
+	 * @param exam
+	 */
+	public void startExam(Student student, Exam exam) {
+
 	}
 
 	public static ExamManager getExamManager(HttpSession session) {

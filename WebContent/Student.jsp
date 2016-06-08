@@ -50,7 +50,6 @@ p.title {
 
 #startExam {
 	text-align: center;
-	margin-left: 20ox;
 }
 </style>
 </head>
@@ -66,7 +65,7 @@ p.title {
 	%>
 	<form action="Student" method="post">
 		<div id="startExam">
-			<p class="title">${exam.getType() }გამოცდა</p>
+			<p class="title">${exam.getType() } გამოცდა</p>
 			<br>
 			<p>სტუდენტი : ${student.getFirstName()} ${student.getLastName() }</p>
 			<p>გამოცდა : ${exam.getName() }</p>
