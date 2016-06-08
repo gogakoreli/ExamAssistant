@@ -62,13 +62,13 @@ p.title {
 	</form>
 	<h1>This is lecturer page</h1>
 	<%
-		Lecturer lecturer = (Lecturer) request.getAttribute("lecturer");
+		IExamsDownloader user = (IExamsDownloader) request.getAttribute("lecturer");
+		ArrayList<Exam> allExams = user.downloadMyExams();
 	%>
 	<form action="Student" method="post">
 		<div id="startExam">
 			<br>
-			<p>ლექტორი : ${lecturer.getFirstName()} ${lecturer.getLastName() }</p>
-			<!-- aq unda iyos Exams.jsp-s gamozaxeba-->
+			<p>გამოცდები : ${" "}</p>
 			<br /> <br />
 		</div>
 	</form>
