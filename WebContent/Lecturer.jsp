@@ -1,3 +1,4 @@
+<%@ page import="servlets.ModifyExamServlet" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, models.*"%>
@@ -70,6 +71,9 @@ p.title {
 			<!-- aq unda iyos Exams.jsp-s gamozaxeba-->
 			<br /> <br />
 		</div>
+	</form>
+		<form action="${pageContext.request.contextPath}/ModifyExamServlet?status=<%=ModifyExamServlet.NEW_EXAM_STATUS %>" method="post">
+    	<input type="submit" name="newExam" value="Create New Exam" />
 	</form>
 </body>
 </html>

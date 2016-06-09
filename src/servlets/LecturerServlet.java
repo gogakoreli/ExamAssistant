@@ -62,13 +62,24 @@ public class LecturerServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		HttpSession session = request.getSession();
+		ServletContext context = request.getServletContext();
+		AccountManager accountManager = (AccountManager) context
+				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
+		Lecturer lecturer = getLecturer(accountManager, session);
+		if (lecturer != null) {
+			RequestDispatcher dispatch = request.getRequestDispatcher("ModifyExam.jsp");
+			dispatch.forward(request, response);
+		} else {
+			response.sendRedirect("/ExamAssistant/Login");
+		}
 	}
 	
-	private Lecturer getLecturer(AccountManager manager, HttpSession session) {
+	public Lecturer getLecturer(AccountManager manager, HttpSession session) {
 		Object currentUser = manager.getCurrentUser(session);
 		Lecturer result = currentUser instanceof Lecturer ? (Lecturer) currentUser : null;
 		return result;
 	}
+	
 
 }
