@@ -15,8 +15,8 @@ import javax.servlet.http.HttpSession;
 
 import helper.AccountManager;
 import helper.ContextStartupListener;
-import helper.ExamManager;
-import models.Exam;
+import helper.LogManager;
+import helper.SecurityChecker;
 import models.Student;
 
 /**
@@ -38,16 +38,15 @@ public class BoardServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		ServletContext context = request.getServletContext();
-		AccountManager manager = (AccountManager) context.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-
-		if (LoginServlet.isUserLogedIn(manager, session)) {
-			RequestDispatcher dispatch = request.getRequestDispatcher("Board.jsp");
-			dispatch.forward(request, response);
-		} else {
-			response.sendRedirect("/ExamAssistant/Login");
+		LogManager.logInfoMessage("Board asked");
+		SecurityChecker sChecker = new SecurityChecker(request, null);
+		if (sChecker.CheckPermissions()){
+			LogManager.logInfoMessage("Board validated");
+			sChecker.getUser();
+		}else{
+			sChecker.redirectToValidPage(response);
 		}
+		
 	}
 
 

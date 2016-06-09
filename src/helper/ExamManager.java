@@ -2,10 +2,13 @@ package helper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.naming.spi.DirStateFactory.Result;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
@@ -113,6 +116,70 @@ public class ExamManager {
 	 */
 	public void startExam(Student student, Exam exam) {
 
+	}
+	
+	/**
+	 * returns exam by examID
+	 */
+	public Exam getExamByExamId(int examId){
+		Exam result = null;
+		String getExamQuery = "select * from exam where ExamID ="+examId+";";
+		DBConnector connector = new DBConnector();
+		SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
+		if (queryResult.isSuccess()) {
+			result = new Exam(queryResult.getResultSet());
+		}
+		connector.dispose();
+		return result;
+	}
+
+	/**
+	 * Modify exam : update info in the exam table after board or lecturer
+	 * pressed modify button
+	 * 
+	 * returns Exam which was added for some tests
+	 */
+	public Exam modifyExam(int examID, boolean openBook, String[] subLecturers, File[] materials, Time startTime,
+			double examDuration) {
+		// TODO Auto-generated constructor stub
+		
+		return null;
+	}
+
+	/**
+	 * Creates new exam : insert into exam new value with setted parameter new
+	 * 
+	 * returns ExamID which was added
+	 */
+	public int createNewExam(Lecturer lec) {
+		int lecId = lec.getUserID();
+		int examId = 0;
+		String insertNewExamQuery = "INSERT INTO exam (exam.status) VALUES ('new');";
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(insertNewExamQuery);
+
+		String getLastIdQuery = "select LAST_INSERT_ID() as lastInsertId;";
+		SqlQueryResult queryResult = connector.getQueryResult(getLastIdQuery);
+		if (queryResult.isSuccess()) {
+			ResultSet res = queryResult.getResultSet();
+			try {
+				if (res.next())
+					examId = res.getInt("lastInsertId");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		connector.dispose();
+
+		addRowInUserExam(lecId, examId);
+		return examId;
+	}
+
+	private void addRowInUserExam(int userId, int examId) {
+		String insertQuery = "insert into userexam (UserID, ExamID) values(" + userId + ", " + examId + ");";
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(insertQuery);
+		connector.dispose();
 	}
 
 	public static ExamManager getExamManager(HttpSession session) {

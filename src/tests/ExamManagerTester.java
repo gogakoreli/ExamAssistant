@@ -1,8 +1,14 @@
 package tests;
 
+
+import org.junit.Test;
+
+import helper.ExamManager;
+
 public class ExamManagerTester {
 
-	public ExamManagerTester() {
+	@Test
+	public void test1() {
 		
 	}
 
