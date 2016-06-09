@@ -40,11 +40,10 @@ public class StudentServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		ServletContext context = request.getServletContext();
+		ServletContext context = session.getServletContext();
 		AccountManager accountManager = (AccountManager) context
 				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-		ExamManager examManager = (ExamManager) context
-				.getAttribute(ContextStartupListener.EXAM_MANEGER_ATTRIBUTE_NAME);
+		ExamManager examManager = ExamManager.getExamManager(session);
 		Student student = getStudent(accountManager, session);
 		if (student != null) {
 			Exam exam = examManager.getExamForStudent(student);
@@ -59,13 +58,23 @@ public class StudentServlet extends HttpServlet {
 		}
 	}
 
+	/**
+	 * when start button is clicked user is redirected here; So exam is started
+	 * and updated in the database and student starts the exam. timer starts.
+	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		HttpSession session = request.getSession();
+		ExamManager examManager = ExamManager.getExamManager(session);
+		Student student = (Student) request.getAttribute("student");
+		Exam exam = (Exam) request.getAttribute("exam");
+		examManager.startExam(student, exam);
+		// TODO: redirect him to the /Exam.jsp page which is not yet written
+		// response.sendRedirect("/ExamAssistant/Exam");
 	}
 
-	/*
-	 * get student which is passed to the servlet from the request
+	/**
+	 * get student which is stored in the accountManager based on the session
 	 */
 	public Student getStudent(AccountManager manager, HttpSession session) {
 		Object currentUser = manager.getCurrentUser(session);

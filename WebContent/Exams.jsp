@@ -1,6 +1,7 @@
+<%@page import="interfaces.IExamsDownloader"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="java.util.*, models.*"%>
+<%@ page import="java.util.*, models.*, interfaces.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -61,13 +62,13 @@ p.title {
 	</form>
 	<h1>This is lecturer page</h1>
 	<%
-		Lecturer lecturer = (Lecturer) request.getAttribute("lecturer");
+		IExamsDownloader user = (IExamsDownloader) request.getAttribute("lecturer");
+		ArrayList<Exam> allExams = user.downloadMyExams();
 	%>
 	<form action="Student" method="post">
 		<div id="startExam">
 			<br>
-			<p>ლექტორი : ${lecturer.getFirstName()} ${lecturer.getLastName() }</p>
-			<!-- aq unda iyos Exams.jsp-s gamozaxeba-->
+			<p>გამოცდები : ${" "}</p>
 			<br /> <br />
 		</div>
 	</form>
