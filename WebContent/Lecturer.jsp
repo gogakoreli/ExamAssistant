@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Student Page</title>
+<title>Lecturer Page</title>
 <style>
 body {
 	background-color: #f2f2f2;
@@ -64,7 +64,7 @@ p.title {
 	<%
 		Lecturer lecturer = (Lecturer) request.getAttribute("lecturer");
 	%>
-	<form action="Student" method="post">
+	<form action="Lecturer" method="post">
 		<div id="startExam">
 			<br>
 			<p>ლექტორი : ${lecturer.getFirstName()} ${lecturer.getLastName() }</p>
@@ -72,7 +72,7 @@ p.title {
 			<br /> <br />
 		</div>
 	</form>
-		<form action="${pageContext.request.contextPath}/ModifyExamServlet?status=<%=ModifyExamServlet.NEW_EXAM_STATUS %>" method="post">
+		<form action="${pageContext.request.contextPath}/Lecturer" method="post">
     	<input type="submit" name="newExam" value="Create New Exam" />
 	</form>
 </body>

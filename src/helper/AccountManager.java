@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.sun.glass.ui.Application;
 
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;

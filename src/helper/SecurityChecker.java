@@ -63,7 +63,7 @@ public class SecurityChecker {
 		List<String> listToReadPermissions = getPermissionsForUser();
 		boolean securePageChecked = true;
 		if (SecurePage != null)
-			securePageChecked = SecurePage.CheckInfo(user);
+			securePageChecked = SecurePage.CheckInfo(user, request);
 		return listToReadPermissions.contains(url) && (securePageChecked);
 	}
 
@@ -116,8 +116,11 @@ public class SecurityChecker {
 	/* permissions for student */
 	public static void initPermissionsForLeqturer() {
 		permissionsForLecturer = new ArrayList<String>();
-		permissionsForLecturer.add("");
-		permissionsForLecturer.add("");
+		permissionsForLecturer.add("Lecturer");
+		permissionsForLecturer.add("Lecturer.jsp");
+		permissionsForLecturer.add("ModifyExamServlet");
+		permissionsForLecturer.add("ModifyExamServlet.jsp");
+		
 	}
 
 	/* permissions for student */

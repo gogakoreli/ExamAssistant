@@ -105,6 +105,21 @@ public class ExamManager {
 	public void startExam(Student student, Exam exam) {
 
 	}
+	
+	/**
+	 * returns exam by examID
+	 */
+	public Exam getExamByExamId(int examId){
+		Exam result = null;
+		String getExamQuery = "select * from exam where ExamID ="+examId+";";
+		DBConnector connector = new DBConnector();
+		SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
+		if (queryResult.isSuccess()) {
+			result = new Exam(queryResult.getResultSet());
+		}
+		connector.dispose();
+		return result;
+	}
 
 	/**
 	 * Modify exam : update info in the exam table after board or lecturer

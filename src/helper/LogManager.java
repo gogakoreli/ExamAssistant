@@ -21,6 +21,7 @@ public class LogManager {
 	public static void logInfoMessage(String message) {
 		if (checkLogAvaliable())
 			contextForLogging.log(message);
+		System.out.println(message);
 	}
 
 	/**
@@ -43,6 +44,7 @@ public class LogManager {
 			message += "Error id = " + ErrorId + "  Message : " + message;
 		if (checkLogAvaliable())
 			contextForLogging.log(message, error);
+		System.out.println(message);
 	}
 	
 	/* checks if logging system is avaliable its if someone forgot to set 

@@ -1,6 +1,7 @@
 package servlets;
 
 import java.io.IOException;
+import java.net.ResponseCache;
 import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
@@ -15,6 +16,9 @@ import javax.servlet.http.HttpSession;
 import helper.AccountManager;
 import helper.ContextStartupListener;
 import helper.ExamManager;
+import helper.LogManager;
+import helper.SecurityChecker;
+import models.EAUser;
 import models.Exam;
 import models.Lecturer;
 import models.Student;
@@ -25,61 +29,58 @@ import models.Student;
 @WebServlet("/Lecturer")
 public class LecturerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public LecturerServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		ServletContext context = request.getServletContext();
-		AccountManager accountManager = (AccountManager) context
-				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-		ExamManager examManager = (ExamManager) context
-				.getAttribute(ContextStartupListener.EXAM_MANEGER_ATTRIBUTE_NAME);
-		Lecturer lecturer = getLecturer(accountManager, session);
-		if (lecturer != null) {
-			ArrayList<Exam> allExams = examManager.getAllExamsForLecturer(lecturer);
+	public LecturerServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
-			request.setAttribute("lecturer", lecturer);
-			request.setAttribute("exams", allExams);
-
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		//sdoPost(request, response);
+		SecurityChecker checker = new SecurityChecker(request, null);
+		if (checker.CheckPermissions()) {
+			EAUser user = checker.getUser();
+			request.setAttribute("lecturer", user);
 			RequestDispatcher dispatch = request.getRequestDispatcher("Lecturer.jsp");
 			dispatch.forward(request, response);
-		} else {
-			response.sendRedirect("/ExamAssistant/Login");
+		}else{
+			checker.redirectToValidPage(response);
 		}
+		
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		ServletContext context = request.getServletContext();
-		AccountManager accountManager = (AccountManager) context
-				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-		Lecturer lecturer = getLecturer(accountManager, session);
-		if (lecturer != null) {
-			RequestDispatcher dispatch = request.getRequestDispatcher("ModifyExam.jsp");
-			dispatch.forward(request, response);
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		SecurityChecker checker = new SecurityChecker(request, null);
+		if (checker.CheckPermissions()) {
+			if (request.getParameter("newExam") != null) {// new exam
+				newExamClicked(request, response);
+			}
+			
+			//all input valid go to lecturer jsp
+
 		} else {
-			response.sendRedirect("/ExamAssistant/Login");
+			checker.redirectToValidPage(response);
 		}
+
 	}
-	
-	public Lecturer getLecturer(AccountManager manager, HttpSession session) {
-		Object currentUser = manager.getCurrentUser(session);
-		Lecturer result = currentUser instanceof Lecturer ? (Lecturer) currentUser : null;
-		return result;
+
+	private void newExamClicked(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		request.setAttribute("status", ModifyExamServlet.NEW_EXAM_STATUS);
+		RequestDispatcher dispatch = request.getRequestDispatcher("/ModifyExamServlet");
+		dispatch.forward(request, response);
 	}
-	
 
 }

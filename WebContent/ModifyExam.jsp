@@ -21,7 +21,7 @@
 	Exam Duration: <input type="text" name="examDuration" /><br>
 	Date Created: <input type="text" name="dateCreated" /><br>
 	
-<input type="submit" value="Submit" />
+<input type="submit" name="saveExam" value="Save Exam" />
 </form>
 
 
