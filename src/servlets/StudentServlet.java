@@ -68,9 +68,11 @@ public class StudentServlet extends HttpServlet {
 		Student student = (Student) accountManager.getCurrentUser(session);
 
 		if (student != null) {
-			Exam exam = (Exam) request.getAttribute("exam");
+			Exam exam = (Exam) session.getAttribute("exam");
 			if (exam != null) {
-				examManager.startExam(student, exam);
+				if (examManager.canStartExam(student, exam)) {
+					examManager.startExam(student, exam);
+				}
 			}
 		}
 		// TODO: redirect him to the /Exam.jsp page which is not yet written

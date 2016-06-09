@@ -62,10 +62,11 @@ p.title {
 	<%
 		Student student = (Student) request.getAttribute("student");
 		Exam exam = (Exam) request.getAttribute("exam");
+		request.getSession().setAttribute("exam", exam);
 	%>
 	<form action="Student" method="post">
 		<div id="startExam">
-			<p class="title">${exam.getType() } გამოცდა</p>
+			<p class="title">${exam.getType() }გამოცდა</p>
 			<br>
 			<p>სტუდენტი : ${student.getFirstName()} ${student.getLastName() }</p>
 			<p>გამოცდა : ${exam.getName() }</p>
