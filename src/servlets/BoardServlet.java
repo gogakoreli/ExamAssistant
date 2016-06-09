@@ -61,22 +61,34 @@ public class BoardServlet extends HttpServlet {
 		String butt = request.getParameter("but");
 		HttpSession session = request.getSession();
 		ExamManager examManager = ExamManager.getExamManager(session);
-		RequestDispatcher rd = null;
 		if (butt.equals("Exam List")) {
-			ArrayList<Exam> exams = null;
-			try {
-				exams = examManager.getAllExamsForBoard();
-			} catch (SQLException e) {				
-				e.printStackTrace();
-			}
-			request.setAttribute("exams", exams);
-			rd = request.getRequestDispatcher("Board.jsp");
-			rd.forward(request, response);
-			
+			showList(examManager, request, response);
 		} else if (butt.equals("Create Exam")) {
-
 			response.sendRedirect("/ExamAssistant/Board");
 		} 
+	}
+	
+	
+	/**
+	 * Sets the ArrayList<Exam> to the request to display the list of the exams in the board jsp. 
+	 * This happens while entering the button Exam List.
+	 * @param examManager
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void showList(ExamManager examManager, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		RequestDispatcher rd = null;
+		ArrayList<Exam> exams = null;
+		try {
+			exams = examManager.getAllExamsForBoard();
+		} catch (SQLException e) {				
+			e.printStackTrace();
+		}
+		request.setAttribute("exams", exams);
+		rd = request.getRequestDispatcher("Board.jsp");
+		rd.forward(request, response);
 	}
 
 }
