@@ -3,6 +3,7 @@ package helper;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,10 +90,29 @@ public class ExamManager {
 		return result;
 	}
 
-	public ArrayList<Exam> getAllExamsForBoard(Lecturer lecturer) {
-		ArrayList<Exam> result = new ArrayList<Exam>();
+	/**
+	 * get all exams for the exam board. Select every exam from the database, to
+	 * be displayed on the exam board servlet
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	public ArrayList<Exam> getAllExamsForBoard() throws SQLException {
+		ArrayList<Exam> res = new ArrayList<Exam>();
+		String st = "select * from exam";
+		DBConnector connector = new DBConnector();
+		SqlQueryResult queryResult = connector.getQueryResult(st);
 
-		return result;
+		if (queryResult.isSuccess()) {
+			ResultSet rs = queryResult.getResultSet();
+
+			while (!rs.isLast()) {
+				Exam exam = new Exam(rs);
+				res.add(exam);
+			}
+		}
+		connector.dispose();
+		return res;
 	}
 
 	/**

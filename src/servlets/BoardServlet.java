@@ -1,6 +1,8 @@
 package servlets;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -13,8 +15,10 @@ import javax.servlet.http.HttpSession;
 
 import helper.AccountManager;
 import helper.ContextStartupListener;
+import helper.ExamManager;
 import helper.LogManager;
 import helper.SecurityChecker;
+import models.Exam;
 import models.Student;
 
 /**
@@ -52,7 +56,25 @@ public class BoardServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
+		String butt = request.getParameter("but");
+		HttpSession session = request.getSession();
+		ExamManager examManager = ExamManager.getExamManager(session);
+		RequestDispatcher rd = null;
+		if (butt.equals("Exam List")) {
+			ArrayList<Exam> exams = null;
+			try {
+				exams = examManager.getAllExamsForBoard();
+			} catch (SQLException e) {				
+				e.printStackTrace();
+			}
+			request.setAttribute("exams", exams);
+			rd = request.getRequestDispatcher("Board.jsp");
+			rd.forward(request, response);
+			
+		} else if (butt.equals("Create Exam")) {
+
+			response.sendRedirect("/ExamAssistant/Board");
+		} 
 	}
 
 }
