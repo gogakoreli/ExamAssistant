@@ -56,9 +56,8 @@ p.title {
 </head>
 
 <body>
-	<form action="Logout" method="post">
-		<input type="submit" value="Log Out">
-	</form>
+	<jsp:include page="includes/LogoutButton.jsp"></jsp:include>
+	
 	<h1>This is lecturer page</h1>
 	<%
 		Lecturer lecturer = (Lecturer) request.getAttribute("lecturer");
@@ -72,6 +71,7 @@ p.title {
 		</div>
 	</form>
 		<form action="${pageContext.request.contextPath}/Lecturer" method="post">
+		<br /> 
     	<input type="submit" name="newExam" value="Create New Exam" />
 	</form>
 </body>
