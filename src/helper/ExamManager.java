@@ -1,5 +1,6 @@
 package helper;
 
+import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLException;
@@ -89,6 +90,13 @@ public class ExamManager {
 		return result;
 	}
 
+	/**
+	 * get all exams for the exam board. Select every exam from the database, to
+	 * be displayed on the exam board servlet
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
 	public ArrayList<Exam> getAllExamsForBoard() throws SQLException {
 		ArrayList<Exam> res = new ArrayList<Exam>();
 		String st = "select * from exam";
@@ -117,13 +125,13 @@ public class ExamManager {
 	public void startExam(Student student, Exam exam) {
 
 	}
-	
+
 	/**
 	 * returns exam by examID
 	 */
-	public Exam getExamByExamId(int examId){
+	public Exam getExamByExamId(int examId) {
 		Exam result = null;
-		String getExamQuery = "select * from exam where ExamID ="+examId+";";
+		String getExamQuery = "select * from exam where ExamID =" + examId + ";";
 		DBConnector connector = new DBConnector();
 		SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
 		if (queryResult.isSuccess()) {
@@ -142,7 +150,7 @@ public class ExamManager {
 	public Exam modifyExam(int examID, boolean openBook, String[] subLecturers, File[] materials, Time startTime,
 			double examDuration) {
 		// TODO Auto-generated constructor stub
-		
+
 		return null;
 	}
 
