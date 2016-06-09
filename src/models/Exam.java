@@ -10,7 +10,7 @@ public class Exam {
 	private String name;
 	private String type;
 	private Date startTime;
-	private int duration; // in seconds or in minutes
+	private int duration; // in minutes
 	private String resourceType;
 	private int numVariants;
 	private String status;

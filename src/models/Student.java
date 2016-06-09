@@ -3,7 +3,8 @@ package models;
 import java.sql.ResultSet;
 
 public class Student extends EAUser {
-//	private Exam exam;
+
+	private ExamInformation examInformation;
 
 	public Student(ResultSet rs) {
 		super(rs);
@@ -13,12 +14,19 @@ public class Student extends EAUser {
 	public void downloadAditionalInfo() {
 	}
 
-//	public Exam getExam() {
-//		return this.exam;
-//	}
-//
-//	public void setExam(Exam exam) {
-//		this.exam = exam;
-//	}
+	/**
+	 * @return the examInformation
+	 */
+	public ExamInformation getExamInformation() {
+		return examInformation;
+	}
+
+	/**
+	 * @param examInformation
+	 *            the examInformation to set
+	 */
+	public void setExamInformation(ExamInformation examInformation) {
+		this.examInformation = examInformation;
+	}
 
 }

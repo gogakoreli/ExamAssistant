@@ -5,9 +5,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-
 
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
@@ -58,11 +57,10 @@ public class AccountManager {
 	 * .getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME); }
 	 */
 
-	/** 
-	public static EAUser getCurrentUser(HttpServletRequest request) {
-		return getCurrentUser(request.getSession());
-	}
-	*/
+	/**
+	 * public static EAUser getCurrentUser(HttpServletRequest request) { return
+	 * getCurrentUser(request.getSession()); }
+	 */
 
 	/**************************/
 	/******** Login ***********/
@@ -165,4 +163,20 @@ public class AccountManager {
 		return result;
 	}
 
+	/**
+	 * Helper method to return account manager object which is general for all
+	 * the sessions.
+	 * 
+	 * @param session
+	 * @return
+	 */
+	public static AccountManager getAccountManager(HttpSession session) {
+		AccountManager result = null;
+		ServletContext context = session.getServletContext();
+		Object object = context.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
+		if (object instanceof AccountManager) {
+			result = (AccountManager) object;
+		}
+		return result;
+	}
 }
