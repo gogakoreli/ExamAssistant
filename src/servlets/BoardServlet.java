@@ -60,7 +60,6 @@ public class BoardServlet extends HttpServlet {
 		ExamManager examManager = ExamManager.getExamManager(session);
 		RequestDispatcher rd = null;
 		if (butt.equals("Exam List")) {
-			System.out.println("aaaaaaaaaaaaaaa");
 			ArrayList<Exam> exams = null;
 			try {
 				exams = examManager.getAllExamsForBoard();
@@ -72,7 +71,6 @@ public class BoardServlet extends HttpServlet {
 			rd.forward(request, response);
 			
 		} else if (butt.equals("Create Exam")) {
-			System.out.println("aaaaaaaaaaaaaaa");
 
 			response.sendRedirect("/ExamAssistant/Board");
 		} 
