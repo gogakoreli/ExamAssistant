@@ -10,52 +10,83 @@ import helper.OpResult;
 import models.EAUser;
 
 public class AccountManagerTester {
-	AccountManager am;
+	AccountManager accManagar;
 
 	@Before
 	public void setUp() throws Exception {
-		am = new AccountManager();
+		accManagar = new AccountManager();
 	}
 
 	@Test
-	public void test1() {
-		OpResult<EAUser> res = am.getEAUserForCreditials("patrick@freeuni.edu.ge", "1234", null);
+	/* test method getEAUserForCreditials() for user patrick*/
+	public void testGetUserCreditials1() {
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials("patrick@freeuni.edu.ge", "1234", null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
 		assertEquals(user.getFirstName(), "Patrick");
 		assertEquals(user.getLastName(), "Querrel");
 		assertEquals(user.getMail(), "patrick@freeuni.edu.ge");
-		assertEquals(user.getRoleByString("student"), EAUser.EAUserRole.STUDENT);
+		assertEquals(EAUser.getRoleByString("student"), EAUser.EAUserRole.STUDENT);
 	}
 	
 	@Test
-	public void test2() {
-		OpResult<EAUser> res = am.getEAUserForCreditials("Molly@freeuni.edu.ge", "FloPup", null);
+	/* test method getEAUserForCreditials() for user Molly */
+	public void testGetUserCreditials2() {
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials("Molly@freeuni.edu.ge", "FloPup", null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
 		assertEquals(user.getFirstName(), "Molly");
 		assertEquals(user.getLastName(), "Smith");
 		assertEquals(user.getMail(), "Molly@freeuni.edu.ge");
-		assertEquals(user.getRoleByString("lecturer"), EAUser.EAUserRole.LECTURER);
+		assertEquals(EAUser.getRoleByString("lecturer"), EAUser.EAUserRole.LECTURER);
 	}
 	
 	@Test
-	public void test3() {
-		OpResult<EAUser> res = am.getEAUserForCreditials("natela@freeuni.edu.ge", "natinati", null);
+	/* test method getEAUserForCreditials() for user natela */
+	public void testGetUserCreditials3() {
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials("natela@freeuni.edu.ge", "natinati", null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
 		assertEquals(user.getFirstName(), "Natela");
 		assertEquals(user.getLastName(), "Shixiashvili");
 		assertEquals(user.getMail(), "natela@freeuni.edu.ge");
-		assertEquals(user.getRoleByString("board"), EAUser.EAUserRole.BOARD);
+		assertEquals(EAUser.getRoleByString("board"), EAUser.EAUserRole.BOARD);
 	}
 	
 	@Test
-	public void test4() {
-		OpResult<EAUser> res = am.getEAUserForCreditials("Shalva", "Natelashvili", null);
+	/* test method getEAUserForCreditials() for user whos username not existing in database */
+	public void testGetUserCreditials4() {
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials("Shalva", "Natelashvili", null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
 		assertTrue(user == AccountManager.NO_USER_FOUND_CONSTANT);
+	}
+	
+	@Test
+	/* test method getEAUserForCreditials() for user existing in database 
+	 * but with wrong password */
+	public void testGetUserCreditials5() {
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials("Molly@freeuni.edu.ge", "1234", null);
+		assertTrue(res.isSuccess());
+		EAUser user = res.getOpResult();
+		assertTrue(user == AccountManager.NO_USER_FOUND_CONSTANT);
+	}
+	
+	@Test
+	/* method getEAUserForCreditials() for user Molly 
+	 * test CaseSenitivity of userName 
+	 * 
+	 * test CaseSenitivity of password */
+	public void testGetUserCreditials6() {
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials("MOLLY@freEUni.eDu.g ", "FloPup", null);
+		assertTrue(res.isSuccess());
+		EAUser user = res.getOpResult();
+		assertEquals(user.getMail(), "Molly@freeuni.edu.ge");
+		
+		OpResult<EAUser> res1 = accManagar.getEAUserForCreditials("MOLLY@freEUni.eDu.ge", "flopup", null);
+		assertTrue(res1.isSuccess());
+		EAUser user1 = res1.getOpResult();
+		assertTrue(user1 == AccountManager.NO_USER_FOUND_CONSTANT);
 	}
 	
 	

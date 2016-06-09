@@ -51,6 +51,7 @@ public class ContextStartupListener implements ServletContextListener {
 		context.setAttribute(ACCOUNT_MANEGER_ATTRIBUTE_NAME, manager);
 	}
 
+	/* initializes exam manager */
 	private void initExamManager(ServletContextEvent servletContextEvent) {
 		ServletContext context = servletContextEvent.getServletContext();
 		ExamManager examManager = new ExamManager();
