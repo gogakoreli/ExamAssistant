@@ -45,6 +45,8 @@ public class BoardServlet extends HttpServlet {
 		if (sChecker.CheckPermissions()){
 			LogManager.logInfoMessage("Board validated");
 			sChecker.getUser();
+			RequestDispatcher dispatch = request.getRequestDispatcher("Board.jsp");
+			dispatch.forward(request, response);
 		}else{
 			sChecker.redirectToValidPage(response);
 		}
