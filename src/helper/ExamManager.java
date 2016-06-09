@@ -9,12 +9,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.naming.spi.DirStateFactory.Result;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import helper.DBConnector.SqlQueryResult;
 import models.Exam;
+import models.ExamInformation;
 import models.Lecturer;
 import models.Student;
 
@@ -123,7 +123,56 @@ public class ExamManager {
 	 * @param exam
 	 */
 	public void startExam(Student student, Exam exam) {
+		String startExamQuery = "UPDATE userplace SET StartTime = NOW() WHERE"
+				+ " UserExamID IN (SELECT ue.UserExamID FROM userexam as ue"
+				+ " JOIN user as u on u.UserID = ue.UserID JOIN exam as e on e.ExamID = ue.ExamID WHERE u.UserID = "
+				+ student.getUserID() + " AND e.ExamID = " + exam.getExamID() + ")";
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(startExamQuery);
+		connector.dispose();
+	}
 
+	/**
+	 * Get the exam from the database which is in 30 minutes or closer. If
+	 * student didn't clicked start exam earlier he is allowed to do so. Else he
+	 * has already started exam and should be redirected to the exam page
+	 * 
+	 * @param student
+	 * @param exam
+	 * @return
+	 */
+	public boolean canStartExam(Student student, Exam exam) {
+		boolean result = false;
+		ExamInformation examInformation = getStudentExamInformation(student, exam);
+		if (examInformation.getStartTime() == null) {
+			result = true;
+		}
+		student.setExamInformation(examInformation);
+		return result;
+	}
+
+	/**
+	 * Gets the information about the exam which student is going to write or is
+	 * writing now. The method returns Information about exam which the student
+	 * is writing for instance the place where he needs to write exam, the ip of
+	 * place, variant number and so on
+	 * 
+	 * @param student
+	 * @param exam
+	 * @return
+	 */
+	public ExamInformation getStudentExamInformation(Student student, Exam exam) {
+		ExamInformation result = null;
+		String examInformationQuery = "SELECT up.*, p.IP, p.Number, p.IsWorking FROM userplace as up JOIN userexam as ue on ue.UserExamID = up.UserExamID"
+				+ " JOIN user as u on u.UserID = ue.UserID JOIN exam as e on e.ExamID = ue.ExamID JOIN place as p on p.PlaceID = up.PlaceID WHERE u.UserID = "
+				+ student.getUserID() + " AND e.ExamID = " + exam.getExamID() + ";";
+		DBConnector connector = new DBConnector();
+		SqlQueryResult queryResult = connector.getQueryResult(examInformationQuery);
+		if (queryResult.isSuccess()) {
+			result = new ExamInformation(queryResult.getResultSet());
+		}
+		connector.dispose();
+		return result;
 	}
 
 	/**
@@ -190,6 +239,14 @@ public class ExamManager {
 		connector.dispose();
 	}
 
+	/**
+	 * Helper method to return exam manager object which is general for all the
+	 * sessions. Exam manager object is stored in servlet context and it is
+	 * reachable throught http session
+	 * 
+	 * @param session
+	 * @return
+	 */
 	public static ExamManager getExamManager(HttpSession session) {
 		ExamManager result = null;
 		ServletContext context = session.getServletContext();

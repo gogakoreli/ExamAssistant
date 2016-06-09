@@ -31,7 +31,7 @@ public class StudentServlet extends HttpServlet {
 		super();
 	}
 
-	/*
+	/**
 	 * Check if user is loged in otherwise send him back to the login page then,
 	 * extract student variable from the session and extract his latest exam
 	 * from the database then, pass student and his exam to the jsp to draw
@@ -40,9 +40,7 @@ public class StudentServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		ServletContext context = session.getServletContext();
-		AccountManager accountManager = (AccountManager) context
-				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
+		AccountManager accountManager = AccountManager.getAccountManager(session);
 		ExamManager examManager = ExamManager.getExamManager(session);
 		Student student = getStudent(accountManager, session);
 		if (student != null) {
@@ -65,10 +63,16 @@ public class StudentServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
+		AccountManager accountManager = AccountManager.getAccountManager(session);
 		ExamManager examManager = ExamManager.getExamManager(session);
-		Student student = (Student) request.getAttribute("student");
-		Exam exam = (Exam) request.getAttribute("exam");
-		examManager.startExam(student, exam);
+		Student student = (Student) accountManager.getCurrentUser(session);
+
+		if (student != null) {
+			Exam exam = (Exam) request.getAttribute("exam");
+			if (exam != null) {
+				examManager.startExam(student, exam);
+			}
+		}
 		// TODO: redirect him to the /Exam.jsp page which is not yet written
 		// response.sendRedirect("/ExamAssistant/Exam");
 	}

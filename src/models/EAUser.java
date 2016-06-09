@@ -4,9 +4,8 @@ import java.sql.ResultSet;
 import helper.LogManager;
 
 public abstract class EAUser {
-	
-	
-	/** enum for roles of Ea User*/
+
+	/** enum for roles of Ea User */
 	public enum EAUserRole {
 		NO_ROLE, ADMIN, STUDENT, LECTURER, BOARD
 	}
@@ -19,40 +18,40 @@ public abstract class EAUser {
 	private String image;
 	private String googleID;
 
-	/** Downlaods additional information based on what kind of user it is 
-	 *  For Example for Leqturer it may be phone number and so and for 
-	 *  Student single exam he needs to Attand  */
+	/**
+	 * Downlaods additional information based on what kind of user it is For
+	 * Example for Leqturer it may be phone number and so and for Student single
+	 * exam he needs to Attand
+	 */
 	public abstract void downloadAditionalInfo();
-	
-	
-	/** for given resultset fills its inside paramethers using them 
-	 * this is common data same for all kinds of users like username, mail 
-	 * and so. 
-	 * if null passed creates simple instance */
+
+	/**
+	 * for given resultset fills its inside paramethers using them this is
+	 * common data same for all kinds of users like username, mail and so. if
+	 * null passed creates simple instance
+	 */
 	public EAUser(ResultSet rs) {
-		if (rs != null)
+		if (rs != null) {
 			parseUserResultSet(rs);
+		}
 	}
 
 	/*
-	 * if null isnot returned 
-	 * parse result set which contains data about user
+	 * if null isnot returned parse result set which contains data about user
 	 */
 	private void parseUserResultSet(ResultSet rs) {
-		if (rs != null) {
-			try {
-				while (rs.next()) {
-					setFirstName(rs.getString("FirstName"));
-					setGoogleID(rs.getString("GoogleID"));
-					setImage(rs.getString("Image"));
-					setLastName(rs.getString("LastName"));
-					setMail(rs.getString("Mail"));
-					setRole(getRoleByString(rs.getString("Role")));
-					setUserID(rs.getInt("UserID"));
-				}
-			} catch (Exception e) {
-				LogManager.logErrorException(3000, "Error parsing ResultSet ", e);
+		try {
+			if (rs.next()) {
+				setFirstName(rs.getString("FirstName"));
+				setGoogleID(rs.getString("GoogleID"));
+				setImage(rs.getString("Image"));
+				setLastName(rs.getString("LastName"));
+				setMail(rs.getString("Mail"));
+				setRole(getRoleByString(rs.getString("Role")));
+				setUserID(rs.getInt("UserID"));
 			}
+		} catch (Exception e) {
+			LogManager.logErrorException(3000, "Error parsing ResultSet ", e);
 		}
 	}
 
@@ -74,12 +73,11 @@ public abstract class EAUser {
 			return EAUserRole.valueOf("NO_ROLE");
 		}
 	}
-	
+
 	/*****************************/
-	/*****  getters/setters ******/
+	/***** getters/setters ******/
 	/*****************************/
 
-	
 	/** set EaUserId for EaUser */
 	public void setUserID(int userID) {
 		this.userID = userID;
@@ -114,7 +112,7 @@ public abstract class EAUser {
 	public void setGoogleID(String googleID) {
 		this.googleID = googleID;
 	}
-	
+
 	/** gets role of EaUser */
 	public EAUserRole getRole() {
 		return this.role;
@@ -130,7 +128,7 @@ public abstract class EAUser {
 		return this.firstName;
 	}
 
-	/** gets Last Name  of EaUser */
+	/** gets Last Name of EaUser */
 	public String getLastName() {
 		return this.lastName;
 	}
