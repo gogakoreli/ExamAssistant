@@ -97,5 +97,10 @@ public class Exam {
 	public void setNumVariants(int numVariants) {
 		this.numVariants = numVariants;
 	}
+	
+	public String toString() {
+		String res = type + " " + status;
+		return res;
+	}
 
 }
