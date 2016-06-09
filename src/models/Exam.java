@@ -34,72 +34,92 @@ public class Exam {
 		}
 	}
 
+
+	/** Returns the id of the exam. */
 	public int getExamID() {
 		return examID;
 	}
 
+	/** Sets the id of the exam. */
 	public void setExamID(int examID) {
 		this.examID = examID;
 	}
 
+	/** Returns the name of the exam. */
 	public String getName() {
 		return name;
 	}
 
+	/** Sets the name of the exam. */
 	public void setName(String name) {
 		this.name = name;
 	}
 
+	/** Gets the type of the exam. */
 	public String getType() {
 		return type;
 	}
 
+	/** Sets the type of the exam. */
 	public void setType(String type) {
 		this.type = type;
 	}
 
+	/** Gets the start time of the exam. */
 	public Date getStartTime() {
 		return startTime;
 	}
-
+	
+	/** Sets the start time of the exam. */
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
 
+	/** Gets the duration of the exam. */
 	public int getDuration() {
 		return duration;
 	}
-
+	
+	/** Sets the duration of the exam. */
 	public void setDuration(int duration) {
 		this.duration = duration;
 	}
 
+	/** Gets the resource types of the exam. */
 	public String getResourceType() {
 		return resourceType;
 	}
-
+	
+	/** Sets the resource types of the exam. */
 	public void setResourceType(String resourceType) {
 		this.resourceType = resourceType;
 	}
 
+	/** Gets the status of the exam. */
 	public String getStatus() {
 		return status;
 	}
-
+	
+	/** Sets the status of the exam. */
 	public void setStatus(String status) {
 		this.status = status;
 	}
-
+	
+	/** Gets the number of variants of the exam. */
 	public int getNumVariants() {
 		return numVariants;
 	}
-
+	
+	/** Sets the number of variants of the exam. */
 	public void setNumVariants(int numVariants) {
 		this.numVariants = numVariants;
 	}
 	
+	/** To string the exam object.*/
 	public String toString() {
-		String res = type + " " + status;
+		String res = "[ Name: " + name + " " + "Type: " + type + " " + "StartTime: " + startTime + " " + "Duration: "
+				+ duration + " " + "Resource: " + resourceType + " " + "NumVariants: " + numVariants + " " + "status: "
+				+ status + " ]";
 		return res;
 	}
 
