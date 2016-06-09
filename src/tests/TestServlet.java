@@ -1,33 +1,23 @@
-package servlets;
+package tests;
 
 import java.io.IOException;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import helper.AccountManager;
-import helper.ContextStartupListener;
-import helper.LogManager;
-import helper.SecurityChecker;
-import models.Student;
 
 /**
- * Servlet implementation class BoardServlet
+ * Servlet implementation class TestServlet
  */
-@WebServlet("/Board")
-public class BoardServlet extends HttpServlet {
+@WebServlet("/TestServlet")
+public class TestServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public BoardServlet() {
+    public TestServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -36,22 +26,15 @@ public class BoardServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		LogManager.logInfoMessage("Board asked");
-		SecurityChecker sChecker = new SecurityChecker(request, null);
-		if (sChecker.CheckPermissions()){
-			LogManager.logInfoMessage("Board validated");
-			sChecker.getUser();
-		}else{
-			sChecker.redirectToValidPage(response);
-		}
-		
+		// TODO Auto-generated method stub
+		response.getWriter().append("Served at: " + request.getRequestURI().substring(request.getRequestURI().lastIndexOf("/")+1) + "   ");
 	}
-
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
 

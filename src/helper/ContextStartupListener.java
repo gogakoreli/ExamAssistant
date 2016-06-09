@@ -35,6 +35,7 @@ public class ContextStartupListener implements ServletContextListener {
 	 */
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		initLogginSystem(servletContextEvent);
+		initSecuritySystem();
 		initAccountManager(servletContextEvent);
 		initExamManager(servletContextEvent);
 	}
@@ -56,6 +57,14 @@ public class ContextStartupListener implements ServletContextListener {
 		ServletContext context = servletContextEvent.getServletContext();
 		ExamManager examManager = new ExamManager();
 		context.setAttribute(EXAM_MANEGER_ATTRIBUTE_NAME, examManager);
+	}
+
+	/* initializes security system */
+	private void initSecuritySystem() {
+		SecurityChecker.initPermissionsForAdmin();
+		SecurityChecker.initPermissionsForBoard();
+		SecurityChecker.initPermissionsForLeqturer();
+		SecurityChecker.initPermissionsForStudent();
 	}
 
 }

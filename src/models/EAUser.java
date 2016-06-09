@@ -5,6 +5,7 @@ import helper.LogManager;
 
 public abstract class EAUser {
 	
+	
 	/** enum for roles of Ea User*/
 	public enum EAUserRole {
 		NO_ROLE, ADMIN, STUDENT, LECTURER, BOARD

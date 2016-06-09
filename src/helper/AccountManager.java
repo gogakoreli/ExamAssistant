@@ -40,29 +40,30 @@ public class AccountManager {
 	/******** get user ***********/
 	/******************************/
 
-	/* 
-	 * /** returns EAUser for given httpsession 
+	/** returns EAUser for given httpsession */
 	public EAUser getCurrentUser(HttpSession httpSession) {
 		return (EAUser) httpSession.getAttribute(USER_ID_IN_SESSION);
-	} */ 
+	}
 
 	/** removes user for given httpsession from loged in system */
 	public void removeCurrentUser(HttpSession httpSession) {
 		httpSession.removeAttribute(USER_ID_IN_SESSION);
 		logedUsers.remove(httpSession.getId());
-		
+
 	}
 
-	/** */
-	public static EAUser getCurrentUser(HttpSession httpSession) {
-		AccountManager accountManager = (AccountManager) httpSession.getServletContext()
-				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-	}
-	
-	/** */
-	public static EAUser getCurrentUser(HttpServletRequest request){
+	/**
+	 * public static EAUser getCurrentUser(HttpSession httpSession) {
+	 * AccountManager accountManager = (AccountManager)
+	 * httpSession.getServletContext()
+	 * .getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME); }
+	 */
+
+	/** 
+	public static EAUser getCurrentUser(HttpServletRequest request) {
 		return getCurrentUser(request.getSession());
 	}
+	*/
 
 	/**************************/
 	/******** Login ***********/
