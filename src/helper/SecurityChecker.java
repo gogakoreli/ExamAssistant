@@ -118,8 +118,8 @@ public class SecurityChecker {
 		permissionsForLecturer = new ArrayList<String>();
 		permissionsForLecturer.add("Lecturer");
 		permissionsForLecturer.add("Lecturer.jsp");
-		permissionsForLecturer.add("ModifyExamServlet");
-		permissionsForLecturer.add("ModifyExamServlet.jsp");
+		permissionsForLecturer.add("ModifyExam");
+		permissionsForLecturer.add("ModifyExam.jsp");
 		
 	}
 

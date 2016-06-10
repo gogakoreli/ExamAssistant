@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.eclipse.jdt.internal.compiler.lookup.ExtraCompilerModifiers;
+
 import helper.AccountManager;
 import helper.ContextStartupListener;
 import helper.DBConnector;
@@ -29,7 +31,7 @@ import models.Lecturer;
 /**
  * Servlet implementation class CreateExamServlet
  */
-@WebServlet("/ModifyExamServlet")
+@WebServlet("/ModifyExam")
 public class ModifyExamServlet extends HttpServlet implements ISecure {
 	private static final long serialVersionUID = 1L;
 	public static final String NEW_EXAM_STATUS = "newexam";
@@ -52,10 +54,9 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			throws ServletException, IOException {
 		SecurityChecker checker = new SecurityChecker(request, null);
 		if (checker.CheckPermissions()) {
-			int examId = Integer.parseInt(request.getParameter("id"));
-			ExamManager manager = ExamManager.getExamManager(request.getSession());
-			Exam exam = manager.getExamByExamId(examId);
-			request.setAttribute("exam", exam);
+			if (checkNewExam(request)) {
+				request.setAttribute("newExam", "Create New Exam");
+			}
 			RequestDispatcher dispatch = request.getRequestDispatcher("ModifyExam.jsp");
 			dispatch.forward(request, response);
 		}
@@ -69,38 +70,79 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			throws ServletException, IOException {
 		SecurityChecker checker = new SecurityChecker(request, null);
 		if (checker.CheckPermissions()) {
-			EAUser user = checker.getUser();
-			if (checkNewExam(request)) {
+			if (checkExamSavedButtonCliqued(request)) {
+				EAUser user = checker.getUser();
 				ExamManager manager = ExamManager.getExamManager(request.getSession());
-				int examId = manager.createNewExam((Lecturer) user);
-				response.sendRedirect("/ExamAssistant/ModifyExamServlet?id=" + examId);
-			}
-			
-			 if (checkExamSavedButtonCliqued(request)){
-				 saveModifiedExam(request);
+				saveModifiedExam(request, manager, user);
 				// TODO Auto-generated constructor stub
-				//gadavushveb tavis sawyis gverdze ogond ak marto lektoristvisaa
-				 response.sendRedirect("/ExamAssistant/LecturerServlet");
-			 }
-			 
+				// gadavushveb tavis sawyis gverdze ogond ak marto
+				// lektoristvisaa
+				response.sendRedirect("/ExamAssistant/Lecturer");
+			}
+
 		} else {
 			checker.redirectToValidPage(response);
 		}
 
 	}
 
+	private int getExamDuration(HttpServletRequest request) {
+		if (request.getParameter("examDuration") != null) {
+			return Integer.parseInt(request.getParameter("examDuration"));
+		} else
+			return Exam.DEFAULT_EXAM_DUARTION;
+
+	}
+
+	private String getExamResourceType(HttpServletRequest request) {
+		if (request.getParameter("examType") != null) {
+			return Exam.OPEN_BOOK;
+		} else
+			return Exam.EXAM_NAME_UNDEFINED;
+	}
+
+	private String getExamName(HttpServletRequest request) {
+		if (request.getParameter("examName") != null) {
+			return request.getParameter("examName");
+		} else
+			return Exam.EXAM_NAME_UNDEFINED;
+	}
+
 	private boolean checkExamSavedButtonCliqued(HttpServletRequest request) {
-		return request.getAttribute("saveExam") != null;
+		return request.getParameter("saveExam") != null;
 	}
 
-	private boolean checkNewExam(HttpServletRequest request) {
-		return request.getAttribute("status") != null && 
-				request.getAttribute("status").equals(NEW_EXAM_STATUS);
+	public static boolean checkNewExam(HttpServletRequest request) {
+		return request.getParameter("newExam") != null || request.getSession().getAttribute("newExam") != null;
 	}
 
-	private void saveModifiedExam(HttpServletRequest request) {
-		// TODO save exam
+	private void saveModifiedExam(HttpServletRequest request, ExamManager manager, EAUser user) {
+		String examName = getExamName(request);
+		String openBook = getExamResourceType(request);
+		String[] subLecturers = null;
+		File[] materials = null;
+		int examDuration = getExamDuration(request);
+		int numVariants = 1;
+		String examType = getExamType(request);
+		if (checkNewExam(request)) {
+			manager.createNewExam(user.getUserID(), examName, openBook, subLecturers, materials, examDuration,
+					numVariants, examType);
+		} else {
+			int examID = Integer.parseInt(request.getParameter("id"));
+			String examStatus = getExamStatus(request);
+			Exam exam = manager.modifyExam(examID, examName, openBook, subLecturers, materials, examDuration,
+					numVariants, examType, examStatus);
+		}
+	}
 
+	private String getExamStatus(HttpServletRequest request) {
+		// TODO am unda shevcvalo examis statusi new aris processing to done
+		return Exam.EXAM_STATUS_WAITING;
+	}
+
+	private String getExamType(HttpServletRequest request) {
+		// TODO dasamatebelia checkBox ModifyExam.jsp rom achvenos statusi
+		return Exam.EXAM_TYPE_FINAL;
 	}
 
 	@Override

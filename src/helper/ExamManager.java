@@ -97,7 +97,7 @@ public class ExamManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<Exam> getAllExamsForBoard() throws SQLException {
+	public ArrayList<Exam> getAllExamsForBoard() {
 		ArrayList<Exam> res = new ArrayList<Exam>();
 		String st = "select * from exam";
 		DBConnector connector = new DBConnector();
@@ -106,9 +106,13 @@ public class ExamManager {
 		if (queryResult.isSuccess()) {
 			ResultSet rs = queryResult.getResultSet();
 
-			while (!rs.isLast()) {
-				Exam exam = new Exam(rs);
-				res.add(exam);
+			try {
+				while (!rs.isLast()) {
+					Exam exam = new Exam(rs);
+					res.add(exam);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 		connector.dispose();
@@ -196,11 +200,17 @@ public class ExamManager {
 	 * 
 	 * returns Exam which was added for some tests
 	 */
-	public Exam modifyExam(int examID, boolean openBook, String[] subLecturers, File[] materials, Time startTime,
-			double examDuration) {
-		// TODO Auto-generated constructor stub
+	public Exam modifyExam(int examID, String examName, String openBook, String[] subLecturers, File[] materials,
+			int examDuration, int numVariants, String examType, String examStatus) {
+		String updateQuery = "update exam set exam.status='" + examStatus + "', exam.Name='" + examName
+				+ "', exam.Type='" + examType + "', " + "exam.Duration=" + examDuration + ", exam.ResourceType='"
+				+ openBook + "', exam.NumVariants=" + numVariants + " where ExamID=" + examID + ";";
+		
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(updateQuery);
+		connector.dispose();
 
-		return null;
+		return getExamByExamId(examID);
 	}
 
 	/**
@@ -208,10 +218,12 @@ public class ExamManager {
 	 * 
 	 * returns ExamID which was added
 	 */
-	public int createNewExam(Lecturer lec) {
-		int lecId = lec.getUserID();
+	public int createNewExam(int lecId, String examName, String openBook, String[] subLecturers, File[] materials,
+			int examDuration, int numVariants, String examType) {
 		int examId = 0;
-		String insertNewExamQuery = "INSERT INTO exam (exam.status) VALUES ('new');";
+		String insertNewExamQuery = "INSERT INTO exam (exam.status, exam.Name, exam.Type, exam.Duration, "
+				+ "exam.ResourceType, exam.NumVariants) VALUES ('new', '" + examName + "', '" + examType + "', "
+				+ examDuration + ", '" + openBook + "', " + numVariants + ");";
 		DBConnector connector = new DBConnector();
 		connector.updateDatabase(insertNewExamQuery);
 

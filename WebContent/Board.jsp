@@ -97,6 +97,9 @@ th {
 </form>
 </div>
 
+<jsp:include page="includes/GenericExamsView.jsp"></jsp:include>
+
+<!-- 
 <div id="section">
 <%
   ArrayList<Exam> exams = (ArrayList<Exam>) request.getAttribute("exams");
@@ -133,7 +136,7 @@ th {
 				}
 			%>
 		</table>
-	</div>
+	</div>  -->
 </body>
 
 </html>
