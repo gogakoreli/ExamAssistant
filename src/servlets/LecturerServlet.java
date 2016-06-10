@@ -49,11 +49,10 @@ public class LecturerServlet extends HttpServlet {
 		ExamManager examManager = ExamManager.getExamManager(session);
 		SecurityChecker checker = new SecurityChecker(request, null);
 		if (checker.CheckPermissions()) {
-			EAUser user = checker.getUser();
-			request.setAttribute("lecturer", user);
+			Lecturer lecturer = (Lecturer)checker.getUser();
+			request.setAttribute("lecturer", lecturer);
 			
-			//TODO ak shesacvlelia examManager.getAllExamsForLecturer();
-			ArrayList<Exam> exams = examManager.getAllExamsForBoard();
+			ArrayList<Exam> exams = examManager.getAllExamsForLecturer(lecturer);
 			request.setAttribute("exams", exams);
 			
 			RequestDispatcher dispatch = request.getRequestDispatcher("Lecturer.jsp");

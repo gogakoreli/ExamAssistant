@@ -92,7 +92,7 @@ public class ExamManager {
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer) throws SQLException {
+	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer){
 		ArrayList<Exam> result = new ArrayList<Exam>();
 		String res = "SELECT e.* FROM user as u LEFT JOIN userexam as ue on ue.UserID = u.UserID LEFT JOIN "
 				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + lecturer.getUserID()
@@ -101,9 +101,13 @@ public class ExamManager {
 		SqlQueryResult queryResult = connector.getQueryResult(res);
 		if (queryResult.isSuccess()) {
 			ResultSet rs = queryResult.getResultSet();
-			while (!rs.isLast()) {
-				Exam exam = new Exam(rs);
-				result.add(exam);
+			try {
+				while (!rs.isLast()) {
+					Exam exam = new Exam(rs);
+					result.add(exam);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 		connector.dispose();
