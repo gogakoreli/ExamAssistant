@@ -21,7 +21,10 @@
 	%>
 	<form action="ModifyExam" method="post">
     Exam Name: <input type="text" name="examName" /><br>
-	<input type="checkbox" name="examType"  value="openBook"  /> Open Book<br>
+	<input type="checkbox" name="examStatus"  value="openBook"  /> Open Book<br>
+	<input type="radio" name="examType"  value="Final" checked="checked" /> Final<br>
+	<input type="radio" name="examType"  value="Midterm" /> Midterm <br>
+	<input type="radio" name="examType"  value="Quizz" /> Quizz <br>
 	Add Sub Lecturer: <input type="text" name="subLecMail" /><br>
 	Add Materials: <input type="text" name="materials" /><br>
 	Start Time: <input type="text" name="startTime" /><br>

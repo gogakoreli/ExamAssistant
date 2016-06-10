@@ -57,6 +57,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			if (checkNewExam(request)) {
 				request.setAttribute("newExam", "Create New Exam");
 			}
+			
 			RequestDispatcher dispatch = request.getRequestDispatcher("ModifyExam.jsp");
 			dispatch.forward(request, response);
 		}
@@ -88,14 +89,17 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 	private int getExamDuration(HttpServletRequest request) {
 		if (request.getParameter("examDuration") != null) {
-			return Integer.parseInt(request.getParameter("examDuration"));
+			try {
+			    return Integer.parseInt(request.getParameter("examDuration"));
+			  } catch (NumberFormatException e) {
+			    return Exam.DEFAULT_EXAM_DUARTION;
+			  }
 		} else
 			return Exam.DEFAULT_EXAM_DUARTION;
-
 	}
 
 	private String getExamResourceType(HttpServletRequest request) {
-		if (request.getParameter("examType") != null) {
+		if (request.getParameter("examStatus") != null) {
 			return Exam.OPEN_BOOK;
 		} else
 			return Exam.EXAM_NAME_UNDEFINED;
@@ -142,7 +146,11 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 	private String getExamType(HttpServletRequest request) {
 		// TODO dasamatebelia checkBox ModifyExam.jsp rom achvenos statusi
-		return Exam.EXAM_TYPE_FINAL;
+		if (request.getParameter("examType").equals("Final")) {
+			return Exam.EXAM_TYPE_FINAL;
+		} else if(request.getParameter("examType").equals("Midterm")){
+			return Exam.EXAM_TYPE_MIDTERM;
+		}else return Exam.EXAM_TYPE_QUIZZ;
 	}
 
 	@Override
