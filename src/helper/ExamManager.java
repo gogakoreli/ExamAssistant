@@ -94,7 +94,7 @@ public class ExamManager {
 	 */
 	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer){
 		ArrayList<Exam> result = new ArrayList<Exam>();
-		String res = "SELECT e.* FROM user as u LEFT JOIN userexam as ue on ue.UserID = u.UserID LEFT JOIN "
+		String res = "SELECT e.* FROM user as u JOIN userexam as ue on ue.UserID = u.UserID JOIN "
 				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + lecturer.getUserID()
 				+ " ORDER BY e.StartTime";
 		DBConnector connector = new DBConnector();
@@ -102,10 +102,14 @@ public class ExamManager {
 		if (queryResult.isSuccess()) {
 			ResultSet rs = queryResult.getResultSet();
 			try {
-				while (!rs.isLast()) {
-					Exam exam = new Exam(rs);
-					result.add(exam);
+				if (rs.next()) {
+					rs.beforeFirst();
+					while (!rs.isLast()) {
+						Exam exam = new Exam(rs);
+						result.add(exam);
+					}
 				}
+				
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
