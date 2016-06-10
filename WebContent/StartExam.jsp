@@ -5,7 +5,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Start Exam</title>
+<%@ include file="includes/logoutscripts.html" %>
 </head>
+
 <style>
 body {
 	background-color: #f2f2f2;
@@ -49,6 +51,7 @@ p.title {
 }
 </style>
 <body>
+ <jsp:directive.include file="includes/LogoutButton.jsp"/>
 	<form action="StudentServlet" method="post">
 		<div>
 			<p class="title">Exam information</p>

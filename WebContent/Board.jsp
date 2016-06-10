@@ -11,6 +11,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Exam Board</title>
+
+<%@ include file="includes/logoutscripts.html" %>
+
 <style>
 #header {
     background-color: #ffaa00;
@@ -71,7 +74,7 @@ th {
 </head>
 <body>
 
-	<jsp:include page="includes/LogoutButton.jsp"></jsp:include>
+	 <jsp:directive.include file="includes/LogoutButton.jsp"/>
 
 <div id="header">
 <h1>Exam Board</h1>

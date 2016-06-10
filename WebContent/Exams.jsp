@@ -5,6 +5,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+
+<%@ include file="includes/logoutscripts.html" %>
+
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Student Page</title>
 <style>
@@ -57,9 +60,7 @@ p.title {
 </head>
 
 <body>
-	<form action="Logout" method="post">
-		<input type="submit" value="Log Out">
-	</form>
+	 <jsp:directive.include file="includes/LogoutButton.jsp"/>
 	<h1>This is lecturer page</h1>
 	<%
 		IExamsDownloader user = (IExamsDownloader) request.getAttribute("lecturer");

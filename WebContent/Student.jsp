@@ -6,6 +6,10 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Student Page</title>
+
+
+<%@ include file="includes/logoutscripts.html" %>
+
 <style>
 body {
 	background-color: #f2f2f2;
@@ -52,11 +56,13 @@ p.title {
 	text-align: center;
 }
 </style>
+
 </head>
 
 <body>
-	<jsp:include page="includes/LogoutButton.jsp"></jsp:include>
-
+	<!-- <jsp:include  page="includes/LogoutButton.jsp"></jsp:include> -->
+    
+    <jsp:directive.include file="includes/LogoutButton.jsp"/>
 
 	<h1>This is student page</h1>
 	<%

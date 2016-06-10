@@ -85,7 +85,9 @@ public class SecurityChecker {
 	 * else to login page
 	 */
 	public void redirectToValidPage(HttpServletResponse response) {
+		LogManager.logInfoMessage("Security Bridge! redirectiong to error message !");
 		try {
+			
 			if (user == null) {
 				response.sendRedirect("/ExamAssistant/Login");
 			} else {
@@ -109,8 +111,8 @@ public class SecurityChecker {
 	/* permissions for student */
 	public static void initPermissionsForStudent() {
 		permissionsForStudent = new ArrayList<String>();
-		permissionsForStudent.add("");
-		permissionsForStudent.add("");
+		permissionsForStudent.add("Student");
+		permissionsForStudent.add("Student.jsp");
 	}
 
 	/* permissions for student */
@@ -127,7 +129,7 @@ public class SecurityChecker {
 	public static void initPermissionsForBoard() {
 		permissionsForBoard = new ArrayList<String>();
 		permissionsForBoard.add("Board");
-		permissionsForBoard.add("");
+		permissionsForBoard.add("Board.jsp");
 	}
 
 	/* permissions for student */
