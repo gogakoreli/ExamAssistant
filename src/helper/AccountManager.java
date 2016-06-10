@@ -33,6 +33,8 @@ public class AccountManager {
 	public AccountManager() {
 
 	}
+	
+	//TODO make threadsade account manager !!!!!!
 
 	/******************************/
 	/******** get user ***********/

@@ -84,15 +84,36 @@ public class ExamManager {
 		return result;
 	}
 
-	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer) {
+	
+	/**
+	 * gets all the correct exams for the lecturer. Selects only the ones is related to 
+	 * the given lecturer.
+	 * @param lecturer
+	 * @return
+	 * @throws SQLException
+	 */
+	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer) throws SQLException {
 		ArrayList<Exam> result = new ArrayList<Exam>();
-
+		String res = "SELECT e.* FROM user as u LEFT JOIN userexam as ue on ue.UserID = u.UserID LEFT JOIN "
+				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + lecturer.getUserID()
+				+ " ORDER BY e.StartTime";
+		DBConnector connector = new DBConnector();
+		SqlQueryResult queryResult = connector.getQueryResult(res);
+		if (queryResult.isSuccess()) {
+			ResultSet rs = queryResult.getResultSet();
+			while (!rs.isLast()) {
+				Exam exam = new Exam(rs);
+				result.add(exam);
+			}
+		}
+		connector.dispose();
 		return result;
 	}
 
+	
 	/**
-	 * get all exams for the exam board. Select every exam from the database, to
-	 * be displayed on the exam board servlet
+	 * Gets all exams for the exam board. Select every exam from the database, to
+	 * be displayed on the exam board servlet.
 	 * 
 	 * @return
 	 * @throws SQLException
@@ -102,10 +123,8 @@ public class ExamManager {
 		String st = "select * from exam";
 		DBConnector connector = new DBConnector();
 		SqlQueryResult queryResult = connector.getQueryResult(st);
-
 		if (queryResult.isSuccess()) {
 			ResultSet rs = queryResult.getResultSet();
-
 			try {
 				while (!rs.isLast()) {
 					Exam exam = new Exam(rs);
@@ -180,6 +199,7 @@ public class ExamManager {
 	}
 
 	/**
+	 * Simply gets the exam by its id.
 	 * returns exam by examID
 	 */
 	public Exam getExamByExamId(int examId) {
@@ -239,7 +259,6 @@ public class ExamManager {
 			}
 		}
 		connector.dispose();
-
 		addRowInUserExam(lecId, examId);
 		return examId;
 	}
