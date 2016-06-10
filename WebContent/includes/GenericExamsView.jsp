@@ -94,7 +94,7 @@ th {
 
 			<tr>
 				<td><%=ex.getExamID()%></td>
-				<td> <a href=ProductDetailServlet?productID=<% out.print(ex.getExamID()); %> > <%=ex.getName()%> </a> </td>
+				<td> <a href=ModifyExam?examID=<% out.print(ex.getExamID()); %> > <%=ex.getName()%> </a> </td>
 				<td><%=ex.getType()%></td>
 				<td><%=ex.getStartTime()%></td>
 				<td><%=ex.getDuration()%></td>

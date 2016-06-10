@@ -52,10 +52,14 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		HttpSession session = request.getSession();
 		SecurityChecker checker = new SecurityChecker(request, null);
 		if (checker.CheckPermissions()) {
+			Exam editExam = getEditExam(request);
 			if (checkNewExam(request)) {
 				request.setAttribute("newExam", "Create New Exam");
+			} else if (editExam != null) {
+				request.setAttribute("exam", editExam);
 			}
 			RequestDispatcher dispatch = request.getRequestDispatcher("ModifyExam.jsp");
 			dispatch.forward(request, response);
@@ -143,6 +147,20 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	private String getExamType(HttpServletRequest request) {
 		// TODO dasamatebelia checkBox ModifyExam.jsp rom achvenos statusi
 		return Exam.EXAM_TYPE_FINAL;
+	}
+
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 */
+	private Exam getEditExam(HttpServletRequest request) {
+		Exam result = null;
+		Object param = request.getParameter("examID");
+		int examID = param != null ? Integer.parseInt((String) param) : -1;
+		ExamManager examManager = ExamManager.getExamManager(request.getSession());
+		result = examManager.getExamByExamId(examID);
+		return result;
 	}
 
 	@Override

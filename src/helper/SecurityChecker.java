@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-
 import interfaces.ISecure;
 import models.Admin;
 import models.EAUser;
@@ -46,9 +45,7 @@ public class SecurityChecker {
 	 */
 	private EAUser getUserFromRequest(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		ServletContext context = session.getServletContext();
-		AccountManager accountManager = (AccountManager) context
-				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
+		AccountManager accountManager = AccountManager.getAccountManager(session);
 		return accountManager.getCurrentUser(session);
 	}
 
@@ -87,7 +84,7 @@ public class SecurityChecker {
 	public void redirectToValidPage(HttpServletResponse response) {
 		LogManager.logInfoMessage("Security Bridge! redirectiong to error message !");
 		try {
-			
+
 			if (user == null) {
 				response.sendRedirect("/ExamAssistant/Login");
 			} else {
@@ -122,7 +119,7 @@ public class SecurityChecker {
 		permissionsForLecturer.add("Lecturer.jsp");
 		permissionsForLecturer.add("ModifyExam");
 		permissionsForLecturer.add("ModifyExam.jsp");
-		
+
 	}
 
 	/* permissions for student */
@@ -130,6 +127,8 @@ public class SecurityChecker {
 		permissionsForBoard = new ArrayList<String>();
 		permissionsForBoard.add("Board");
 		permissionsForBoard.add("Board.jsp");
+		permissionsForBoard.add("ModifyExam");
+		permissionsForBoard.add("ModifyExam.jsp");
 	}
 
 	/* permissions for student */

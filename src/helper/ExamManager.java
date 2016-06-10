@@ -84,15 +84,15 @@ public class ExamManager {
 		return result;
 	}
 
-	
 	/**
-	 * gets all the correct exams for the lecturer. Selects only the ones is related to 
-	 * the given lecturer.
+	 * gets all the correct exams for the lecturer. Selects only the ones is
+	 * related to the given lecturer.
+	 * 
 	 * @param lecturer
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer){
+	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer) {
 		ArrayList<Exam> result = new ArrayList<Exam>();
 		String res = "SELECT e.* FROM user as u LEFT JOIN userexam as ue on ue.UserID = u.UserID LEFT JOIN "
 				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + lecturer.getUserID()
@@ -114,10 +114,9 @@ public class ExamManager {
 		return result;
 	}
 
-	
 	/**
-	 * Gets all exams for the exam board. Select every exam from the database, to
-	 * be displayed on the exam board servlet.
+	 * Gets all exams for the exam board. Select every exam from the database,
+	 * to be displayed on the exam board servlet.
 	 * 
 	 * @return
 	 * @throws SQLException
@@ -203,18 +202,19 @@ public class ExamManager {
 	}
 
 	/**
-	 * Simply gets the exam by its id.
-	 * returns exam by examID
+	 * Simply gets the exam by its id. returns exam by examID
 	 */
-	public Exam getExamByExamId(int examId) {
+	public Exam getExamByExamId(int examID) {
 		Exam result = null;
-		String getExamQuery = "select * from exam where ExamID =" + examId + ";";
-		DBConnector connector = new DBConnector();
-		SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
-		if (queryResult.isSuccess()) {
-			result = new Exam(queryResult.getResultSet());
+		if (examID != -1) {
+			String getExamQuery = "select * from exam where ExamID =" + examID + ";";
+			DBConnector connector = new DBConnector();
+			SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
+			if (queryResult.isSuccess()) {
+				result = new Exam(queryResult.getResultSet());
+			}
+			connector.dispose();
 		}
-		connector.dispose();
 		return result;
 	}
 
@@ -229,7 +229,7 @@ public class ExamManager {
 		String updateQuery = "update exam set exam.status='" + examStatus + "', exam.Name='" + examName
 				+ "', exam.Type='" + examType + "', " + "exam.Duration=" + examDuration + ", exam.ResourceType='"
 				+ openBook + "', exam.NumVariants=" + numVariants + " where ExamID=" + examID + ";";
-		
+
 		DBConnector connector = new DBConnector();
 		connector.updateDatabase(updateQuery);
 		connector.dispose();
