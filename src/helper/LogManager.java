@@ -7,6 +7,7 @@ public class LogManager {
 
 	private static ServletContext contextForLogging = null;
 	private static boolean EnibleLogging  = true;
+	private static boolean EnibleLogOnConsole = false;
 	private static int NO_ERROR_ID = 0; // used when no error id is passed 
 	
 	/**
@@ -21,7 +22,7 @@ public class LogManager {
 	public static void logInfoMessage(String message) {
 		if (checkLogAvaliable())
 			contextForLogging.log(message);
-		System.out.println(message);
+		if (EnibleLogOnConsole) System.out.println(message);
 	}
 
 	/**
@@ -44,7 +45,7 @@ public class LogManager {
 			message += "Error id = " + ErrorId + "  Message : " + message;
 		if (checkLogAvaliable())
 			contextForLogging.log(message, error);
-		System.out.println(message);
+		if (EnibleLogOnConsole) System.out.println(message);
 	}
 	
 	/* checks if logging system is avaliable its if someone forgot to set 
