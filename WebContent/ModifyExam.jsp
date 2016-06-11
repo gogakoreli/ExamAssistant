@@ -36,10 +36,14 @@ input[type=submit] {
 	background-color: #4CAF50;
 	color: white;
 	padding: 12px 20px;
-	margin: 8px 0;
+	margin: 4px 0;
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
+}
+
+input[type="text"] {
+	width: 100%;
 }
 
 </style>
