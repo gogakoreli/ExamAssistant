@@ -147,12 +147,13 @@ public class Exam {
 	
 	/** To string the exam object.*/
 	public String toString() {
-		String res = "[ Name: " + name + " " + "Type: " + type + " " + "StartTime: " + startTime + " " + "Duration: "
-				+ duration + " " + "Resource: " + resourceType + " " + "NumVariants: " + numVariants + " " + "status: "
-				+ status + " ]";
+		String res = "[ ExamId:" + examID + "Name:" + name + " " + "Type:" + type + " " + "StartTime:" + startTime + " "
+				+ "Duration:" + duration + " " + "Resource:" + resourceType + " " + "NumVariants:" + numVariants + " "
+				+ "status: " + status + " ]";
 		return res;
 	}
 
+	
 	public boolean equals(Exam ex) {
 		if (ex.getName().equals(this.getName()) && ex.getExamID() == this.getExamID()) {
 			return true;

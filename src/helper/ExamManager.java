@@ -211,7 +211,7 @@ public class ExamManager {
 	 */
 	public Exam getExamByExamId(int examID) {
 		Exam result = null;
-		if (examID != -1) {
+		if (examID > 0) {
 			String getExamQuery = "select * from exam where ExamID =" + examID + ";";
 			DBConnector connector = new DBConnector();
 			SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
