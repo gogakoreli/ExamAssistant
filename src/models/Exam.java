@@ -48,6 +48,18 @@ public class Exam {
 	}
 
 
+	public Exam(int examID, String name, String type, Date startTime, int duration, String resourceType,
+			int numVariants, String status) {
+		this.examID = examID;
+		this.name = name;
+		this.type = type;
+		this.startTime = startTime;
+		this.duration = duration;
+		this.resourceType = resourceType;
+		this.numVariants = numVariants;
+		this.status = status;
+	}
+	
 	public Exam() {
 		
 	}

@@ -70,6 +70,7 @@ public class ExamManager {
 		}
 		return result;
 	}
+	
 
 	/**
 	 * Query string for selecting closest exam specific to the userID
@@ -272,6 +273,11 @@ public class ExamManager {
 	}
 	
 
+	/**
+	 * Adds new row in the base in the userexam table, which connects each user to the exam.
+	 * @param userId
+	 * @param examId
+	 */
 	private void addRowInUserExam(int userId, int examId) {
 		String insertQuery = "insert into userexam (UserID, ExamID) values(" + userId + ", " + examId + ");";
 		DBConnector connector = new DBConnector();

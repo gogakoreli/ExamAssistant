@@ -36,9 +36,22 @@ public abstract class EAUser {
 		}
 	}
 	
+	public EAUser(int userID, EAUserRole role, String mail, String firstName, String lastName, String image,
+			String googleID) {
+		this.userID = userID;
+		this.role = role;
+		this.mail = mail;
+		this.firstName = firstName;
+		this.lastName =lastName;
+		this.image = image;
+		this.googleID = googleID;
+	}
+	
+	
 	public EAUser() {
 		
 	}
+	
 
 	/*
 	 * if null isnot returned parse result set which contains data about user
