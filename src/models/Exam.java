@@ -7,6 +7,7 @@ import helper.LogManager;
 
 public class Exam {
 	public static final String OPEN_BOOK = "Open book";
+	public static final String CLOSED_BOOK = "Closed book";
 	public static final String EXAM_STATUS_DONE = "Done";
 	public static final String EXAM_STATUS_PROCESSING = "Processing";
 	public static final String EXAM_STATUS_NEW = "new";
@@ -16,6 +17,7 @@ public class Exam {
 	public static final String EXAM_NAME_UNDEFINED = "Undefined";
 	public static final int DEFAULT_EXAM_DUARTION = 100;
 	public static final String EXAM_STATUS_WAITING= "Quizz";
+	
 	
 	private int examID;
 	private String name;

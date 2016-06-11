@@ -2,8 +2,11 @@ package servlets;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -13,6 +16,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import org.eclipse.jdt.internal.compiler.lookup.ExtraCompilerModifiers;
 
@@ -61,7 +65,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			} else if (editExam != null) {
 				request.setAttribute("exam", editExam);
 			}
-			
+
 			RequestDispatcher dispatch = request.getRequestDispatcher("ModifyExam.jsp");
 			dispatch.forward(request, response);
 		}
@@ -83,6 +87,16 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 				// gadavushveb tavis sawyis gverdze ogond ak marto
 				// lektoristvisaa
 				response.sendRedirect("/ExamAssistant/Lecturer");
+			} else if (saveFileButtonClicked(request)) {
+				Part filePart=null;
+				try{
+					filePart = request.getPart("uploadFile"); // Retrieves <input type="file" name="file">
+					String fileName = filePart.getSubmittedFileName();
+				    InputStream fileContent = filePart.getInputStream();
+				    System.out.println(fileName);
+				} catch (Exception e){
+					LogManager.logErrorException("Error Uploading file", e);
+				}
 			}
 
 		} else {
@@ -91,13 +105,18 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 	}
 
+	private boolean saveFileButtonClicked(HttpServletRequest request) {
+		request.getParameter("uploadFile");
+		return request.getParameter("saveFile") != null;
+	}
+
 	private int getExamDuration(HttpServletRequest request) {
 		if (request.getParameter("examDuration") != null) {
 			try {
-			    return Integer.parseInt(request.getParameter("examDuration"));
-			  } catch (NumberFormatException e) {
-			    return Exam.DEFAULT_EXAM_DUARTION;
-			  }
+				return Integer.parseInt(request.getParameter("examDuration"));
+			} catch (NumberFormatException e) {
+				return Exam.DEFAULT_EXAM_DUARTION;
+			}
 		} else
 			return Exam.DEFAULT_EXAM_DUARTION;
 	}
@@ -106,7 +125,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		if (request.getParameter("examStatus") != null) {
 			return Exam.OPEN_BOOK;
 		} else
-			return Exam.EXAM_NAME_UNDEFINED;
+			return Exam.CLOSED_BOOK;
 	}
 
 	private String getExamName(HttpServletRequest request) {
@@ -152,9 +171,10 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		// TODO dasamatebelia checkBox ModifyExam.jsp rom achvenos statusi
 		if (request.getParameter("examType").equals("Final")) {
 			return Exam.EXAM_TYPE_FINAL;
-		} else if(request.getParameter("examType").equals("Midterm")){
+		} else if (request.getParameter("examType").equals("Midterm")) {
 			return Exam.EXAM_TYPE_MIDTERM;
-		}else return Exam.EXAM_TYPE_QUIZZ;
+		} else
+			return Exam.EXAM_TYPE_QUIZZ;
 	}
 
 	/**

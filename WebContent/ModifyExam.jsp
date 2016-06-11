@@ -26,14 +26,19 @@
 	<input type="radio" name="examType"  value="Midterm" /> Midterm <br>
 	<input type="radio" name="examType"  value="Quizz" /> Quizz <br>
 	Add Sub Lecturer: <input type="text" name="subLecMail" /><br>
-	Add Materials: <input type="text" name="materials" /><br>
 	Start Time: <input type="text" name="startTime" /><br>
 	Exam Duration: <input type="text" name="examDuration" /><br>
 	Date Created: <input type="text" name="dateCreated" /><br>
 	
+	
 <input type="submit" name="saveExam" value="Save Exam" />
 </form>
-
+<!--This is a comment. Comments are not displayed in the browser
+	<form action="ModifyExam" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" multiple="true" />
+    <input type="submit" name="saveFile" value="Save File"/> <br>
+    </form>
+-->
 
 </body>
 </html>
