@@ -45,10 +45,16 @@ public class LecturerServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		//sdoPost(request, response);
+		HttpSession session = request.getSession();
+		ExamManager examManager = ExamManager.getExamManager(session);
 		SecurityChecker checker = new SecurityChecker(request, null);
 		if (checker.CheckPermissions()) {
-			EAUser user = checker.getUser();
-			request.setAttribute("lecturer", user);
+			Lecturer lecturer = (Lecturer)checker.getUser();
+			request.setAttribute("lecturer", lecturer);
+			
+			ArrayList<Exam> exams = examManager.getAllExamsForLecturer(lecturer);
+			request.setAttribute("exams", exams);
+			
 			RequestDispatcher dispatch = request.getRequestDispatcher("Lecturer.jsp");
 			dispatch.forward(request, response);
 		}else{
@@ -68,9 +74,6 @@ public class LecturerServlet extends HttpServlet {
 			if (request.getParameter("newExam") != null) {// new exam
 				newExamClicked(request, response);
 			}
-			
-			//all input valid go to lecturer jsp
-
 		} else {
 			checker.redirectToValidPage(response);
 		}
@@ -79,8 +82,7 @@ public class LecturerServlet extends HttpServlet {
 
 	private void newExamClicked(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		request.setAttribute("status", ModifyExamServlet.NEW_EXAM_STATUS);
-		RequestDispatcher dispatch = request.getRequestDispatcher("/ModifyExamServlet");
-		dispatch.forward(request, response);
+		response.sendRedirect("/ExamAssistant/ModifyExam");
 	}
 
 }

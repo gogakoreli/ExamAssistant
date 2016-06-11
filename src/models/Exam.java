@@ -6,6 +6,17 @@ import java.sql.ResultSet;
 import helper.LogManager;
 
 public class Exam {
+	public static final String OPEN_BOOK = "Open book";
+	public static final String EXAM_STATUS_DONE = "Done";
+	public static final String EXAM_STATUS_PROCESSING = "Processing";
+	public static final String EXAM_STATUS_NEW = "new";
+	public static final String EXAM_TYPE_FINAL = "Final";
+	public static final String EXAM_TYPE_MIDTERM = "Midterm";
+	public static final String EXAM_TYPE_QUIZZ = "Quizz";
+	public static final String EXAM_NAME_UNDEFINED = "Undefined";
+	public static final int DEFAULT_EXAM_DUARTION = 100;
+	public static final String EXAM_STATUS_WAITING= "Quizz";
+	
 	private int examID;
 	private String name;
 	private String type;

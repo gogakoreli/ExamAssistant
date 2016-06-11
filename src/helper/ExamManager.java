@@ -84,50 +84,61 @@ public class ExamManager {
 		return result;
 	}
 
-	
 	/**
-	 * gets all the correct exams for the lecturer. Selects only the ones is related to 
-	 * the given lecturer.
+	 * gets all the correct exams for the lecturer. Selects only the ones is
+	 * related to the given lecturer.
+	 * 
 	 * @param lecturer
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer) throws SQLException {
+	public ArrayList<Exam> getAllExamsForLecturer(Lecturer lecturer) {
 		ArrayList<Exam> result = new ArrayList<Exam>();
-		String res = "SELECT e.* FROM user as u LEFT JOIN userexam as ue on ue.UserID = u.UserID LEFT JOIN "
+		String res = "SELECT e.* FROM user as u JOIN userexam as ue on ue.UserID = u.UserID JOIN "
 				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + lecturer.getUserID()
 				+ " ORDER BY e.StartTime";
 		DBConnector connector = new DBConnector();
 		SqlQueryResult queryResult = connector.getQueryResult(res);
 		if (queryResult.isSuccess()) {
 			ResultSet rs = queryResult.getResultSet();
-			while (!rs.isLast()) {
-				Exam exam = new Exam(rs);
-				result.add(exam);
+			try {
+				if (rs.next()) {
+					rs.beforeFirst();
+					while (!rs.isLast()) {
+						Exam exam = new Exam(rs);
+						result.add(exam);
+					}
+				}
+				
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 		connector.dispose();
 		return result;
 	}
 
-	
 	/**
-	 * Gets all exams for the exam board. Select every exam from the database, to
-	 * be displayed on the exam board servlet.
+	 * Gets all exams for the exam board. Select every exam from the database,
+	 * to be displayed on the exam board servlet.
 	 * 
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<Exam> getAllExamsForBoard() throws SQLException {
+	public ArrayList<Exam> getAllExamsForBoard() {
 		ArrayList<Exam> res = new ArrayList<Exam>();
 		String st = "select * from exam";
 		DBConnector connector = new DBConnector();
 		SqlQueryResult queryResult = connector.getQueryResult(st);
 		if (queryResult.isSuccess()) {
 			ResultSet rs = queryResult.getResultSet();
-			while (!rs.isLast()) {
-				Exam exam = new Exam(rs);
-				res.add(exam);
+			try {
+				while (!rs.isLast()) {
+					Exam exam = new Exam(rs);
+					res.add(exam);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
 		}
 		connector.dispose();
@@ -195,18 +206,19 @@ public class ExamManager {
 	}
 
 	/**
-	 * Simply gets the exam by its id.
-	 * returns exam by examID
+	 * Simply gets the exam by its id. returns exam by examID
 	 */
-	public Exam getExamByExamId(int examId) {
+	public Exam getExamByExamId(int examID) {
 		Exam result = null;
-		String getExamQuery = "select * from exam where ExamID =" + examId + ";";
-		DBConnector connector = new DBConnector();
-		SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
-		if (queryResult.isSuccess()) {
-			result = new Exam(queryResult.getResultSet());
+		if (examID != -1) {
+			String getExamQuery = "select * from exam where ExamID =" + examID + ";";
+			DBConnector connector = new DBConnector();
+			SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
+			if (queryResult.isSuccess()) {
+				result = new Exam(queryResult.getResultSet());
+			}
+			connector.dispose();
 		}
-		connector.dispose();
 		return result;
 	}
 
@@ -216,12 +228,17 @@ public class ExamManager {
 	 * 
 	 * returns Exam which was added for some tests
 	 */
-	public Exam modifyExam(int examID, boolean openBook, String[] subLecturers, File[] materials, Time startTime,
-			double examDuration) {
-		// TODO Auto-generated constructor stub
+	public Exam modifyExam(int examID, String examName, String openBook, String[] subLecturers, File[] materials,
+			int examDuration, int numVariants, String examType, String examStatus) {
+		String updateQuery = "update exam set exam.status='" + examStatus + "', exam.Name='" + examName
+				+ "', exam.Type='" + examType + "', " + "exam.Duration=" + examDuration + ", exam.ResourceType='"
+				+ openBook + "', exam.NumVariants=" + numVariants + " where ExamID=" + examID + ";";
 
-		
-		return null;
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(updateQuery);
+		connector.dispose();
+
+		return getExamByExamId(examID);
 	}
 
 	/**
@@ -229,10 +246,12 @@ public class ExamManager {
 	 * 
 	 * returns ExamID which was added
 	 */
-	public int createNewExam(Lecturer lec) {
-		int lecId = lec.getUserID();
+	public int createNewExam(int lecId, String examName, String openBook, String[] subLecturers, File[] materials,
+			int examDuration, int numVariants, String examType) {
 		int examId = 0;
-		String insertNewExamQuery = "INSERT INTO exam (exam.status) VALUES ('new');";
+		String insertNewExamQuery = "INSERT INTO exam (exam.status, exam.Name, exam.Type, exam.Duration, "
+				+ "exam.ResourceType, exam.NumVariants) VALUES ('new', '" + examName + "', '" + examType + "', "
+				+ examDuration + ", '" + openBook + "', " + numVariants + ");";
 		DBConnector connector = new DBConnector();
 		connector.updateDatabase(insertNewExamQuery);
 

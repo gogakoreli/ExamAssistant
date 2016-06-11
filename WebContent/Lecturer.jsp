@@ -72,9 +72,11 @@ p.title {
 			<br /> <br />
 		</div>
 	</form>
-		<form action="${pageContext.request.contextPath}/Lecturer" method="post">
+		<form action="ModifyExam" method="get">
 		<br /> 
     	<input type="submit" name="newExam" value="Create New Exam" />
 	</form>
+	
+	<jsp:include page="includes/GenericExamsView.jsp"></jsp:include>
 </body>
 </html>

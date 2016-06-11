@@ -1,3 +1,4 @@
+<%@page import="servlets.ModifyExamServlet"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -13,10 +14,17 @@
 </head>
 </head>
 <body>
- <jsp:directive.include file="includes/LogoutButton.jsp"/>
-	<form action="${pageContext.request.contextPath}/ModifyExamServlet" method="post">
+	<%
+	if(ModifyExamServlet.checkNewExam(request)){
+		request.getSession().setAttribute("newExam", "Create New Exam");
+	}
+	%>
+	<form action="ModifyExam" method="post">
     Exam Name: <input type="text" name="examName" /><br>
-	<input type="checkbox" name="examType"  value="openBook"  /> Open Book<br>
+	<input type="checkbox" name="examStatus"  value="openBook"  /> Open Book<br>
+	<input type="radio" name="examType"  value="Final" checked="checked" /> Final<br>
+	<input type="radio" name="examType"  value="Midterm" /> Midterm <br>
+	<input type="radio" name="examType"  value="Quizz" /> Quizz <br>
 	Add Sub Lecturer: <input type="text" name="subLecMail" /><br>
 	Add Materials: <input type="text" name="materials" /><br>
 	Start Time: <input type="text" name="startTime" /><br>

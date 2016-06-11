@@ -81,11 +81,9 @@ public class BoardServlet extends HttpServlet {
 	private void showList(ExamManager examManager, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		RequestDispatcher rd = null;
 		ArrayList<Exam> exams = null;
-		try {
-			exams = examManager.getAllExamsForBoard();
-		} catch (SQLException e) {				
-			e.printStackTrace();
-		}
+		
+		exams = examManager.getAllExamsForBoard();
+		
 		request.setAttribute("exams", exams);
 		rd = request.getRequestDispatcher("Board.jsp");
 		rd.forward(request, response);
