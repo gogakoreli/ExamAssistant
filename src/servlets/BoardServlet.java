@@ -63,8 +63,6 @@ public class BoardServlet extends HttpServlet {
 		ExamManager examManager = ExamManager.getExamManager(session);
 		if (butt.equals("Exam List")) {
 			showList(examManager, request, response);
-		} else if (butt.equals("Create Exam")) {
-			response.sendRedirect("/ExamAssistant/Board");
 		} 
 	}
 	
@@ -81,9 +79,7 @@ public class BoardServlet extends HttpServlet {
 	private void showList(ExamManager examManager, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		RequestDispatcher rd = null;
 		ArrayList<Exam> exams = null;
-		
 		exams = examManager.getAllExamsForBoard();
-		
 		request.setAttribute("exams", exams);
 		rd = request.getRequestDispatcher("Board.jsp");
 		rd.forward(request, response);

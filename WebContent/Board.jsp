@@ -20,6 +20,7 @@
     color:white;
     text-align:center;
     padding:25px;
+    font-size: 30px;
 }
 #nav {
     line-height:30px;
@@ -41,6 +42,7 @@ p {
  margin: 0px 0px;
 }
 
+
 input[type=submit] {
 	width: 47%;
 	background-color: #ffaa00;
@@ -52,23 +54,6 @@ input[type=submit] {
 	cursor: pointer;	
 }
 
-table {
-    border-collapse: collapse;
-    width: 100%;
-    padding:20px;
-}
-
-th, td {
-    text-align: left;
-    padding: 1px;
-}
-
-tr:nth-child(even){background-color: #f2f2f2}
-
-th {
-    background-color: #4CAF50;
-    color: white;
-}
 
 </style>
 </head>
@@ -77,7 +62,9 @@ th {
 	 <jsp:directive.include file="includes/LogoutButton.jsp"/>
 
 <div id="header">
-<h1>Exam Board</h1>
+
+<h1> Exam Board</h1>
+
 </div>
 
 <div id="nav">
@@ -91,12 +78,11 @@ th {
 
 <p> EMail: <%= user.getMail() %> </p>
 <p> User: <%=user.getFirstName()%>  <%= user.getLastName() %> </p>
-<form action="Board" method="post">
 
+<form action="Board" method="post">
 <br /> 
 <input type="submit" name = "but" value="Exam List">
-<br /> <br />
-<input type="submit" name = "but" value="Create Exam">
+
 </form>
 </div>
 
