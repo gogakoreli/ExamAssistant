@@ -34,7 +34,7 @@ public class AccountManager {
 
 	}
 	
-	//TODO make threadsade account manager !!!!!!
+	//TODO make threadsafe account manager !!!!!!
 
 	/******************************/
 	/******** get user ***********/
