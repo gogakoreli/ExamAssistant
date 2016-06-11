@@ -9,7 +9,7 @@
 <style>
 body {
 	background-color: #f2f2f2;
-	text-align: centre;
+	text-align: center;
 }
 
 input[type=submit] {
@@ -27,7 +27,6 @@ input {
 	width: 45%;
 	padding: 12px 20xp;
 	margin: 8px 4px;
-	display: inline-block;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	box-sizing: border-box;
