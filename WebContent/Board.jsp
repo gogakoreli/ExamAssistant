@@ -19,7 +19,7 @@
     background-color: #ffaa00;
     color:white;
     text-align:center;
-    padding:5px;
+    padding:25px;
 }
 #nav {
     line-height:30px;
