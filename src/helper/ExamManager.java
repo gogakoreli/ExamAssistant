@@ -220,6 +220,7 @@ public class ExamManager {
 			double examDuration) {
 		// TODO Auto-generated constructor stub
 
+		
 		return null;
 	}
 
@@ -250,6 +251,7 @@ public class ExamManager {
 		addRowInUserExam(lecId, examId);
 		return examId;
 	}
+	
 
 	private void addRowInUserExam(int userId, int examId) {
 		String insertQuery = "insert into userexam (UserID, ExamID) values(" + userId + ", " + examId + ");";

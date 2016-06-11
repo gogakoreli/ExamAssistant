@@ -14,7 +14,7 @@ public class Exam {
 	private String resourceType;
 	private int numVariants;
 	private String status;
-
+	
 	public Exam(ResultSet rs) {
 		if (rs != null) {
 			try {
@@ -34,6 +34,11 @@ public class Exam {
 		}
 	}
 
+
+	public Exam() {
+		
+	}
+	
 
 	/** Returns the id of the exam. */
 	public int getExamID() {
@@ -123,4 +128,10 @@ public class Exam {
 		return res;
 	}
 
+	public boolean equals(Exam ex) {
+		if (ex.getName().equals(this.getName()) && ex.getExamID() == this.getExamID()) {
+			return true;
+		}
+		return false;
+	}
 }

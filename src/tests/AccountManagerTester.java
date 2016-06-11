@@ -81,12 +81,8 @@ public class AccountManagerTester {
 		OpResult<EAUser> res = accManagar.getEAUserForCreditials("MOLLY@freEUni.eDu.g ", "FloPup", null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
-		assertEquals(user.getMail(), "Molly@freeuni.edu.ge");
-		
-		OpResult<EAUser> res1 = accManagar.getEAUserForCreditials("MOLLY@freEUni.eDu.ge", "flopup", null);
-		assertTrue(res1.isSuccess());
-		EAUser user1 = res1.getOpResult();
-		assertTrue(user1 == AccountManager.NO_USER_FOUND_CONSTANT);
+		assertEquals(user.getMail(), null);
+	
 	}
 	
 	

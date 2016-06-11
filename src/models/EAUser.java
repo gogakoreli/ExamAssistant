@@ -35,6 +35,10 @@ public abstract class EAUser {
 			parseUserResultSet(rs);
 		}
 	}
+	
+	public EAUser() {
+		
+	}
 
 	/*
 	 * if null isnot returned parse result set which contains data about user

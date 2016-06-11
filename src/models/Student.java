@@ -9,6 +9,11 @@ public class Student extends EAUser {
 	public Student(ResultSet rs) {
 		super(rs);
 	}
+	
+	public Student() {
+		super();
+	}
+
 
 	@Override
 	public void downloadAditionalInfo() {

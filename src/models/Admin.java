@@ -8,6 +8,10 @@ public class Admin extends EAUser {
 	public Admin(ResultSet rs) {
 		super(rs);
 	}
+	
+	public Admin() {
+		super();
+	}
 
 	@Override
 	public void downloadAditionalInfo() {

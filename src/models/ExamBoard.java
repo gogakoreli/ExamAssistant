@@ -8,6 +8,11 @@ public class ExamBoard extends EAUser {
 		super(rs);
 		
 	}
+	
+	public ExamBoard() {
+		super();
+		
+	}
 
 	@Override
 	public void downloadAditionalInfo() {

@@ -8,6 +8,11 @@ public class Lecturer extends EAUser{
 	public Lecturer(ResultSet rs) {
 		super(rs);
 	}
+	
+	
+	public Lecturer() {
+		super();
+	}
 
 
 	@Override
