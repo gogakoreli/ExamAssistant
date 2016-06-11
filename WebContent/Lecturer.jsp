@@ -5,52 +5,51 @@
 <html>
 <head>
 
-<%@ include file="includes/logoutscripts.html" %>
+<%@ include file="includes/logoutscripts.html"%>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Lecturer Page</title>
 <style>
-body {
-	background-color: #f2f2f2;
-	text-align: center;
-}
-
-div {
-	heigth: 300px;
-	width: 500px;
-	text-align: center;
-	border: 3px solid #ffaa00;
-	border-radius: 5px;
-	background-color: white;
-	padding: 25px;
-	margin: auto;
-}
-
-input.start {
-	background-color: #4CAF50;
-	border: none;
+#header {
+	background-color: #ffaa00;
 	color: white;
-	padding: 18px 40px;
-	text-decoration: none;
-	margin: 8px 2px;
-	cursor: pointer;
+	text-align: center;
+	padding: 25px;
+	font-size: 30px;
+}
+
+#nav {
+	line-height: 30px;
+	background-color: #eeeeee;
+	height: 700px;
+	width: 250px;
+	float: left;
+	padding: 9px;
+}
+
+#section {
+	width: 70%;
+	float: left;
+	padding: 1px;
 }
 
 p {
-	font-family: "Arial";
-	font-size: 20px;
-	text-align: left;
-	margin: 13px 90px;
-	font-weight: light;
+	font-family: "Arial", cursive, sans-serif;
+	font-size: 17px;
+	margin: 0px 0px;
 }
 
-p.title {
-	font-size: 27px;
-	text-align: center;
-	margin: 14px 90px;
-	font-weight: 600;
+input[type=submit] {
+	width: 63%;
+	background-color: #ffaa00;
+	color: white;
+	padding: 12px 20px;
+	margin: 8px 0;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
 }
 
-#startExam{
+#startExam {
 	text-align: center;
 	margin-left: 20ox;
 }
@@ -58,25 +57,30 @@ p.title {
 </head>
 
 <body>
-	 <jsp:directive.include file="includes/LogoutButton.jsp"/>
-	
-	<h1>This is lecturer page</h1>
+	<jsp:directive.include file="includes/LogoutButton.jsp" />
+
+	<div id="header">
+		<h1>Lecturer</h1>
+	</div>
+
 	<%
 		Lecturer lecturer = (Lecturer) request.getAttribute("lecturer");
 	%>
-	<form action="Lecturer" method="post">
-		<div id="startExam">
+	<div id="nav">
+		<form action="Lecturer" method="post">
+
 			<br>
-			<p>ლექტორი : ${lecturer.getFirstName()} ${lecturer.getLastName() }</p>
+			<p>EMail: ${lecturer.getMail() }</p>
+			<p>ლექტორი: ${lecturer.getFirstName()} ${lecturer.getLastName() }</p>
 			<!-- aq unda iyos Exams.jsp-s gamozaxeba-->
-			<br /> <br />
-		</div>
-	</form>
+
+		</form>
 		<form action="ModifyExam" method="get">
-		<br /> 
-    	<input type="submit" name="newExam" value="Create New Exam" />
-	</form>
-	
+			<br /> <input type="submit" name="newExam" value="Create New Exam" />
+		</form>
+	</div>
+
 	<jsp:include page="includes/GenericExamsView.jsp"></jsp:include>
+
 </body>
 </html>

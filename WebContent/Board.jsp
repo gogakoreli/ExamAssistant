@@ -12,36 +12,37 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Exam Board</title>
 
-<%@ include file="includes/logoutscripts.html" %>
+<%@ include file="includes/logoutscripts.html"%>
 
 <style>
 #header {
-    background-color: #ffaa00;
-    color:white;
-    text-align:center;
-    padding:25px;
-    font-size: 30px;
+	background-color: #ffaa00;
+	color: white;
+	text-align: center;
+	padding: 25px;
+	font-size: 30px;
 }
+
 #nav {
-    line-height:30px;
-    background-color:#eeeeee;
-    height:700px;
-    width:250px;
-    float:left;
-    padding:9px;
+	line-height: 30px;
+	background-color: #eeeeee;
+	height: 700px;
+	width: 250px;
+	float: left;
+	padding: 9px;
 }
+
 #section {
-    width:70%;
-    float:left;
-    padding:1px;
+	width: 70%;
+	float: left;
+	padding: 1px;
 }
 
 p {
- font-family: "Arial", cursive, sans-serif;
- font-size: 17px;
- margin: 0px 0px;
+	font-family: "Arial", cursive, sans-serif;
+	font-size: 17px;
+	margin: 0px 0px;
 }
-
 
 input[type=submit] {
 	width: 47%;
@@ -51,43 +52,43 @@ input[type=submit] {
 	margin: 8px 0;
 	border: none;
 	border-radius: 4px;
-	cursor: pointer;	
+	cursor: pointer;
 }
-
-
 </style>
 </head>
 <body>
 
-	 <jsp:directive.include file="includes/LogoutButton.jsp"/>
+	<jsp:directive.include file="includes/LogoutButton.jsp" />
 
-<div id="header">
+	<div id="header">
 
-<h1> Exam Board</h1>
+		<h1>Exam Board</h1>
 
-</div>
+	</div>
 
-<div id="nav">
-<br />
-<%
-	ServletContext ctx = request.getServletContext();
-	AccountManager manager = (AccountManager) ctx.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
-	EAUser user = manager.getCurrentUser(request.getSession());
-	
-%>
+	<div id="nav">
+		<br />
+		<%
+			ServletContext ctx = request.getServletContext();
+			AccountManager manager = (AccountManager) ctx.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
+			EAUser user = manager.getCurrentUser(request.getSession());
+		%>
 
-<p> EMail: <%= user.getMail() %> </p>
-<p> User: <%=user.getFirstName()%>  <%= user.getLastName() %> </p>
+		<p>
+			EMail:
+			<%=user.getMail()%>
+		</p>
+		<p>
+			User:
+			<%=user.getFirstName()%>
+			<%=user.getLastName()%>
+		</p>
 
-<form action="Board" method="post">
-<br /> 
-<input type="submit" name = "but" value="Exam List">
+		<form action="Board" method="post">
+			<br /> <input type="submit" name="but" value="Exam List">
 
-</form>
-</div>
-
-<jsp:include page="includes/GenericExamsView.jsp"></jsp:include>
-
+		</form>
+	</div>
+	<jsp:include page="includes/GenericExamsView.jsp"></jsp:include>
 </body>
-
 </html>
