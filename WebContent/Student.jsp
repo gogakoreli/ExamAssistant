@@ -59,10 +59,10 @@ p.title {
 
 </head>
 
-<body>
-	<!-- <jsp:include  page="includes/LogoutButton.jsp"></jsp:include> -->
-    
+<body>    
     <jsp:directive.include file="includes/LogoutButton.jsp"/>
+    
+    <jsp:directive.include file="includes/UserProfile.jsp"/>
 
 	<h1>This is student page</h1>
 	<%
