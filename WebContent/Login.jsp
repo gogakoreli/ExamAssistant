@@ -26,7 +26,7 @@ input[type=submit] {
 input {
 	width: 45%;
 	padding: 12px 20xp;
-	margin: 8px 4px;
+	margin: 12px 4px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
 	box-sizing: border-box;
@@ -34,7 +34,6 @@ input {
 
 div {
 	text-align: center;
-	heigth: 280px;
 	width: 470px;
 	border: 3px solid #ffaa00;
 	border-radius: 5px;
