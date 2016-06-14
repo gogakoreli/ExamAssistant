@@ -1,5 +1,6 @@
 package models;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 
 public class Student extends EAUser {
@@ -9,11 +10,10 @@ public class Student extends EAUser {
 	public Student(ResultSet rs) {
 		super(rs);
 	}
-	
+
 	public Student() {
 		super();
 	}
-
 
 	@Override
 	public void downloadAditionalInfo() {
@@ -32,6 +32,19 @@ public class Student extends EAUser {
 	 */
 	public void setExamInformation(ExamInformation examInformation) {
 		this.examInformation = examInformation;
+	}
+
+	/**
+	 * if student has already set exam information, then return his start time
+	 * 
+	 * @return
+	 */
+	public Date getExamStartTime() {
+		Date result = null;
+		if (examInformation != null) {
+			result = examInformation.getStartTime();
+		}
+		return result;
 	}
 
 }

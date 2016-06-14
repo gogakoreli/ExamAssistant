@@ -1,15 +1,19 @@
 package servlets;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.junit.Test;
 
 /**
  * Servlet implementation class DisplayServlet
@@ -23,7 +27,6 @@ public class DisplayServlet extends HttpServlet {
 	 */
 	public DisplayServlet() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -32,20 +35,20 @@ public class DisplayServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		try {
-			String fileName = request.getParameter("image");
-			FileInputStream fis = new FileInputStream(new File("d:\\" + fileName));
-			BufferedInputStream bis = new BufferedInputStream(fis);
-			response.setContentType("jpg");
-			BufferedOutputStream output = new BufferedOutputStream(response.getOutputStream());
-			for (int data; (data = bis.read()) > -1;) {
-				output.write(data);
-			}
-			fis.close();
-			bis.close();
-		} catch (IOException e) {
+		response.setContentType("jpg");
+		String filePath = getServletContext().getRealPath("/profileImage/" + request.getParameter("image"));
+		response.getOutputStream().write(extractBytes(filePath));
+	}
 
+	public byte[] extractBytes(String ImageName) {
+		File fi = new File(ImageName);
+		byte[] fileContent = null;
+		try {
+			fileContent = Files.readAllBytes(fi.toPath());
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		return fileContent;
 	}
 
 	/**
