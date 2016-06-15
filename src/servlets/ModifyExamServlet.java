@@ -62,12 +62,14 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			Exam editExam = getEditExam(request);
 			if (checkNewExam(request)) {
 				request.setAttribute("newExam", "Create New Exam");
+				request.setAttribute("exam", editExam);
 			} else if (editExam != null) {
 				request.setAttribute("exam", editExam);
 			}
-
 			RequestDispatcher dispatch = request.getRequestDispatcher("ModifyExam.jsp");
 			dispatch.forward(request, response);
+		} else {
+			checker.redirectToValidPage(response);
 		}
 	}
 
