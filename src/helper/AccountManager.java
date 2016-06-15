@@ -33,8 +33,8 @@ public class AccountManager {
 	public AccountManager() {
 
 	}
-	
-	//TODO make threadsafe account manager !!!!!!
+
+	// TODO make threadsafe account manager !!!!!!
 
 	/******************************/
 	/******** get user ***********/
@@ -98,6 +98,59 @@ public class AccountManager {
 		}
 		connector.dispose();
 		return result;
+	}
+
+	public OpResult<EAUser> getUserById(int userId) {
+		OpResult<EAUser> result = new OpResult<EAUser>();
+		DBConnector connector = new DBConnector();
+		String getUserQuery = "select * from user where UserID = " + userId + ";";
+		SqlQueryResult queryResult = connector.getQueryResult(getUserQuery);
+		
+		if (queryResult.isSuccess()) {
+			ResultSet rs = queryResult.getResultSet();
+			if (isResultSetEmpty(rs)) {// check if no user found
+				result.setResultObject(NO_USER_FOUND_CONSTANT);
+			} else {
+				EAUser user = getEAUserType(rs);// get user
+				result.setResultObject(user);// set return object
+			}
+		}
+		return result;
+	}
+
+	public OpResult<EAUser> addUser(String userName, String password, String role, String firstName, String lastName) {
+		DBConnector connector = new DBConnector();
+		String addUserQuery = "insert into user (Mail, UserPassword, FirstName, LastName, Role) " + "values ('"
+				+ userName + "', '" + password + "', '" + firstName + "', '" + lastName + "', '" + role + "');";
+		connector.updateDatabase(addUserQuery);
+		String getLastIdQuery = "select LAST_INSERT_ID() as lastInsertId;";
+		SqlQueryResult queryResult = connector.getQueryResult(getLastIdQuery);
+
+		int lastInd = 0;
+
+		if (queryResult.isSuccess()) {
+			ResultSet res = queryResult.getResultSet();
+			try {
+				if (res.next())
+					lastInd = res.getInt("lastInsertId");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		connector.dispose();
+		return getUserById(lastInd);
+	}
+
+	public boolean userExists(String userName, String password) {
+		return true;
+	}
+
+	public EAUser removeUserByID(int userId) {
+		return null;
+	}
+
+	public void removeUserByCreditials(String userName, String password){
+		
 	}
 
 	/* saves user in local cache by its session */

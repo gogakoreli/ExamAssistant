@@ -85,6 +85,17 @@ public class AccountManagerTester {
 	
 	}
 	
+	@Test
+	public void testGetUserCreditials7() {
+		
+		OpResult<EAUser> res = accManagar.getUserById(1);
+		assertTrue(res.isSuccess());
+		EAUser user = res.getOpResult();
+		//assertTrue(user.getRoleByString(roleString) == AccountManager.NO_USER_FOUND_CONSTANT);
+	
+	}
+	
+	
 	
 
 }
