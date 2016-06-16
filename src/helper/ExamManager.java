@@ -4,8 +4,6 @@ package helper;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -264,6 +262,10 @@ public class ExamManager {
 		addRowInUserExam(lecId, examId);
 		return examId;
 	}
+	
+	public void addExamForStudent(int userId, int examId){
+		addRowInUserExam(userId, examId);
+	}
 
 	/**
 	 * Adds new row in the base in the userexam table, which connects each user
@@ -276,6 +278,28 @@ public class ExamManager {
 		String insertQuery = "insert into userexam (UserID, ExamID) values(" + userId + ", " + examId + ");";
 		DBConnector connector = new DBConnector();
 		connector.updateDatabase(insertQuery);
+		connector.dispose();
+	}
+	
+	/**
+	 * deletes exam by id from exam table
+	 * also updates userexam table by deleting all exam user pairs
+	 * 
+	 * @param examId
+	 */
+	public void deleteExam(int examId){
+		deleteAllExamsInUserExam(examId);
+		DBConnector connector = new DBConnector();
+		String removeQuery = "delete from exam where ExamID ="+examId+";";
+		connector.updateDatabase(removeQuery);
+		connector.dispose();
+	}
+	
+	/* updates userexam table by deleting all exam user pairs */
+	private void deleteAllExamsInUserExam(int examId){
+		DBConnector connector = new DBConnector();
+		String removeQuery = "delete from userexam where ExamID ="+examId+";";
+		connector.updateDatabase(removeQuery);
 		connector.dispose();
 	}
 

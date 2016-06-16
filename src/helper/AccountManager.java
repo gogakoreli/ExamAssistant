@@ -100,12 +100,18 @@ public class AccountManager {
 		return result;
 	}
 
+	/**
+	 * returns OpResult<EAUser> from database using users id if user is not
+	 * found returns result with NO_USER_FOUND_CONSTANT
+	 * 
+	 * @param userId
+	 */
 	public OpResult<EAUser> getUserById(int userId) {
 		OpResult<EAUser> result = new OpResult<EAUser>();
 		DBConnector connector = new DBConnector();
 		String getUserQuery = "select * from user where UserID = " + userId + ";";
 		SqlQueryResult queryResult = connector.getQueryResult(getUserQuery);
-		
+
 		if (queryResult.isSuccess()) {
 			ResultSet rs = queryResult.getResultSet();
 			if (isResultSetEmpty(rs)) {// check if no user found
@@ -115,9 +121,20 @@ public class AccountManager {
 				result.setResultObject(user);// set return object
 			}
 		}
+		connector.dispose();
 		return result;
 	}
 
+	/**
+	 * adds user in user table in database ar itvaliswinebs aseti useri aris tu
+	 * ara bazashi amis shesamowmeblad shegizliat gamoiyenot userExists() metodi
+	 * 
+	 * @param userName
+	 * @param password
+	 * @param role
+	 * @param firstName
+	 * @param lastName
+	 */
 	public OpResult<EAUser> addUser(String userName, String password, String role, String firstName, String lastName) {
 		DBConnector connector = new DBConnector();
 		String addUserQuery = "insert into user (Mail, UserPassword, FirstName, LastName, Role) " + "values ('"
@@ -141,16 +158,43 @@ public class AccountManager {
 		return getUserById(lastInd);
 	}
 
+	/**
+	 * returns true if we have such user in database
+	 * 
+	 * @param userName
+	 * @param password
+	 */
+
 	public boolean userExists(String userName, String password) {
-		return true;
+		DBConnector connector = new DBConnector();
+		String findQuery = "select * from user where mail='" + userName + "'" + " and UserPassword='" + password + "';";
+		SqlQueryResult queryResult = connector.getQueryResult(findQuery);
+
+		if (queryResult.isSuccess()) {
+			ResultSet res = queryResult.getResultSet();
+			try {
+				if (res.next())
+					return true;
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		connector.dispose();
+		return false;
 	}
 
-	public EAUser removeUserByID(int userId) {
-		return null;
-	}
-
-	public void removeUserByCreditials(String userName, String password){
-		
+	/**
+	 * removes user from database using users id ar itvaliswinebs aseti useri
+	 * aris tu ara bazashi amis shesamowmeblad shegizliat gamoiyenot
+	 * userExists() metodi
+	 * 
+	 * @param userId
+	 */
+	public void removeUserByID(int userId) {
+		DBConnector connector = new DBConnector();
+		String removeQuery = "DELETE FROM user WHERE UserID=" + userId + ";";
+		connector.updateDatabase(removeQuery);
+		connector.dispose();
 	}
 
 	/* saves user in local cache by its session */

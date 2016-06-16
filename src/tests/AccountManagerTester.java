@@ -19,57 +19,124 @@ public class AccountManagerTester {
 
 	@Test
 	/* test method getEAUserForCreditials() for user patrick*/
-	public void testGetUserCreditials1() {
-		OpResult<EAUser> res = accManagar.getEAUserForCreditials("patrick@freeuni.edu.ge", "1234", null);
+	public void test1() {
+		String userName = "patrick@freeuni.edu.ge";
+		String password = "1234";
+		String role = "student";
+		String firstName = "Patrick";
+		String lastName = "Querrel";
+		boolean exists = false;
+		if(accManagar.userExists(userName, password)){
+			exists = true;
+		}else{
+			accManagar.addUser(userName, password, role, firstName, lastName);
+		}
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials(userName, password, null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
-		assertEquals(user.getFirstName(), "Patrick");
-		assertEquals(user.getLastName(), "Querrel");
-		assertEquals(user.getMail(), "patrick@freeuni.edu.ge");
-		assertEquals(EAUser.getRoleByString("student"), EAUser.EAUserRole.STUDENT);
+		assertEquals(user.getFirstName(), firstName);
+		assertEquals(user.getLastName(), lastName);
+		assertEquals(user.getMail(), userName);
+		assertEquals(EAUser.getRoleByString(role), EAUser.EAUserRole.STUDENT);
+		if(!exists){
+			int userId = user.getUserID();
+			accManagar.removeUserByID(userId);
+		}
 	}
 	
 	@Test
 	/* test method getEAUserForCreditials() for user Molly */
-	public void testGetUserCreditials2() {
-		OpResult<EAUser> res = accManagar.getEAUserForCreditials("Molly@freeuni.edu.ge", "FloPup", null);
+	public void test2() {
+		String userName = "Molly@freeuni.edu.ge";
+		String password = "FloPup";
+		String role = "lecturer";
+		String firstName = "Molly";
+		String lastName = "Smith";
+		boolean exists = false;
+		if(accManagar.userExists(userName, password)){
+			exists = true;
+		}else{
+			accManagar.addUser(userName, password, role, firstName, lastName);
+		}
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials(userName, password, null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
-		assertEquals(user.getFirstName(), "Molly");
-		assertEquals(user.getLastName(), "Smith");
-		assertEquals(user.getMail(), "Molly@freeuni.edu.ge");
-		assertEquals(EAUser.getRoleByString("lecturer"), EAUser.EAUserRole.LECTURER);
+		assertEquals(user.getFirstName(), firstName);
+		assertEquals(user.getLastName(), lastName);
+		assertEquals(user.getMail(), userName);
+		assertEquals(EAUser.getRoleByString(role), EAUser.EAUserRole.LECTURER);
+		if(!exists){
+			int userId = user.getUserID();
+			accManagar.removeUserByID(userId);
+		}
 	}
 	
 	@Test
 	/* test method getEAUserForCreditials() for user natela */
-	public void testGetUserCreditials3() {
-		OpResult<EAUser> res = accManagar.getEAUserForCreditials("natela@freeuni.edu.ge", "natinati", null);
+	public void test3() {
+		String userName = "natela@freeuni.edu.ge";
+		String password = "natinati";
+		String role = "board";
+		String firstName = "Natela";
+		String lastName = "Shixiashvili";
+		boolean exists = false;
+		if(accManagar.userExists(userName, password)){
+			exists = true;
+		}else{
+			accManagar.addUser(userName, password, role, firstName, lastName);
+		}
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials(userName, password, null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
-		assertEquals(user.getFirstName(), "Natela");
-		assertEquals(user.getLastName(), "Shixiashvili");
-		assertEquals(user.getMail(), "natela@freeuni.edu.ge");
-		assertEquals(EAUser.getRoleByString("board"), EAUser.EAUserRole.BOARD);
+		assertEquals(user.getFirstName(), firstName);
+		assertEquals(user.getLastName(), lastName);
+		assertEquals(user.getMail(), userName);
+		assertEquals(EAUser.getRoleByString(role), EAUser.EAUserRole.BOARD);
+		if(!exists){
+			int userId = user.getUserID();
+			accManagar.removeUserByID(userId);
+		}
 	}
 	
 	@Test
 	/* test method getEAUserForCreditials() for user whos username not existing in database */
-	public void testGetUserCreditials4() {
-		OpResult<EAUser> res = accManagar.getEAUserForCreditials("Shalva", "Natelashvili", null);
-		assertTrue(res.isSuccess());
-		EAUser user = res.getOpResult();
-		assertTrue(user == AccountManager.NO_USER_FOUND_CONSTANT);
+	public void test4() {
+		String userName = "shalva@freeuni.edu.ge";
+		String password = "Natelashvili";
+		if(!accManagar.userExists(userName, password)){
+			OpResult<EAUser> res = accManagar.getEAUserForCreditials("shalva@freeuni.edu.ge", "Natelashvili", null);
+			assertTrue(res.isSuccess());
+			EAUser user = res.getOpResult();
+			assertTrue(user == AccountManager.NO_USER_FOUND_CONSTANT);
+		}
 	}
 	
 	@Test
 	/* test method getEAUserForCreditials() for user existing in database 
 	 * but with wrong password */
-	public void testGetUserCreditials5() {
-		OpResult<EAUser> res = accManagar.getEAUserForCreditials("Molly@freeuni.edu.ge", "1234", null);
+	public void test5() {
+		String userName = "Molly@freeuni.edu.ge";
+		String password = "FloPup";
+		String role = "lecturer";
+		String firstName = "Molly";
+		String lastName = "Smith";
+		String wrongPassword = "1234";
+		assertFalse(password.equals(wrongPassword));
+		boolean exists = false;
+		if(accManagar.userExists(userName, password)){
+			exists = true;
+		}else{
+			accManagar.addUser(userName, password, role, firstName, lastName);
+		}
+		
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials(userName, wrongPassword, null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
 		assertTrue(user == AccountManager.NO_USER_FOUND_CONSTANT);
+		if(!exists){
+			int userId = user.getUserID();
+			accManagar.removeUserByID(userId);
+		}
 	}
 	
 	@Test
@@ -77,21 +144,60 @@ public class AccountManagerTester {
 	 * test CaseSenitivity of userName 
 	 * 
 	 * test CaseSenitivity of password */
-	public void testGetUserCreditials6() {
-		OpResult<EAUser> res = accManagar.getEAUserForCreditials("MOLLY@freEUni.eDu.g ", "FloPup", null);
+	public void test6() {
+		String userName = "Molly@freeuni.edu.ge";
+		String password = "FloPup";
+		String role = "lecturer";
+		String firstName = "Molly";
+		String lastName = "Smith";
+		boolean exists = false;
+		if(accManagar.userExists(userName, password)){
+			exists = true;
+		}else{
+			accManagar.addUser(userName, password, role, firstName, lastName);
+		}
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials("MOLLY@freEUni.eDu.ge", password, null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
-		assertEquals(user.getMail(), null);
+		assertEquals(user.getFirstName(), firstName);
+		assertEquals(user.getLastName(), lastName);
+		assertEquals(user.getMail(), userName);
+		assertEquals(EAUser.getRoleByString(role), EAUser.EAUserRole.LECTURER);
+		if(!exists){
+			int userId = user.getUserID();
+			accManagar.removeUserByID(userId);
+		}
 	
 	}
 	
 	@Test
-	public void testGetUserCreditials7() {
+	/* method getEAUserForCreditials() for user Molly 
+	 * test addUser and removeUser */
+	public void test7() {
+		String userName = "noUser@freeuni.edu.ge";
+		String password = "noPassword";
+		String role = "lecturer";
+		String firstName = "noFirstName";
+		String lastName = "noLastName";
+		boolean exists = false;
+		if(accManagar.userExists(userName, password)){
+			exists = true;
+		}else{
+			accManagar.addUser(userName, password, role, firstName, lastName);
+		}
 		
-		OpResult<EAUser> res = accManagar.getUserById(1);
+		OpResult<EAUser> res = accManagar.getEAUserForCreditials(userName, password, null);
 		assertTrue(res.isSuccess());
 		EAUser user = res.getOpResult();
-		//assertTrue(user.getRoleByString(roleString) == AccountManager.NO_USER_FOUND_CONSTANT);
+		assertEquals(user.getFirstName(), firstName);
+		assertEquals(user.getLastName(), lastName);
+		assertEquals(user.getMail(), userName);
+		assertEquals(EAUser.getRoleByString(role), EAUser.EAUserRole.LECTURER);
+		
+		if(!exists){
+			int userId = user.getUserID();
+			accManagar.removeUserByID(userId);
+		}
 	
 	}
 	
