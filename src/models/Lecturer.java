@@ -14,7 +14,6 @@ public class Lecturer extends EAUser{
 		super();
 	}
 
-
 	@Override
 	public void downloadAditionalInfo() {
 		// TODO Auto-generated method stub

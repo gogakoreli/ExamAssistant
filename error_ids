@@ -7,3 +7,4 @@
 1004 - Error making execute request in db 
 1005 - connection wasnot esabilished when requestion execution of query in dbConnector.
 1010 - Error while validating  for resultset to contain data 
+2000 - Error parsing data from lecturers suggestiosn 

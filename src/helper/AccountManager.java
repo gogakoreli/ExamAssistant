@@ -2,7 +2,9 @@ package helper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -16,6 +18,7 @@ import models.Lecturer;
 import models.EAUser.EAUserRole;
 import models.ExamBoard;
 import models.Student;
+import servlets.LecturerServlet;
 
 /** main class responsible for all operations over Accounts */
 public class AccountManager {
@@ -27,14 +30,17 @@ public class AccountManager {
 	public static final EAUser NO_USER_FOUND_CONSTANT = new Student(null);
 	public static final String USER_ID_IN_SESSION = "AccountManager.USERID";
 
+	/* //how many lectueres should be displayed */
+	private static final int LECTUER_SUGGESTIONS_LIMIT = 5;
+
 	// hashmap storing logedinusers
 	private Map<String, EAUser> logedUsers = new HashMap<String, EAUser>();
 
 	public AccountManager() {
 
 	}
-	
-	//TODO make threadsafe account manager !!!!!!
+
+	// TODO make threadsafe account manager xeli ar axlot aravin !!!!!!
 
 	/******************************/
 	/******** get user ***********/
@@ -180,5 +186,59 @@ public class AccountManager {
 			result = (AccountManager) object;
 		}
 		return result;
+	}
+
+	/**
+	 * returns OpResult containing list of lecturers who's names start with
+	 * 
+	 * @nameStart this lectures will only contain basic informaiton like fname,
+	 *            lname and Email.
+	 */
+	public OpResult<List<Lecturer>> getLecturersByNameStart(String nameStart) {
+		OpResult<List<Lecturer>> result = new OpResult<List<Lecturer>>();
+		DBConnector connector = new DBConnector();
+
+		SqlQueryResult queryResult = connector.getQueryResult(getSqlQueryForLecturersSug(nameStart));
+		if (queryResult.isSuccess()) {
+			List<Lecturer> lecturers = null;
+			try {
+				lecturers = getLectuersFromResultSet(queryResult.getResultSet());
+				result.setResultObject(lecturers);
+			} catch (Exception e) {
+				// data retrieved but error parsing
+				LogManager.logErrorException(2000, "Error parsing data from lecturers suggestions", e);
+				result.setError(2000, "Error parsing lecturers info");
+			}
+		} else {
+			// set error its same SqlQueryResult has
+			result.setError(queryResult.getErrorId(), queryResult.getErrorMsg());
+		}
+		connector.dispose();
+		return result;
+	}
+
+	/* gets list of lecturers from result set throws @SQLException */
+	private List<Lecturer> getLectuersFromResultSet(ResultSet rs) throws SQLException {
+		List<Lecturer> lecturers = new ArrayList<Lecturer>();
+		while (rs.next()) {
+			Lecturer curLec = new Lecturer();
+			curLec.setFirstName(rs.getString("fname"));
+			curLec.setUserID(rs.getInt("uid"));
+			curLec.setLastName(rs.getString("lname"));
+			curLec.setMail(rs.getString("mail"));
+			lecturers.add(curLec);
+		}
+		return lecturers;
+	}
+
+	/*
+	 * returns query string for given name @nameStart which will retrive all
+	 * lecturers starting on @nameStart
+	 */
+	private String getSqlQueryForLecturersSug(String nameStart) {
+		return "SELECT UserID as uid, Mail as mail, FirstName as fname, LastName as lname FROM examassistant.user "
+				+ "where role = 'lecturer'" + "and ((CONCAT(FirstName, ' ', LastName) LIKE '" + nameStart + "%') OR"
+				+ "(CONCAT(LastName, ' ', FirstName) LIKE '" + nameStart + "%')) LIMIT " + LECTUER_SUGGESTIONS_LIMIT
+				+ ";";
 	}
 }

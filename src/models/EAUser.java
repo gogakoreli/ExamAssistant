@@ -164,4 +164,14 @@ public abstract class EAUser {
 	public String getGoogleID() {
 		return this.googleID;
 	}
+	
+	
+	
+	/** override of toString() 
+	 * writes its user and eMAIL*/
+	@Override
+	public String toString(){
+		return "username = " + getFirstName() + "  Email = " + getMail();
+	}
+	
 }

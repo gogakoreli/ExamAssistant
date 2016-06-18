@@ -2,3 +2,4 @@
 *.orig
 .classpath
 /bin
+WebContent/test.html

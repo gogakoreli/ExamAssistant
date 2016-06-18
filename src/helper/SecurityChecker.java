@@ -22,6 +22,8 @@ import models.Student;
  */
 public class SecurityChecker {
 
+	public static String LECTURER_SUGGESTIONS_PERMISSION = "SecurityChecker.PermissionSeeLectuers";
+	
 	EAUser user = null;// takes given user for page
 	ISecure SecurePage = null;// page which wants to be secured
 	HttpServletRequest request = null;
@@ -94,6 +96,24 @@ public class SecurityChecker {
 			LogManager.logErrorException("Error redirectiong to Error Page", e);
 		}
 
+	}
+
+	/************************************************/
+	/****** validation extra set of permissions *****/
+	/************************************************/
+	
+	
+	/** checks if user from @Recuest has permissions on given @permissionOn  */
+	public boolean checkExtraPermissions(String permission){
+		if (permission == LECTURER_SUGGESTIONS_PERMISSION){
+			return validateLecSuggestionsPermission();
+		}
+		return false;
+	}
+	
+	/* checks if user has permission on luggestions list */
+	private boolean validateLecSuggestionsPermission(){
+		return (user instanceof Lecturer);
 	}
 
 	/***********************************************/
