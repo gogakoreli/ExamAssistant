@@ -42,7 +42,8 @@ public class StudentServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		AccountManager accountManager = AccountManager.getAccountManager(session);
 		ExamManager examManager = ExamManager.getExamManager(session);
-		Student student = getStudent(accountManager, session);
+
+		Student student = (Student) accountManager.getCurrentUser(session);
 		if (student != null) {
 			Exam exam = examManager.getExamForStudent(student);
 
@@ -69,23 +70,17 @@ public class StudentServlet extends HttpServlet {
 
 		if (student != null) {
 			Exam exam = (Exam) session.getAttribute("exam");
-			if (exam != null) {
-				if (examManager.canStartExam(student, exam)) {
-					examManager.startExam(student, exam);
-				}
-			}
+			session.removeAttribute("exam");
+
+//			examManager.startExam(student, exam);
+			
+			RequestDispatcher dispatch = request.getRequestDispatcher("Student.jsp");
+			dispatch.forward(request, response);
+		} else {
+			response.sendRedirect("/ExamAssistant/Login");
 		}
 		// TODO: redirect him to the /Exam.jsp page which is not yet written
 		// response.sendRedirect("/ExamAssistant/Exam");
-	}
-
-	/**
-	 * get student which is stored in the accountManager based on the session
-	 */
-	public Student getStudent(AccountManager manager, HttpSession session) {
-		Object currentUser = manager.getCurrentUser(session);
-		Student result = currentUser instanceof Student ? (Student) currentUser : null;
-		return result;
 	}
 
 }

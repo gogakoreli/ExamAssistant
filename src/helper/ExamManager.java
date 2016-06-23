@@ -1,10 +1,9 @@
+
 package helper;
 
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +36,9 @@ public class ExamManager {
 	 */
 	public Exam getExamForStudent(Student student) {
 		Exam result = null;
-		String getExamQuery = getExamForStudentQuery(student.getUserID());
+		String getExamQuery = "SELECT e.* FROM user as u LEFT JOIN userexam as ue on ue.UserID = u.UserID LEFT JOIN "
+				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + student.getUserID()
+				+ " AND Status != 'Processing' ORDER BY e.StartTime asc LIMIT 1";
 		DBConnector connector = new DBConnector();
 		SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
 		if (queryResult.isSuccess()) {
@@ -70,20 +71,6 @@ public class ExamManager {
 		}
 		return result;
 	}
-	
-
-	/**
-	 * Query string for selecting closest exam specific to the userID
-	 * 
-	 * @param userID
-	 * @return String of the query which is sent to DB
-	 */
-	private String getExamForStudentQuery(int userID) {
-		String result = "SELECT e.* FROM user as u LEFT JOIN userexam as ue on ue.UserID = u.UserID LEFT JOIN "
-				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + userID
-				+ " AND Status != 'Processing' ORDER BY e.StartTime asc LIMIT 1";
-		return result;
-	}
 
 	/**
 	 * gets all the correct exams for the lecturer. Selects only the ones is
@@ -110,7 +97,7 @@ public class ExamManager {
 						result.add(exam);
 					}
 				}
-				
+
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -147,8 +134,9 @@ public class ExamManager {
 	}
 
 	/**
-	 * Start exam : update info in the database that user clicked start exam
-	 * button so timer begins from now
+	 * First check if the user has started exam before or not. Start exam :
+	 * update info in the database that user clicked start exam button so timer
+	 * begins from now
 	 * 
 	 * @param student
 	 * @param exam
@@ -159,7 +147,10 @@ public class ExamManager {
 				+ " JOIN user as u on u.UserID = ue.UserID JOIN exam as e on e.ExamID = ue.ExamID WHERE u.UserID = "
 				+ student.getUserID() + " AND e.ExamID = " + exam.getExamID() + ")";
 		DBConnector connector = new DBConnector();
-		connector.updateDatabase(startExamQuery);
+		updateStudentExamInformation(student, exam, connector);
+		if (student.getExamStartTime() == null) {
+			connector.updateDatabase(startExamQuery);
+		}
 		connector.dispose();
 	}
 
@@ -174,11 +165,12 @@ public class ExamManager {
 	 */
 	public boolean canStartExam(Student student, Exam exam) {
 		boolean result = false;
-		ExamInformation examInformation = getStudentExamInformation(student, exam);
-		if (examInformation.getStartTime() == null) {
+		DBConnector connector = new DBConnector();
+		updateStudentExamInformation(student, exam, connector);
+		if (student.getExamStartTime() == null) {
 			result = true;
 		}
-		student.setExamInformation(examInformation);
+		connector.dispose();
 		return result;
 	}
 
@@ -192,18 +184,17 @@ public class ExamManager {
 	 * @param exam
 	 * @return
 	 */
-	public ExamInformation getStudentExamInformation(Student student, Exam exam) {
-		ExamInformation result = null;
+	public void updateStudentExamInformation(Student student, Exam exam, DBConnector connector) {
+		ExamInformation examInfo = null;
 		String examInformationQuery = "SELECT up.*, p.IP, p.Number, p.IsWorking FROM userplace as up JOIN userexam as ue on ue.UserExamID = up.UserExamID"
 				+ " JOIN user as u on u.UserID = ue.UserID JOIN exam as e on e.ExamID = ue.ExamID JOIN place as p on p.PlaceID = up.PlaceID WHERE u.UserID = "
 				+ student.getUserID() + " AND e.ExamID = " + exam.getExamID() + ";";
-		DBConnector connector = new DBConnector();
 		SqlQueryResult queryResult = connector.getQueryResult(examInformationQuery);
 		if (queryResult.isSuccess()) {
-			result = new ExamInformation(queryResult.getResultSet());
+			examInfo = new ExamInformation(queryResult.getResultSet());
+			student.setExamInformation(examInfo);
 		}
 		connector.dispose();
-		return result;
 	}
 
 	/**
@@ -272,9 +263,14 @@ public class ExamManager {
 		return examId;
 	}
 	
+	public void addExamForStudent(int userId, int examId){
+		addRowInUserExam(userId, examId);
+	}
 
 	/**
-	 * Adds new row in the base in the userexam table, which connects each user to the exam.
+	 * Adds new row in the base in the userexam table, which connects each user
+	 * to the exam.
+	 * 
 	 * @param userId
 	 * @param examId
 	 */
@@ -282,6 +278,28 @@ public class ExamManager {
 		String insertQuery = "insert into userexam (UserID, ExamID) values(" + userId + ", " + examId + ");";
 		DBConnector connector = new DBConnector();
 		connector.updateDatabase(insertQuery);
+		connector.dispose();
+	}
+	
+	/**
+	 * deletes exam by id from exam table
+	 * also updates userexam table by deleting all exam user pairs
+	 * 
+	 * @param examId
+	 */
+	public void deleteExam(int examId){
+		deleteAllExamsInUserExam(examId);
+		DBConnector connector = new DBConnector();
+		String removeQuery = "delete from exam where ExamID ="+examId+";";
+		connector.updateDatabase(removeQuery);
+		connector.dispose();
+	}
+	
+	/* updates userexam table by deleting all exam user pairs */
+	private void deleteAllExamsInUserExam(int examId){
+		DBConnector connector = new DBConnector();
+		String removeQuery = "delete from userexam where ExamID ="+examId+";";
+		connector.updateDatabase(removeQuery);
 		connector.dispose();
 	}
 
