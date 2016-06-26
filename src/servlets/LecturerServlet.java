@@ -51,7 +51,7 @@ public class LecturerServlet extends HttpServlet {
 		if (checker.CheckPermissions()) {
 			Lecturer lecturer = (Lecturer)checker.getUser();
 			request.setAttribute("lecturer", lecturer);
-			
+			System.out.println(session.getId());
 			ArrayList<Exam> exams = examManager.getAllExamsForLecturer(lecturer);
 			request.setAttribute("exams", exams);
 			
