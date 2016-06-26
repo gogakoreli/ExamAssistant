@@ -20,13 +20,14 @@ import javax.servlet.http.Part;
 
 import org.eclipse.jdt.internal.compiler.lookup.ExtraCompilerModifiers;
 
-import helper.AccountManager;
-import helper.ContextStartupListener;
+import data_managers.AccountManager;
+import data_managers.ExamManager;
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
-import helper.ExamManager;
 import helper.LogManager;
+import helper.OpResult;
 import interfaces.ISecure;
+import listeners.ContextStartupListener;
 import helper.SecurityChecker;
 import models.EAUser;
 import models.Exam;
@@ -39,7 +40,6 @@ import models.Lecturer;
 public class ModifyExamServlet extends HttpServlet implements ISecure {
 	private static final long serialVersionUID = 1L;
 	public static final String NEW_EXAM_STATUS = "newexam";
-
 	public static final String MODIFY_EXAM_STATUS = "modifyexam";
 
 	/**
@@ -56,20 +56,92 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		SecurityChecker checker = new SecurityChecker(request, null);
+		/* edit of exam requested */
+		SecurityChecker checker = new SecurityChecker(request, this);
 		if (checker.CheckPermissions()) {
-			Exam editExam = getEditExam(request);
-			if (checkNewExam(request)) {
-				request.setAttribute("newExam", "Create New Exam");
-				request.setAttribute("exam", editExam);
-			} else if (editExam != null) {
-				request.setAttribute("exam", editExam);
-			}
+			Exam examToEdit = getEditExam(request);
+			request.setAttribute("exam", examToEdit);
 			RequestDispatcher dispatch = request.getRequestDispatcher("ModifyExam.jsp");
 			dispatch.forward(request, response);
 		} else {
 			checker.redirectToValidPage(response);
+		}
+	}
+
+	// TODO needs testing for security
+
+	@Override
+	/** checks if user has permission to access exam or create new one */
+	public boolean CheckInfo(EAUser user, HttpServletRequest request) {
+		if (isNewExamRequest(request)) {
+			// ensure its lecturer who creates new exam
+			return (user instanceof Lecturer);
+		}
+
+		if (canAccessExam(user, request)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/* checks if its request for new exam or not */
+	private boolean isNewExamRequest(HttpServletRequest request) {
+		return (request.getParameter("newExam") != null);
+	}
+
+	/* retrives exam id from request we are working on */
+	private int getExamIdFromRequest(HttpServletRequest request) {
+		int examID = ExamManager.NO_EXAM_ID;
+		Object param = request.getParameter("examID");
+		try {
+			examID = Integer.parseInt((String) param);
+		} catch (Exception ignored) {
+		}
+		return examID;
+	}
+
+	/* checks if user @user has permission to view exam @examId */
+	private boolean canAccessExam(EAUser user, HttpServletRequest request) {
+		int examId = getExamIdFromRequest(request);
+		return ExamManager.getExamManager(request.getSession()).CanUserAccessExam(user, examId);
+	}
+
+	/*
+	 * Retrives and returns Exam user wants to edit
+	 * 
+	 * @param request - we take exam id from request
+	 * 
+	 * @return Exam
+	 * 
+	 * returns null if there was error reading examId from request or error
+	 * happened while reading exam info from exam manager
+	 */
+	private Exam getEditExam(HttpServletRequest request) {
+		if (isNewExamRequest(request))
+			return ExamManager.EMPTY_EXAM;
+		ExamManager examManager = ExamManager.getExamManager(request.getSession());
+		Exam examToEdit = examManager.getExamByExamId(getExamIdFromRequest(request));
+
+		setCreatorNameForExam(examToEdit, request);
+		setSubLecturersForExam(examToEdit, request);
+		return examToEdit;
+	}
+
+	/* sets sub lecturers for exam */
+	private void setSubLecturersForExam(Exam examToEdit, HttpServletRequest request) {
+		ExamManager examManager = ExamManager.getExamManager(request.getSession());
+		List<Lecturer> subLecs = examManager.downloadSubLecturers(examToEdit);
+		examToEdit.setSubLecturers(subLecs);
+	}
+
+	/* sets creator name for given exam */
+	private void setCreatorNameForExam(Exam examToEdit, HttpServletRequest request) {
+		OpResult<EAUser> creatorResult = AccountManager.getAccountManager(request.getSession())
+				.getUserById(examToEdit.getCreatorId());
+		if (creatorResult.isSuccess()) {
+			EAUser examCreator = creatorResult.getOpResult();
+			examToEdit.setCreator(examCreator);
 		}
 	}
 
@@ -90,13 +162,16 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 				// lektoristvisaa
 				response.sendRedirect("/ExamAssistant/Lecturer");
 			} else if (saveFileButtonClicked(request)) {
-				Part filePart=null;
-				try{
-					filePart = request.getPart("uploadFile"); // Retrieves <input type="file" name="file">
+				Part filePart = null;
+				try {
+					filePart = request.getPart("uploadFile"); // Retrieves
+																// <input
+																// type="file"
+																// name="file">
 					String fileName = filePart.getSubmittedFileName();
-				    InputStream fileContent = filePart.getInputStream();
-				    System.out.println(fileName);
-				} catch (Exception e){
+					InputStream fileContent = filePart.getInputStream();
+					System.out.println(fileName);
+				} catch (Exception e) {
 					LogManager.logErrorException("Error Uploading file", e);
 				}
 			}
@@ -177,28 +252,6 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			return Exam.EXAM_TYPE_MIDTERM;
 		} else
 			return Exam.EXAM_TYPE_QUIZZ;
-	}
-
-	/**
-	 * 
-	 * @param request
-	 * @return
-	 */
-	private Exam getEditExam(HttpServletRequest request) {
-		Exam result = null;
-		Object param = request.getParameter("examID");
-		int examID = param != null ? Integer.parseInt((String) param) : -1;
-		ExamManager examManager = ExamManager.getExamManager(request.getSession());
-		result = examManager.getExamByExamId(examID);
-		return result;
-	}
-
-	@Override
-	public boolean CheckInfo(EAUser user, HttpServletRequest request) {
-		if (checkNewExam(request)) {
-			return user instanceof Lecturer;
-		}
-		return true;
 	}
 
 }

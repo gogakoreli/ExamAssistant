@@ -13,11 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import helper.AccountManager;
-import helper.ContextStartupListener;
-import helper.ExamManager;
+import data_managers.AccountManager;
+import data_managers.ExamManager;
 import helper.LogManager;
 import helper.SecurityChecker;
+import listeners.ContextStartupListener;
 import models.EAUser;
 import models.Exam;
 import models.Lecturer;
@@ -69,20 +69,20 @@ public class LecturerServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		SecurityChecker checker = new SecurityChecker(request, null);
+		/* SecurityChecker checker = new SecurityChecker(request, null);
 		if (checker.CheckPermissions()) {
 			if (request.getParameter("newExam") != null) {// new exam
-				newExamClicked(request, response);
+				//newExamClicked(request, response);
 			}
 		} else {
 			checker.redirectToValidPage(response);
-		}
+		}*/
 
 	}
 
-	private void newExamClicked(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	/* private void newExamClicked(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		request.setAttribute("status", ModifyExamServlet.NEW_EXAM_STATUS);
 		response.sendRedirect("/ExamAssistant/ModifyExam");
-	}
+	} */
 
 }

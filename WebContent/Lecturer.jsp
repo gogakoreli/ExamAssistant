@@ -38,7 +38,7 @@ p {
 	margin: 0px 0px;
 }
 
-input[type=submit] {
+.btnclass {
 	width: 63%;
 	background-color: #ffaa00;
 	color: white;
@@ -76,7 +76,7 @@ input[type=submit] {
 
 		</form>
 		<form action="ModifyExam" method="get">
-			<br /> <input type="submit" name="newExam" value="Create New Exam" />
+			<br /> <button name="newExam" class="btnclass" type="submit" value="1" >New Exam</button>
 		</form>
 	</div>
 

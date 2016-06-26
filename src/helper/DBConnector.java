@@ -94,7 +94,7 @@ public class DBConnector {
 				LogManager.logErrorException(1004, "Error Executing Query in db", e);
 				queryResult.setError(1004, "Error during execution of sqlProcedure");
 			}
-		}else{
+		} else {
 			queryResult.setError(1005, "No Connection with db");
 		}
 		return queryResult;
@@ -112,7 +112,7 @@ public class DBConnector {
 			} catch (Exception e) {
 				LogManager.logErrorException(1003, "Error making update in db", e);
 			}
-		}//case when connection wasnot esabilished.
+		} // case when connection wasnot esabilished.
 	}
 
 	/** class used for storing result during communication with database */
@@ -120,6 +120,24 @@ public class DBConnector {
 		/** returns result set of sql procedure in case of success */
 		public ResultSet getResultSet() {
 			return (ResultSet) getOpResult();
+		}
+
+		/**
+		 * returns if QueryResult returned from sql is empty or not. if result
+		 * is or error occures while checking returns true
+		 */
+		public boolean isResultEmpty() {
+			ResultSet resultset = getResultSet();
+			boolean result = true;
+			try {
+				if (resultset != null) {
+					result = !resultset.next();
+					resultset.beforeFirst();
+				}
+			} catch (Exception ignored) {
+				result = true;
+			}
+			return result;
 		}
 	}
 

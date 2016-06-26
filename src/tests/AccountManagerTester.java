@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import helper.AccountManager;
+import data_managers.AccountManager;
 import helper.OpResult;
 import models.EAUser;
 

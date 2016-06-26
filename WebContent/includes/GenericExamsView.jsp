@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
-<%@ page import="helper.AccountManager"%>
-<%@ page import="helper.ContextStartupListener"%>
+<%@ page import="data_managers.AccountManager"%>
+<%@ page import="listeners.ContextStartupListener"%>
 <%@ page import="models.EAUser"%>
 <%@ page import="models.Exam"%>
 <%@ page import="java.util.ArrayList"%>

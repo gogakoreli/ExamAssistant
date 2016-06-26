@@ -1,23 +1,31 @@
 
-package helper;
+package data_managers;
 
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
+import listeners.ContextStartupListener;
+import models.EAUser;
 import models.Exam;
 import models.ExamInformation;
 import models.Lecturer;
 import models.Student;
 
 public class ExamManager {
+
+	public static final int NO_EXAM_ID = -1;// id of exam which isnot found in
+											// db
+	public static final Exam EMPTY_EXAM = new Exam(NO_EXAM_ID);
 
 	private Map<Integer, Exam> exams;
 
@@ -198,16 +206,19 @@ public class ExamManager {
 	}
 
 	/**
-	 * Simply gets the exam by its id. returns exam by examID
+	 * Simply gets the exam by its id. if this exam doesnot exists returns
+	 * EMPTY_EXAM;
 	 */
 	public Exam getExamByExamId(int examID) {
-		Exam result = null;
+		Exam result = EMPTY_EXAM;
 		if (examID > 0) {
 			String getExamQuery = "select * from exam where ExamID =" + examID + ";";
 			DBConnector connector = new DBConnector();
 			SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
 			if (queryResult.isSuccess()) {
 				result = new Exam(queryResult.getResultSet());
+				if (result.isEmptyExam()) // if no Exam found
+					result = EMPTY_EXAM;
 			}
 			connector.dispose();
 		}
@@ -262,8 +273,8 @@ public class ExamManager {
 		addRowInUserExam(lecId, examId);
 		return examId;
 	}
-	
-	public void addExamForStudent(int userId, int examId){
+
+	public void addExamForStudent(int userId, int examId) {
 		addRowInUserExam(userId, examId);
 	}
 
@@ -280,25 +291,25 @@ public class ExamManager {
 		connector.updateDatabase(insertQuery);
 		connector.dispose();
 	}
-	
+
 	/**
-	 * deletes exam by id from exam table
-	 * also updates userexam table by deleting all exam user pairs
+	 * deletes exam by id from exam table also updates userexam table by
+	 * deleting all exam user pairs
 	 * 
 	 * @param examId
 	 */
-	public void deleteExam(int examId){
+	public void deleteExam(int examId) {
 		deleteAllExamsInUserExam(examId);
 		DBConnector connector = new DBConnector();
-		String removeQuery = "delete from exam where ExamID ="+examId+";";
+		String removeQuery = "delete from exam where ExamID =" + examId + ";";
 		connector.updateDatabase(removeQuery);
 		connector.dispose();
 	}
-	
+
 	/* updates userexam table by deleting all exam user pairs */
-	private void deleteAllExamsInUserExam(int examId){
+	private void deleteAllExamsInUserExam(int examId) {
 		DBConnector connector = new DBConnector();
-		String removeQuery = "delete from userexam where ExamID ="+examId+";";
+		String removeQuery = "delete from userexam where ExamID =" + examId + ";";
 		connector.updateDatabase(removeQuery);
 		connector.dispose();
 	}
@@ -319,5 +330,53 @@ public class ExamManager {
 			result = (ExamManager) object;
 		}
 		return result;
+	}
+
+	/** checks if user id can access exam @examid */
+	public boolean CanUserAccessExam(EAUser user, int examId) {
+		boolean result = false;
+		String getExamQuery = getSqlQueryForUserAccessExam(user.getUserID(), examId);
+		DBConnector connector = new DBConnector();
+		SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
+		if (queryResult.isSuccess()) {
+			result = !queryResult.isResultEmpty();
+		}
+		connector.dispose();
+		// return result;
+		return result;
+	}
+
+	/* returns sql Query for CanUserAcessExam */
+	private String getSqlQueryForUserAccessExam(int userId, int examId) {
+		String sqlQuery = "select CreatedBy from examassistant.exam " + "where (ExamID = " + examId
+				+ ") and (CreatedBy = " + userId + ") " + "union all select UserID from examassistant.userexam "
+				+ "where 	(ExamID = " + examId + ") and (UserID = " + userId + ")";
+		return sqlQuery;
+	}
+
+	/* for given Exam @exam returns list of its subLecturers */
+	public List<Lecturer> downloadSubLecturers(Exam exam){
+		List<Lecturer> lecturers = new ArrayList<Lecturer>();
+		String getExamSubLecQuery = getSqlQueryForExamSubLecturers(exam.getExamID());
+		DBConnector connector = new DBConnector();
+		SqlQueryResult queryResult = connector.getQueryResult(getExamSubLecQuery);
+		if (queryResult.isSuccess()) {
+			ResultSet rs = queryResult.getResultSet();
+			while (true){
+				Lecturer lec = new Lecturer(rs);
+				if (lec.getUserID() == EAUser.NO_USER_ID)
+					break;//means end of resultset found
+				lecturers.add(lec);
+			}
+		}
+		return lecturers;
+	}
+
+	/* returns sql Query for CanUserAcessExam */
+	private String getSqlQueryForExamSubLecturers(int examId) {
+		String sqlQuery = "select u.* from examassistant.user as u right join (select UserID FROM examassistant.userexam where ExamID = "
+				+ examId + ") as e on e.UserID = u.UserID";
+
+		return sqlQuery;
 	}
 }

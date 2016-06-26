@@ -1,4 +1,4 @@
-package helper;
+package data_managers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,7 +12,9 @@ import javax.servlet.http.HttpSession;
 
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
+import listeners.ContextStartupListener;
 import helper.LogManager;
+import helper.OpResult;
 import models.EAUser;
 import models.Lecturer;
 import models.EAUser.EAUserRole;
@@ -53,9 +55,9 @@ public class AccountManager {
 
 	/** removes user for given httpsession from loged in system */
 	public void removeCurrentUser(HttpSession httpSession) {
+		//TODO check if user quit without saving info  (shemtxvevit tu gavarda )
 		httpSession.removeAttribute(USER_ID_IN_SESSION);
 		logedUsers.remove(httpSession.getId());
-
 	}
 
 	/**

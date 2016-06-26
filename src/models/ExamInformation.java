@@ -16,7 +16,7 @@ public class ExamInformation {
 	private String ip;
 	private int placeNumber;
 	private boolean isWorking;
-
+	
 	public ExamInformation(ResultSet resultSet) {
 		if (resultSet != null) {
 			try {

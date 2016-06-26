@@ -9,8 +9,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import helper.AccountManager;
-import helper.ExamManager;
+import data_managers.AccountManager;
+import data_managers.ExamManager;
 import helper.OpResult;
 import models.EAUser;
 import models.Exam;
@@ -127,7 +127,43 @@ public class ExamManagerTester {
 		assertEquals(numVariants, myExam.getNumVariants());
 		exManager.deleteExam(examId);
 	}
+	
+	@Test
+	public void testGetExamById(){
+		//we asume that exam by id 1231231 is not in db if this test fails we should check if it was created 
+		Exam myExam = exManager.getExamByExamId(1231231);
+		assertEquals(true, myExam == ExamManager.EMPTY_EXAM);
+		
+		Exam myExam1 = exManager.getExamByExamId(1231232);
+		assertEquals(true, myExam1 == ExamManager.EMPTY_EXAM);
+	}
+	
+	
+	@Test
+	public void TestCanUserAccessExam(){
+		assertEquals(true, exManager.CanUserAccessExam(lecturer, 1));//check user has permission as creator
+		assertEquals(true, exManager.CanUserAccessExam(lecturer, 2));//check user has permission as sublectuer
+		assertEquals(false, exManager.CanUserAccessExam(lecturer, 113));//check user has not permission on lecture 
+	}
 
+
+	@Test
+	public void TestDownloadSubLecturers(){
+		Exam noSubsExam = exManager.getExamByExamId(130);
+		assertEquals(true, exManager.downloadSubLecturers(noSubsExam).isEmpty());//exam with not sub lecturers 
+		
+		Exam examSubCurrent = exManager.getExamByExamId(131);
+		assertEquals(true, exManager.downloadSubLecturers(examSubCurrent).contains(lecturer));//exam with sub lecturer current lecturer
+		
+		Exam examSubMult = exManager.getExamByExamId(132);
+		assertEquals(true, exManager.downloadSubLecturers(examSubMult).size() == 2);//exam with multiple sub lecturer 
+		
+		Exam examSubMult2 = exManager.getExamByExamId(2);
+		assertEquals(true, exManager.downloadSubLecturers(examSubMult2).size() == 4);//exam with multiple sub lecturer 
+	}
+	
+	
+	
 	/*
 	 * Test getExamForStudent(). Simply check it by adding new exam with current
 	 * time

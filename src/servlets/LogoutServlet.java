@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import helper.AccountManager;
-import helper.ContextStartupListener;
+import data_managers.AccountManager;
+import listeners.ContextStartupListener;
 
 /**
  * Servlet implementation class LogoutServlet

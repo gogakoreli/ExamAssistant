@@ -1,3 +1,4 @@
+<%@page import="data_managers.AccountManager"%>
 <%@ page import="java.util.*, models.*, helper.*"%>
 <%
 	AccountManager accountManager = AccountManager.getAccountManager(session);
