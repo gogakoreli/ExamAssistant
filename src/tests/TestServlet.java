@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import helper.AccountManager;
+import data_managers.AccountManager;
 import helper.LogManager;
 import models.EAUser;
 

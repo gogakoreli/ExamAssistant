@@ -9,8 +9,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import helper.AccountManager;
-import helper.ExamManager;
+import data_managers.AccountManager;
+import data_managers.ExamManager;
 import helper.OpResult;
 import models.EAUser;
 import models.Exam;

@@ -20,11 +20,11 @@ import javax.servlet.http.Part;
 
 import org.eclipse.jdt.internal.compiler.lookup.ExtraCompilerModifiers;
 
-import helper.AccountManager;
-import helper.ContextStartupListener;
+import data_managers.AccountManager;
+import listeners.ContextStartupListener;
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
-import helper.ExamManager;
+import data_managers.ExamManager;
 import helper.LogManager;
 import interfaces.ISecure;
 import helper.SecurityChecker;

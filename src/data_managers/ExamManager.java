@@ -1,5 +1,5 @@
 
-package helper;
+package data_managers;
 
 import java.io.File;
 import java.sql.ResultSet;
@@ -11,7 +11,9 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
+import listeners.ContextStartupListener;
 import models.Exam;
 import models.ExamInformation;
 import models.Lecturer;
