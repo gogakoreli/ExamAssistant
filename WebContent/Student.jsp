@@ -13,8 +13,8 @@
 <style>
 body {
 	background-color: #f2f2f2;
-	text-align: center;
 }
+
 
 div {
 	heigth: 300px;
@@ -55,16 +55,18 @@ p.title {
 #startExam {
 	text-align: center;
 }
+
 </style>
 
 </head>
 
-<body>    
-    <jsp:directive.include file="includes/LogoutButton.jsp"/>
+<jsp:directive.include file="includes/LogoutButton.jsp"/>
     
-    <jsp:directive.include file="includes/UserProfile.jsp"/>
+<jsp:directive.include file="includes/UserProfile.jsp"/>
 
-	<h1>This is student page</h1>
+<body>    
+    
+    <p> </p>
 	<%
 		Student student = (Student) request.getAttribute("student");
 		Exam exam = (Exam) request.getAttribute("exam");
@@ -72,7 +74,7 @@ p.title {
 	%>
 	<form action="Student" method="post">
 		<div id="startExam">
-			<p class="title">${exam.getType() }გამოცდა</p>
+			<p class="title">${exam.getType() } გამოცდა</p>
 			<br>
 			<p>სტუდენტი : ${student.getFirstName()} ${student.getLastName() }</p>
 			<p>გამოცდა : ${exam.getName() }</p>

@@ -4,14 +4,23 @@
 	AccountManager accountManager = AccountManager.getAccountManager(session);
 	EAUser user = accountManager.getCurrentUser(session);
 %>
+<style>
+
+div.profile {
+  	border: 3px solid #ffaa00;
+	border-radius: 12px;
+}
+
+</style>
 
 
-<div class="panel-body">
-	<div class="text-center vd_info-parent">
-		<image src="Display?image=<%=user.getImage()%>">
-	</div>
-
+<div class = "profile" >
+	<img src="Display?image=<%=user.getImage()%>">
+	
 	<h2 class="font-semibold mgbt-xs-5"><%=user.getFirstName() + " " + user.getLastName()%></h2>
-	<h4>Student/Lecturer/ExamBoard</h4>
-	<p>MACS/ESM/NONE</p>
+	<h4> <%=user.getRole() %> </h4>
+	<h4> <%=user.getMail() %> </h4>
+	
+	<h4>MACS/ESM/NONE</h4>
+	
 </div>
