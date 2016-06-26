@@ -47,8 +47,8 @@ public class Exam {
 					this.setNumVariants(rs.getInt("NumVariants"));
 					this.setStatus(rs.getString("Status"));
 					this.setCreatorId(rs.getInt("CreatedBy"));
-				}else{
-					//case empty resultset was passed 
+				} else {
+					// case empty resultset was passed
 					this.examID = ExamManager.NO_EXAM_ID;
 				}
 			} catch (Exception e) {
@@ -69,7 +69,6 @@ public class Exam {
 		this.status = status;
 	}
 
-	
 	public Exam(int examId) {
 		this.examID = examId;
 	}
@@ -77,46 +76,66 @@ public class Exam {
 	public Exam() {
 
 	}
-	
+
 	/** returns name of creator of exam as whole for displaying */
-	public String getCreatorName(){
+	public String getCreatorName() {
 		return this.getCreator().getFirstName() + " " + this.getCreator().getLastName();
 	}
-	
+
 	/** sets sub lecturers from db for current exam */
-	public void setSubLecturers(List<Lecturer> subLectuers){
+	public void setSubLecturers(List<Lecturer> subLectuers) {
 		this.subLectuers = subLectuers;
 	}
-	
-	/** returns only date when exam should be started format : YYYY-MM-DD*/
-	public String getExamStartDate(){
+
+	/** returns only date when exam should be started format : YYYY-MM-DD */
+	public String getExamStartDate() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(startTime);
-		return "" + calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH);	
+		return "" + calendar.get(Calendar.YEAR) + "-" + getDateStringFromInt(calendar.get(Calendar.MONTH)) + "-"
+				+ getDateStringFromInt(calendar.get(Calendar.DAY_OF_MONTH));
 	}
-	
-	/** returns exam start time format : HH:MM*/
-	public String getExamStartTime(){
+
+	/*
+	 * gets string which is 2 in length for month and day if they are between
+	 * 1-9 we should write 08 not 8
+	 */
+	private String getDateStringFromInt(int x) {
+		String s = "" + x;
+		if (x <= 9)
+			s = "0" + s;
+		return s;
+	}
+
+	/** returns exam start time format : HH:MM */
+	public String getExamStartTime() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(startTime);
 		return "" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE);
 	}
-	
-	/** gets sub lecturers from db for current exam */
-	public List<Lecturer> getSubLecturers(){
-		return this.subLectuers;
+
+	/** gets sub lecturers from db for current exam 
+	 *  subLecturers in db contains creator itself but we dont
+	 *  need to display it. as its model for modifyexam we remove itself from list
+	 *  and return others */
+	public List<Lecturer> getSubLecturers() {
+		//copy list/ remove creator 
+		List<Lecturer> lecList = new ArrayList<Lecturer>();
+		lecList.addAll(subLectuers);
+		lecList.remove((Lecturer)getCreator());
+		
+		return lecList;
 	}
-	
-	public void setCreator(EAUser creator){
+
+	public void setCreator(EAUser creator) {
 		this.creator = creator;
 	}
-	
-	public EAUser getCreator(){
+
+	public EAUser getCreator() {
 		return creator;
 	}
-	
+
 	/** checks if given exam is empty end not valid for precessiong */
-	public boolean isEmptyExam(){
+	public boolean isEmptyExam() {
 		return getExamID() == ExamManager.NO_EXAM_ID;
 	}
 
@@ -199,17 +218,16 @@ public class Exam {
 	public void setNumVariants(int numVariants) {
 		this.numVariants = numVariants;
 	}
-	
-	/** Sets creator id for exam  */
+
+	/** Sets creator id for exam */
 	public void setCreatorId(int creatorId) {
 		this.creatorId = creatorId;
 	}
-	
-	/** Gets creator id for exam  */
+
+	/** Gets creator id for exam */
 	public int getCreatorId() {
 		return creatorId;
 	}
-
 
 	/** To string the exam object. */
 	public String toString() {

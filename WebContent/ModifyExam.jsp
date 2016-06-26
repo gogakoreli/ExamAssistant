@@ -5,13 +5,14 @@
 	pageEncoding="UTF-8"%>
 
 
-	<%
-	 Exam exam = (Exam) request.getAttribute("exam");
-	 if (exam == null) response.sendRedirect("ErrorPage.jsp");
-	%>
-	
-	
-	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%
+	Exam exam = (Exam) request.getAttribute("exam");
+	if (exam == null)
+		response.sendRedirect("ErrorPage.jsp");
+%>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;" charset="UTF-8">
@@ -105,21 +106,12 @@
 
 		var items = [];
 
-		$
-				.each(
-						data,
-						function(i, item) {
-							var name = item.firstName + ' ' + item.lastName;
-							items
-									.push('<li> <a onclick="addNewLecturer('
-											+ item.userID
-											+ ',\''
-											+ name
-											+ '\'); return false;" name="sugglink">'
-											+ item.mail
-											+ '<br /> <span>'
-											+ name + '</span></a></li>');
-						}); // close each()
+		$.each(data, function(i, item) {
+			var name = item.firstName + ' ' + item.lastName;
+			items.push('<li> <a onclick="addNewLecturer(' + item.userID + ',\''
+					+ name + '\'); return false;" name="sugglink">' + item.mail
+					+ '<br /> <span>' + name + '</span></a></li>');
+		}); // close each()
 
 		$('#suggestionsList').empty();
 		$('#suggestionsList').append(items.join(''));
@@ -149,7 +141,7 @@
 					+ '<i class="glyphicon-remove"></i></button>';
 			li.setAttribute("id", liid); // added line
 			ul.appendChild(li);
-			
+
 			var x = document.getElementById("tfaddlectuers");
 			x.value = '';
 			lectSuggestionsBlur();
@@ -157,11 +149,11 @@
 		}
 
 	}
-	
+
 	$(document).on('click', function(event) {
-	  if (!$(event.target).closest('#searchsuggestionsid').length) {
-		lectSuggestionsBlur();
-	  }
+		if (!$(event.target).closest('#searchsuggestionsid').length) {
+			lectSuggestionsBlur();
+		}
 	});
 
 	function lectSuggestionsBlur() {
@@ -180,7 +172,7 @@
 	<a id="logout" href="Logout" class="btn btn-info btn-lg"> <span
 		class="glyphicon glyphicon-log-out"> </span> Log out
 	</a>
-	<h1>This is student page</h1>
+	<h1>This is Exams page</h1>
 	<form action="Student" method="post">
 		<div id="startExam">
 			<p class="title">გამოცდა</p>
@@ -189,8 +181,7 @@
 					<tr>
 						<th class="th-left">
 							<div class="th-key">მასწავლებელი:</div>
-							<div class="th-value"><%=exam.getCreatorName()%></div>
-							<!--  <div class="th-value">ამირან მელია</div>  -->
+							<div class="th-value"><%=exam.getCreatorName()%></div> <!--  <div class="th-value">ამირან მელია</div>  -->
 						</th>
 					</tr>
 					<tr>
@@ -208,10 +199,10 @@
 							<div class="th-key">გამოცდის ტიპი:</div>
 							<div class="th-value">
 								<input type="radio" name="examType" value="Final"
-									class="disabledfield lecturer" checked="checked" disabled />Final 
+									class="disabledfield lecturer" checked="checked" disabled />Final
 								<input type="radio" name="examType" value="Midterm"
-									class="disabledfield lecturer" disabled /> Midterm 
-								<input	type="radio" name="examType" value="Quizz"
+									class="disabledfield lecturer" disabled /> Midterm <input
+									type="radio" name="examType" value="Quizz"
 									class="disabledfield lecturer" disabled /> Quizz
 							</div>
 						</th>
@@ -222,8 +213,8 @@
 							<div class="th-value">
 
 								<input type="text" id="fname" name="examDuration"
-									class="disabledfield lecturer" value="<%=exam.getDuration()%>" disabled>
-								წუთი.
+									class="disabledfield lecturer" value="<%=exam.getDuration()%>"
+									disabled> წუთი.
 
 							</div>
 						</th>
@@ -235,7 +226,8 @@
 							<div class="th-key">თარიღი:</div>
 							<div class="th-value">
 								<input type="date" id="myDate" name="examStartDate"
-									class="disabledfield examboard" value="<%=exam.getExamStartDate()%>" disabled>
+									class="disabledfield examboard"
+									value="<%=exam.getExamStartDate()%>" disabled>
 							</div>
 						</th>
 					</tr>
@@ -248,7 +240,8 @@
 
 
 								<input type="text" id="fname" name="examStartTime"
-									class="disabledfield examboard" value="<%=exam.getExamStartTime()%>" disabled>
+									class="disabledfield examboard"
+									value="<%=exam.getExamStartTime()%>" disabled>
 							</div>
 						</th>
 					</tr>
@@ -278,7 +271,6 @@
 									<div class="drp_search">
 										<input type="text" id="tfaddlectuers" name="examName"
 											oninput="getLectuerersSuggestions()"
-											
 											class="disabledfield lecturer" value=""
 											placeholder="მასწავლებლის სახელი..." autocomplete="off"
 											disabled>
@@ -297,7 +289,7 @@
 
 
 
-										<li id="lecid0"><label>გიორგი გონაშვილი</label>
+										<!-- <li id="lecid0"><label>გიორგი გონაშვილი</label>
 											<button type="button" onclick="removeSubLectuer('lecid0')">
 												<i class="glyphicon-remove"></i>
 											</button></li>
@@ -308,25 +300,24 @@
 										<li id="lecid2"><label>გოგა კორელი</label>
 											<button type="button" onclick="removeSubLectuer('lecid2')">
 												<i class="glyphicon-remove"></i>
-											</button></li>
+											</button></li> -->
 									</ul>
 								</div>
-								
-								
+
+
 								<script type='text/javascript'>
-								alert("aeeee");
-								<%
 									
-									/* adding sub lecturers  to exam */
-									for (Lecturer curLec : exam.getSubLecturers()){
-										out.append("addNewLecturer(" + curLec.getUserID() + "," +  (curLec.getFirstName() + " " + curLec.getLastName()) + ");\n\r");
-									}
-								%>
+								<%/* adding sub lecturers to exam */
+									for (Lecturer curLec : exam.getSubLecturers()) {
+						
+										out.append("addNewLecturer(" + curLec.getUserID() + ",'"
+												+ (curLec.getFirstName() + " " + curLec.getLastName()) + "');\n\r");
+									}%>
 									
 								</script>
-								
-								
-								
+
+
+
 								<!-- selected lecturers  -->
 							</div>
 						</th>
@@ -367,4 +358,3 @@
 	</form>
 </body>
 </html>
-	
