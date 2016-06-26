@@ -20,18 +20,17 @@
 </script>
 
 <style>
-
 .chat {
-  width: 80%;
-  height: 300px;
-  overflow: hidden;
-  background: rgba(0, 0, 0, .5);
-  border-radius: 20px;
+	width: 80%;
+	height: 300px;
+	overflow: hidden;
+	background: rgba(0, 0, 0, .5);
+	border-radius: 20px;
 }
 
 .dd {
-  flex-direction: column;
-  display: flex;  
+	flex-direction: column;
+	display: flex;
 }
 
 input[type=button] {
@@ -45,35 +44,24 @@ input[type=button] {
 	cursor: pointer;
 }
 
-
 body {
-  background-color: #f2f2f2;
-  font-family: 'Open Sans', sans-serif;
-  font-size: 12px;
+	background-color: #f2f2f2;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 12px;
 }
 
 .message-input {
-   width: 100%;
+	width: 100%;
 }
 
 .chat-title {
-  flex: 0 1 45px;
-  position: relative;
-  background: rgba(0, 0, 0, 0.2);
-  color: #fff;
-  text-transform: uppercase;
-  text-align: left;
-  padding: 10px 10px 10px 50px;
-}
-.messageTextArea {
-	font-family: "Comic Sans MS", cursive, sans-serif;
+	flex: 0 1 45px;
+	position: relative;
+	background: rgba(0, 0, 0, 0.2);
 	color: #fff;
-	background-color: #329fd9;
-	 float: right;
-      color: #fff;
-      text-align: right;
-      background: linear-gradient(120deg, #248A52, #257287);
-      border-radius: 10px 10px 0 10px;
+	text-transform: uppercase;
+	text-align: left;
+	padding: 10px 10px 10px 50px;
 }
 
 
@@ -89,7 +77,8 @@ body {
 			<p>leqtoris saxeli </p>
 		</div>
 		<div class = "dd"> 
-		<textarea id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
+		<textarea style="color:green; border: 1px solid #ffaa00;" 
+		id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
 		</div>
 		<textarea class="message-input" id="messageText"
 			placeholder="Type message..."> </textarea>
