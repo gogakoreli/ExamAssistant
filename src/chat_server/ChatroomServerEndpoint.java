@@ -1,6 +1,5 @@
 package chat_server;
 
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,7 +35,6 @@ public class ChatroomServerEndpoint {
 	@OnMessage
 	public void onMessage(Session userSession, String message) throws IOException {
 		String userName = (String) userSession.getUserProperties().get("userName");
-		userName = "giorgi";
 		if (userName != null) {
 			userSession.getUserProperties().put("userName", message);
 			userSession.getBasicRemote().sendText(buildJson("System", "Your message is " + message));
@@ -53,4 +51,5 @@ public class ChatroomServerEndpoint {
 	}
 
 }
+
 
