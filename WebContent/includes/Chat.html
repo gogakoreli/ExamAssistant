@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -20,26 +21,82 @@
 
 <style>
 
-.chat_box{
-	position:fixed;
-	right:20px;
-	bottom:0px;
-	width:250px;
+.chat {
+  width: 80%;
+  height: 300px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, .5);
+  border-radius: 20px;
 }
 
-body {
-	background-color: #eeeeee;
+.dd {
+  flex-direction: column;
+  display: flex;  
 }
+
+input[type=button] {
+	width: 100%;
+	background-color: #248A52;
+	color: white;
+	padding: 12px 20px;
+	margin: 8px 0;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+
+body {
+  background-color: #f2f2f2;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 12px;
+}
+
+.message-input {
+   width: 100%;
+}
+
+.chat-title {
+  flex: 0 1 45px;
+  position: relative;
+  background: rgba(0, 0, 0, 0.2);
+  color: #fff;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 10px 10px 10px 50px;
+}
+.messageTextArea {
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	color: #fff;
+	background-color: #329fd9;
+	 float: right;
+      color: #fff;
+      text-align: right;
+      background: linear-gradient(120deg, #248A52, #257287);
+      border-radius: 10px 10px 0 10px;
+}
+
+
 
 </style>
 
-</head>
-<body>
-	<textarea id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
-	<br />
-	<input type="text" id="messageText" size="50" />
-	<input type="button" value="send" onclick="sendMessage();" />
 
+</head>
+
+<body>
+	<div class="chat">
+		<div class="chat-title">
+			<p>leqtoris saxeli </p>
+		</div>
+		<div class = "dd"> 
+		<textarea id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
+		</div>
+		<textarea class="message-input" id="messageText"
+			placeholder="Type message..."> </textarea>
+		<input type="button"  value="Send"  onclick="sendMessage();" />
+		</div>
+		
 </body>
+
 </html>
 
