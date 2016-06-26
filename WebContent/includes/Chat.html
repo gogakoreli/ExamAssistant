@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;" charset="UTF-8">
-<title>Simple Chat</title>
+
 <script type="text/javascript">
 	var webSocket = new WebSocket(
 			"ws://localhost:8080/ExamAssistant/ChatroomServerEndpoint");
@@ -17,6 +17,22 @@
 		messageText.value = "";
 	}
 </script>
+
+<style>
+
+.chat_box{
+	position:fixed;
+	right:20px;
+	bottom:0px;
+	width:250px;
+}
+
+body {
+	background-color: #eeeeee;
+}
+
+</style>
+
 </head>
 <body>
 	<textarea id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
