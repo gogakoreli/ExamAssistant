@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;" charset="UTF-8">
+<title>Simple Chat</title>
+<script type="text/javascript">
+	var webSocket = new WebSocket(
+			"ws://localhost:8080/ExamAssistant/ChatroomServerEndpoint");
+
+	webSocket.onmessage = function processMessage(message) {
+		var gson = message.data;
+		messageTextArea.value += gson + "\n";
+	}
+
+	function sendMessage() {
+		webSocket.send(messageText.value);
+		messageText.value = "";
+	}
+</script>
+</head>
+<body>
+	<textarea id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
+	<br />
+	<input type="text" id="messageText" size="50" />
+	<input type="button" value="send" onclick="sendMessage();" />
+
+</body>
+</html>
+
