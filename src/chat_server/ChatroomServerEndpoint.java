@@ -91,7 +91,7 @@ public class ChatroomServerEndpoint {
 	
 	private void generateMessage(Session mainSession, Session curSession, EAUser user, 
 			String msg, ExamManager examManager, AccountManager accountManager) throws IOException{
-		mainSession.getBasicRemote().sendText(buildJson("You", msg));
+		mainSession.getBasicRemote().sendText("You :"+msg);
 		if(curSession.equals(mainSession)) return;
 			
 		HttpSession httpSession = sessions.get(mainSession);
@@ -103,7 +103,7 @@ public class ChatroomServerEndpoint {
 			for(Lecturer lecturer : lecturers){
 				if(lecturer.equals(curLecturer)){
 					//TODO gaugzavne am lektors message
-					curSession.getBasicRemote().sendText(buildJson(user.getFirstName(), msg));
+					curSession.getBasicRemote().sendText(buildJson(user, msg));
 				}
 			}
 			
@@ -120,8 +120,21 @@ public class ChatroomServerEndpoint {
 		connector.dispose();
 	}
 	
-	private String buildJson(String userName, String message) {
-		String json = new Gson().toJson(userName + " :" + message);
+	public class GsonMessage{
+		public int fromId;
+		public String name;
+		public String message;
+		
+		public GsonMessage(EAUser user, String message){
+			fromId = user.getUserID();
+			name = user.getFirstName();
+			this.message = message;
+		}
+	}
+	
+	private String buildJson(EAUser user, String message) {
+		GsonMessage msg = new GsonMessage(user, message);
+		String json = new Gson().toJson(msg);
 		return json;
 	}
 
