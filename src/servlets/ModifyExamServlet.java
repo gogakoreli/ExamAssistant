@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
-import org.eclipse.jdt.internal.compiler.lookup.ExtraCompilerModifiers;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import data_managers.AccountManager;
 import data_managers.ExamManager;
@@ -41,7 +45,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	private static final long serialVersionUID = 1L;
 	public static final String NEW_EXAM_STATUS = "newexam";
 	public static final String MODIFY_EXAM_STATUS = "modifyexam";
-
+	private static final int MAX_UPLOAD_FILE_SIZE = 4 * 1024;
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -144,6 +148,61 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			examToEdit.setCreator(examCreator);
 		}
 	}
+	
+	/* handles file uploads saves them ftp server and on writes url in db */
+	private void handleFileUplaods(HttpServletRequest request){
+		  // Check that we have a file upload request
+	      boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+	      int maxFileSize = 50 * 1024 * 1024;
+	      int maxMemSize = 4 * 1024;
+	      String  filePath = 
+	              getServletContext().getInitParameter("file-upload"); 
+	      
+	      DiskFileItemFactory factory = new DiskFileItemFactory();
+	      // maximum size that will be stored in memory
+	      factory.setSizeThreshold(maxFileSize);
+	      // Location to save data that is larger than maxMemSize.
+	      factory.setRepository(new File("c:\\temp"));
+
+	      // Create a new file upload handler
+	      ServletFileUpload upload = new ServletFileUpload(factory);
+	      // maximum file size to be uploaded.
+	      upload.setSizeMax( maxFileSize );
+
+	      try{ 
+	      // Parse the request to get file items.
+	      List<FileItem> fileItems = upload.parseRequest(request);
+		
+	      // Process the uploaded file items
+	      Iterator<FileItem> i = fileItems.iterator();
+	      File file ;
+	      while ( i.hasNext () ) 
+	      {
+	         FileItem fi = (FileItem)i.next();
+	         if ( !fi.isFormField () )	
+	         {
+	            // Get the uploaded file parameters
+	            String fieldName = fi.getFieldName();
+	            String fileName = fi.getName();
+	            String contentType = fi.getContentType();
+	            boolean isInMemory = fi.isInMemory();
+	            long sizeInBytes = fi.getSize();
+	            // Write the file
+	            if( fileName.lastIndexOf("\\") >= 0 ){
+	               file = new File( filePath + 
+	               fileName.substring( fileName.lastIndexOf("\\"))) ;
+	            }else{
+	               file = new File( filePath + 
+	               fileName.substring(fileName.lastIndexOf("\\")+1)) ;
+	            }
+	            fi.write( file ) ;
+	         }
+	      }
+	   
+	   }catch(Exception ex) {
+	       System.out.println(ex);
+	   }
+	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
@@ -153,6 +212,9 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			throws ServletException, IOException {
 		SecurityChecker checker = new SecurityChecker(request, null);
 		if (checker.CheckPermissions()) {
+			
+			handleFileUplaods(request);
+			if (true) return;//testing purpose 
 			if (checkExamSavedButtonCliqued(request)) {
 				EAUser user = checker.getUser();
 				ExamManager manager = ExamManager.getExamManager(request.getSession());

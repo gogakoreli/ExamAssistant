@@ -173,7 +173,7 @@
 		class="glyphicon glyphicon-log-out"> </span> Log out
 	</a>
 	<h1>This is Exams page</h1>
-	<form action="Student" method="post">
+	<form action="ModifyExam" method="post" enctype="multipart/form-data">
 		<div id="startExam">
 			<p class="title">გამოცდა</p>
 			<table class="detail-car-table">
@@ -353,7 +353,9 @@
 				</tbody>
 			</table>
 			<input class="start" onclick="EnibleEditing()" type="button"
-				value="გამოცდის დაწყება">
+				value="Save ">
+				
+			<input type="submit" value="Submit">
 		</div>
 	</form>
 </body>
