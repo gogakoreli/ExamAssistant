@@ -10,14 +10,33 @@ import data_managers.ExamManager;
 import helper.LogManager;
 
 public class Exam {
-	public static final String OPEN_BOOK = "Open book";
-	public static final String CLOSED_BOOK = "Closed book";
-	public static final String EXAM_STATUS_DONE = "Done";
-	public static final String EXAM_STATUS_PROCESSING = "Processing";
-	public static final String EXAM_STATUS_NEW = "new";
-	public static final String EXAM_TYPE_FINAL = "Final";
-	public static final String EXAM_TYPE_MIDTERM = "Midterm";
-	public static final String EXAM_TYPE_QUIZZ = "Quizz";
+	
+	public final class NoteType {
+		public static final String OPEN_BOOK = "Open book";
+		public static final String CLOSED_BOOK = "Closed book";
+		public static final String 	OPEN_NOTE = "Open Note";
+	}
+	
+	
+
+	/*
+	 * enum for ExamStatus this names match with names we save exam status in db
+	 */
+	public final class ExamStatus {
+		public static final String NEW = "new";
+		public static final String PENDING = "pending";
+		public static final String READY = "ready";
+		public static final String PUBLISHED = "published";
+		public static final String LIVE = "live";
+		public static final String FINISHED = "finished";
+	}
+
+	public final class ExamType {
+		public static final String FINAL = "Final";
+		public static final String MIDTERM = "Midterm";
+		public static final String QUIZZ = "Quizz";
+	}
+
 	public static final String EXAM_NAME_UNDEFINED = "Undefined";
 	public static final int DEFAULT_EXAM_DUARTION = 100;
 	public static final String EXAM_STATUS_WAITING = "Quizz";
@@ -25,14 +44,23 @@ public class Exam {
 	private int examID;
 	private String name = "";
 	private String type = "";
+	private String noteType = "";
 	private Date startTime;
 	private int duration = 0; // in minutes
 	private String resourceType = "";
 	private int numVariants = 0;
 	private String status = "";
 	private int creatorId;
-	private EAUser creator;
+	private EAUser creator;// user who created exam
+	private EAUser editor;// user who is editing current isntance of exam
 	List<Lecturer> subLectuers = new ArrayList<Lecturer>();
+	
+	//files attached to exam 
+	private List<String> variantUrls = new ArrayList<String>();
+	private List<String> materialsUrls =  new ArrayList<String>();
+	private String studentsListUrl = "";
+	
+	
 
 	public Exam(ResultSet rs) {
 		if (rs != null) {
@@ -76,6 +104,21 @@ public class Exam {
 	public Exam() {
 
 	}
+	
+	/** sets Note Type for given exam */
+	public void setNoteType(String type) {
+		this.noteType = type;
+	}
+
+	/** gets Note Type for given exam */
+	public String getNoteType() {
+		return this.noteType;
+	}
+
+	/** sets editor user for given exam */
+	public void setExamEditor(EAUser editor) {
+		this.editor = editor;
+	}
 
 	/** returns name of creator of exam as whole for displaying */
 	public String getCreatorName() {
@@ -113,16 +156,17 @@ public class Exam {
 		return "" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE);
 	}
 
-	/** gets sub lecturers from db for current exam 
-	 *  subLecturers in db contains creator itself but we dont
-	 *  need to display it. as its model for modifyexam we remove itself from list
-	 *  and return others */
+	/**
+	 * gets sub lecturers from db for current exam subLecturers in db contains
+	 * creator itself but we dont need to display it. as its model for
+	 * modifyexam we remove itself from list and return others
+	 */
 	public List<Lecturer> getSubLecturers() {
-		//copy list/ remove creator 
+		// copy list/ remove creator
 		List<Lecturer> lecList = new ArrayList<Lecturer>();
 		lecList.addAll(subLectuers);
-		lecList.remove((Lecturer)getCreator());
-		
+		lecList.remove((Lecturer) getCreator());
+
 		return lecList;
 	}
 
@@ -178,6 +222,12 @@ public class Exam {
 	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
+	
+	/** Sets the start time of the exam. */
+	public Date getStartDateTime() {
+		return this.startTime;
+	}
+
 
 	/** Gets the duration of the exam. */
 	public int getDuration() {

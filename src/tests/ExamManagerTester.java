@@ -110,12 +110,12 @@ public class ExamManagerTester {
 	@Test
 	public void test1() {
 		String examName = "albatoba";
-		String openBook = Exam.CLOSED_BOOK;
+		String openBook = Exam.NoteType.CLOSED_BOOK;
 		String[] subLecturers = null;
 		File[] materials = null;
 		int examDuration = 100;
 		int numVariants = 1;
-		String examType = Exam.EXAM_TYPE_FINAL;
+		String examType = Exam.ExamType.FINAL;
 		int examId = exManager.createNewExam(lecturer.getUserID(), examName, openBook, subLecturers, materials,
 				examDuration, numVariants, examType);
 		Exam myExam = exManager.getExamByExamId(examId);
@@ -132,10 +132,10 @@ public class ExamManagerTester {
 	public void testGetExamById(){
 		//we asume that exam by id 1231231 is not in db if this test fails we should check if it was created 
 		Exam myExam = exManager.getExamByExamId(1231231);
-		assertEquals(true, myExam == ExamManager.EMPTY_EXAM);
+		assertEquals(true, myExam == ExamManager.WRONG_EXAM);
 		
 		Exam myExam1 = exManager.getExamByExamId(1231232);
-		assertEquals(true, myExam1 == ExamManager.EMPTY_EXAM);
+		assertEquals(true, myExam1 == ExamManager.WRONG_EXAM);
 	}
 	
 	
@@ -171,12 +171,12 @@ public class ExamManagerTester {
 	@Test
 	public void test2() {
 		String examName = "albatoba";
-		String openBook = Exam.CLOSED_BOOK;
+		String openBook = Exam.NoteType.CLOSED_BOOK;
 		String[] subLecturers = null;
 		File[] materials = null;
 		int examDuration = 100;
 		int numVariants = 1;
-		String examType = Exam.EXAM_TYPE_FINAL;
+		String examType = Exam.ExamType.FINAL;
 		int examId = exManager.createNewExam(lecturer.getUserID(), examName, openBook, subLecturers, materials,
 				examDuration, numVariants, examType);
 		exManager.addExamForStudent(student1.getUserID(), examId);
@@ -196,22 +196,22 @@ public class ExamManagerTester {
 	@Test
 	public void test3() {
 		String examName = "albatoba";
-		String openBook = Exam.CLOSED_BOOK;
+		String openBook = Exam.NoteType.CLOSED_BOOK;
 		String[] subLecturers = null;
 		File[] materials = null;
 		int examDuration = 100;
 		int numVariants = 1;
-		String examType = Exam.EXAM_TYPE_FINAL;
+		String examType = Exam.ExamType.FINAL;
 		int examId = exManager.createNewExam(lecturer.getUserID(), examName, openBook, subLecturers, materials,
 				examDuration, numVariants, examType);
 
 		String newExamName = "kalkulusi";
-		String newOpenBook = Exam.OPEN_BOOK;
+		String newOpenBook = Exam.NoteType.OPEN_BOOK;
 		String[] newSubLecturers = null;
 		File[] newMaterials = null;
 		int newExamDuration = 200;
 		int newNumVariants = 2;
-		String newExamType = Exam.EXAM_TYPE_MIDTERM;
+		String newExamType = Exam.ExamType.MIDTERM;
 		String newExamStatus = Exam.EXAM_STATUS_WAITING;
 		Exam modExam = exManager.modifyExam(examId, newExamName, newOpenBook, newSubLecturers, newMaterials,
 				newExamDuration, newNumVariants, newExamType, newExamStatus);
@@ -230,23 +230,23 @@ public class ExamManagerTester {
 	@Test
 	public void test4() {
 		String examName = "albatoba";
-		String openBook = Exam.CLOSED_BOOK;
+		String openBook = Exam.NoteType.CLOSED_BOOK;
 		String[] subLecturers = null;
 		File[] materials = null;
 		int examDuration = 100;
 		int numVariants = 1;
-		String examType = Exam.EXAM_TYPE_FINAL;
+		String examType = Exam.ExamType.FINAL;
 		int albatobaExamId = exManager.createNewExam(lecturer.getUserID(), examName, openBook, subLecturers, materials,
 				examDuration, numVariants, examType);
 		//Exam albatobaExam = exManager.getExamByExamId(albatobaExamId);
 
 		String newExamName = "kalkulusi";
-		String newOpenBook = Exam.OPEN_BOOK;
+		String newOpenBook = Exam.NoteType.OPEN_BOOK;
 		String[] newSubLecturers = null;
 		File[] newMaterials = null;
 		int newExamDuration = 200;
 		int newNumVariants = 2;
-		String newExamType = Exam.EXAM_TYPE_MIDTERM;
+		String newExamType =  Exam.ExamType.MIDTERM;
 
 		int kalkulusiExamId = exManager.createNewExam(lecturer.getUserID(), newExamName, newOpenBook, newSubLecturers,
 				newMaterials, newExamDuration, newNumVariants, newExamType);
