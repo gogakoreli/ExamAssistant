@@ -3,8 +3,11 @@ package servlets;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,9 +46,12 @@ import models.Lecturer;
 @WebServlet("/ModifyExam")
 public class ModifyExamServlet extends HttpServlet implements ISecure {
 	private static final long serialVersionUID = 1L;
+
+	public static final String EXAM_ID_PARAM_NAME = "examID";
 	public static final String NEW_EXAM_STATUS = "newexam";
 	public static final String MODIFY_EXAM_STATUS = "modifyexam";
 	private static final int MAX_UPLOAD_FILE_SIZE = 4 * 1024;
+
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -64,6 +70,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		SecurityChecker checker = new SecurityChecker(request, this);
 		if (checker.CheckPermissions()) {
 			Exam examToEdit = getEditExam(request);
+			fillExamWithAditionalInfo(examToEdit, request);
 			request.setAttribute("exam", examToEdit);
 			RequestDispatcher dispatch = request.getRequestDispatcher("ModifyExam.jsp");
 			dispatch.forward(request, response);
@@ -74,8 +81,22 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 	// TODO needs testing for security
 
+	/*
+	 * adds aditional info to exam which we wont to display like sublecturers or
+	 * creator info
+	 */
+	private void fillExamWithAditionalInfo(Exam examToEdit, HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		setCreatorNameForExam(examToEdit, request);
+		setSubLecturersForExam(examToEdit, request);
+	}
+
 	@Override
-	/** checks if user has permission to access exam or create new one */
+	/**
+	 * checks if user has permission to access exam or create new one. if
+	 * CheckInfo returns true this means Exam was detected which needs to be
+	 * created or edited
+	 */
 	public boolean CheckInfo(EAUser user, HttpServletRequest request) {
 		if (isNewExamRequest(request)) {
 			// ensure its lecturer who creates new exam
@@ -91,13 +112,23 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 	/* checks if its request for new exam or not */
 	private boolean isNewExamRequest(HttpServletRequest request) {
-		return (request.getParameter("newExam") != null);
+
+		boolean isNewExamFromGet = (request.getParameter("newExam") != null);
+
+		String examIdstr = getParametherFromRequest(request, EXAM_ID_PARAM_NAME, "" + ExamManager.NO_EXAM_ID);
+		int ExamID = Integer.getInteger(examIdstr, ExamManager.NO_EXAM_ID);
+		boolean isNewExamFromPost = (ExamID == ExamManager.NEW_EXAM_ID);
+
+		return isNewExamFromGet || isNewExamFromPost;
 	}
 
-	/* retrives exam id from request we are working on */
+	/*
+	 * retrives exam id from request we are working on if error occured while
+	 * retriving NO_EXAM_ID is returned
+	 */
 	private int getExamIdFromRequest(HttpServletRequest request) {
 		int examID = ExamManager.NO_EXAM_ID;
-		Object param = request.getParameter("examID");
+		Object param = request.getParameterValues(EXAM_ID_PARAM_NAME);
 		try {
 			examID = Integer.parseInt((String) param);
 		} catch (Exception ignored) {
@@ -120,15 +151,16 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	 * 
 	 * returns null if there was error reading examId from request or error
 	 * happened while reading exam info from exam manager
+	 * 
+	 * returns new instance of Exam with id EMPTY_EXAM_ID if is new exam
 	 */
 	private Exam getEditExam(HttpServletRequest request) {
 		if (isNewExamRequest(request))
-			return ExamManager.EMPTY_EXAM;
+			return new Exam(ExamManager.NEW_EXAM_ID);
 		ExamManager examManager = ExamManager.getExamManager(request.getSession());
 		Exam examToEdit = examManager.getExamByExamId(getExamIdFromRequest(request));
-
-		setCreatorNameForExam(examToEdit, request);
-		setSubLecturersForExam(examToEdit, request);
+		if (examToEdit == ExamManager.WRONG_EXAM)
+			return null;
 		return examToEdit;
 	}
 
@@ -148,73 +180,178 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			examToEdit.setCreator(examCreator);
 		}
 	}
-	
-	/* handles file uploads saves them ftp server and on writes url in db */
-	private void handleFileUplaods(HttpServletRequest request){
-		  // Check that we have a file upload request
-	      boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-	      int maxFileSize = 50 * 1024 * 1024;
-	      int maxMemSize = 4 * 1024;
-	      String  filePath = 
-	              getServletContext().getInitParameter("file-upload"); 
-	      
-	      DiskFileItemFactory factory = new DiskFileItemFactory();
-	      // maximum size that will be stored in memory
-	      factory.setSizeThreshold(maxFileSize);
-	      // Location to save data that is larger than maxMemSize.
-	      factory.setRepository(new File("c:\\temp"));
 
-	      // Create a new file upload handler
-	      ServletFileUpload upload = new ServletFileUpload(factory);
-	      // maximum file size to be uploaded.
-	      upload.setSizeMax( maxFileSize );
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		SecurityChecker checker = new SecurityChecker(request, this);
+		if (checker.CheckPermissions()) {
+			Exam examToEdit = getEditExam(request);
+			if (examToEdit == null) {
+				response.sendRedirect("/ExamAssistant/ErrorPage.jsp");
+			}
 
-	      try{ 
-	      // Parse the request to get file items.
-	      List<FileItem> fileItems = upload.parseRequest(request);
-		
-	      // Process the uploaded file items
-	      Iterator<FileItem> i = fileItems.iterator();
-	      File file ;
-	      while ( i.hasNext () ) 
-	      {
-	         FileItem fi = (FileItem)i.next();
-	         if ( !fi.isFormField () )	
-	         {
-	            // Get the uploaded file parameters
-	            String fieldName = fi.getFieldName();
-	            String fileName = fi.getName();
-	            String contentType = fi.getContentType();
-	            boolean isInMemory = fi.isInMemory();
-	            long sizeInBytes = fi.getSize();
-	            // Write the file
-	            if( fileName.lastIndexOf("\\") >= 0 ){
-	               file = new File( filePath + 
-	               fileName.substring( fileName.lastIndexOf("\\"))) ;
-	            }else{
-	               file = new File( filePath + 
-	               fileName.substring(fileName.lastIndexOf("\\")+1)) ;
-	            }
-	            fi.write( file ) ;
-	         }
-	      }
-	   
-	   }catch(Exception ex) {
-	       System.out.println(ex);
-	   }
+			// here we have valid exam to edit and paramethers for this editing.
+			examToEdit.setExamEditor(checker.getUser());
+			editAndSaveExam(examToEdit, request);
+
+		} else {
+			checker.redirectToValidPage(response);
+		}
+
 	}
+
+	/***************************************************************/
+
+	/*********** functions for modifying exam and saving ************/
+	/***************************************************************/
+
+	/* filles examtoEdit with new values and processes its save in database */
+	private void editAndSaveExam(Exam examToEdit, HttpServletRequest request) {
+		setNewBasicValues(examToEdit, request);
+		printExamForTesting(examToEdit);
+		updateExamInDb(examToEdit, request);
+
+	}
+
+	/* prints exams info for testing purposes on console */
+	private void printExamForTesting(Exam examToEdit) {
+		LogManager.logInfoMessage(examToEdit.toString());
+	}
+
+	/*
+	 * sets new values of Exam before processing it to save in db. we try to set
+	 * every value Editable value of new Exam but some of them may not be
+	 * changeble for given user or at all in that case fields are saved
+	 * unchanged
+	 */
+	private void setNewBasicValues(Exam examToEdit, HttpServletRequest request) {
+		examToEdit.setName(getParametherFromRequest(request, "examName", examToEdit.getName()));
+		examToEdit.setType(getParametherFromRequest(request, "examType", examToEdit.getType()));
+		examToEdit.setDuration(getNewDuration(request, examToEdit.getDuration()));
+		examToEdit.setStartTime(getNewStartTime(request, examToEdit.getStartDateTime()));
+		examToEdit.setNoteType(getNewNoteType(request, examToEdit.getNoteType()));
+	}
+
+	private String getNewNoteType(HttpServletRequest request, String noteType) {
+		String isOpenBook = getParametherFromRequest(request, "openbookcb", Exam.NoteType.CLOSED_BOOK);
+		String isOpenNote = getParametherFromRequest(request, "openNote", isOpenBook);
+		return isOpenNote;
+	}
+
+	/* returns new starttime for given exam by commbining its start date and start clock */
+	private Date getNewStartTime(HttpServletRequest request, Date defaultDate) {
+		String startDate = getParametherFromRequest(request, "examStartDate", "");
+		String startTime = getParametherFromRequest(request, "examStartTime", "");
+		if (startDate.equals("") || startTime.equals(""))
+			return defaultDate;
+
+		SimpleDateFormat format = new SimpleDateFormat("MM/DD/YYYY hh:mm");
+		java.util.Date parsed = null;
+		try {
+			parsed = format.parse(startDate + " " + startTime);
+		} catch (ParseException e) {
+			return defaultDate;
+		}
+		Date newDate = new Date(parsed.getTime());
+		return newDate;
+	}
+
+	/* returns new duration set in request */
+	private int getNewDuration(HttpServletRequest request, int defaultduration) {
+		return Integer.getInteger(getParametherFromRequest(request, "examDuration", "" + defaultduration),
+				defaultduration);
+	}
+	
+	
+	
+
+	/*
+	 * passes this exam @examToEdit to ExamManager to process update of given
+	 * exam in db
+	 */
+	private void updateExamInDb(Exam examToEdit, HttpServletRequest request) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * gets paramether @parametherName from given request @request if it's not
+	 * exists returns @deaultValue
+	 */
+	private String getParametherFromRequest(HttpServletRequest request, String parametherName, String defaultValue) {
+		String[] paramVals = request.getParameterValues(parametherName);
+		//String paramVal = request.getParameter(parametherName);
+		if (paramVals == null || (paramVals.length == 0))
+			return defaultValue;
+		return paramVals[0];
+	}
+
+	/* handles file uploads saves them ftp server and on writes url in db */
+	private void handleFileUplaods(HttpServletRequest request) {
+		// Check that we have a file upload request
+		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+		int maxFileSize = 50 * 1024 * 1024;
+		int maxMemSize = 4 * 1024;
+		String filePath = getServletContext().getInitParameter("file-upload");
+
+		DiskFileItemFactory factory = new DiskFileItemFactory();
+		// maximum size that will be stored in memory
+		factory.setSizeThreshold(maxFileSize);
+		// Location to save data that is larger than maxMemSize.
+		factory.setRepository(new File("c:\\temp"));
+
+		// Create a new file upload handler
+		ServletFileUpload upload = new ServletFileUpload(factory);
+		// maximum file size to be uploaded.
+		upload.setSizeMax(maxFileSize);
+
+		try {
+			// Parse the request to get file items.
+			List<FileItem> fileItems = upload.parseRequest(request);
+
+			// Process the uploaded file items
+			Iterator<FileItem> i = fileItems.iterator();
+			File file;
+			while (i.hasNext()) {
+				FileItem fi = (FileItem) i.next();
+				if (!fi.isFormField()) {
+					// Get the uploaded file parameters
+					String fieldName = fi.getFieldName();
+					String fileName = fi.getName();
+					String contentType = fi.getContentType();
+					boolean isInMemory = fi.isInMemory();
+					long sizeInBytes = fi.getSize();
+					// Write the file
+					if (fileName.lastIndexOf("\\") >= 0) {
+						file = new File(filePath + fileName.substring(fileName.lastIndexOf("\\")));
+					} else {
+						file = new File(filePath + fileName.substring(fileName.lastIndexOf("\\") + 1));
+					}
+					fi.write(file);
+				}
+			}
+
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+	}
+
+	/***************************************************************/
+	/*********** end of functions for modifying exam ***************/
+	/***************************************************************/
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost1(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		SecurityChecker checker = new SecurityChecker(request, null);
 		if (checker.CheckPermissions()) {
-			
+
 			handleFileUplaods(request);
-			if (true) return;//testing purpose 
+			if (true)
+				return;// testing purpose
 			if (checkExamSavedButtonCliqued(request)) {
 				EAUser user = checker.getUser();
 				ExamManager manager = ExamManager.getExamManager(request.getSession());
@@ -261,10 +398,11 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	}
 
 	private String getExamResourceType(HttpServletRequest request) {
-		if (request.getParameter("examStatus") != null) {
+		/* if (request.getParameter("examStatus") != null) {
 			return Exam.OPEN_BOOK;
 		} else
-			return Exam.CLOSED_BOOK;
+			return Exam.CLOSED_BOOK; */
+		return null;
 	}
 
 	private String getExamName(HttpServletRequest request) {
@@ -309,11 +447,12 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	private String getExamType(HttpServletRequest request) {
 		// TODO dasamatebelia checkBox ModifyExam.jsp rom achvenos statusi
 		if (request.getParameter("examType").equals("Final")) {
-			return Exam.EXAM_TYPE_FINAL;
+			// return Exam.EXAM_TYPE_FINAL;
 		} else if (request.getParameter("examType").equals("Midterm")) {
-			return Exam.EXAM_TYPE_MIDTERM;
-		} else
-			return Exam.EXAM_TYPE_QUIZZ;
+			// return Exam.EXAM_TYPE_MIDTERM;
+		}
+		return null;
+		// return Exam.EXAM_TYPE_QUIZZ;
 	}
 
 }
