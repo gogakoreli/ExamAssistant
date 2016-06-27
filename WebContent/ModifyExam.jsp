@@ -136,7 +136,8 @@
 			var li = document.createElement("li");
 			li.innerHTML = '<label> '
 					+ name
-					+ ' </label> <button type="button" onclick="removeSubLectuer(\''
+					+ ' </label> <input type="hidden" name="sublec[]" value="' + id
+					+'"> <button type="button" onclick="removeSubLectuer(\''
 					+ liid + '\')">'
 					+ '<i class="glyphicon-remove"></i></button>';
 			li.setAttribute("id", liid); // added line
@@ -173,7 +174,10 @@
 		class="glyphicon glyphicon-log-out"> </span> Log out
 	</a>
 	<h1>This is Exams page</h1>
-	<form action="Student" method="post">
+	<form action="ModifyExam" method="post" >
+	
+	<input type="hidden" name="<%=ModifyExamServlet.EXAM_ID_PARAM_NAME %>" value="<%=exam.getExamID()%>">
+	
 		<div id="startExam">
 			<p class="title">გამოცდა</p>
 			<table class="detail-car-table">
@@ -250,7 +254,8 @@
 						<th class="th-left">
 							<div class="th-key">Open Book:</div>
 							<div class="th-value">
-								<input type="checkbox" name="openbookcb" id="openbookcb">
+								<input type="checkbox" name="openbookcb" id="openbookcb" value
+									<%=Exam.NoteType.OPEN_BOOK%>>
 								<div id="opennodediv" class="hiddencb">
 									Open Note: <input type="checkbox" name="openNote" id="openNote">
 								</div>
@@ -308,11 +313,11 @@
 								<script type='text/javascript'>
 									
 								<%/* adding sub lecturers to exam */
-									for (Lecturer curLec : exam.getSubLecturers()) {
-						
-										out.append("addNewLecturer(" + curLec.getUserID() + ",'"
-												+ (curLec.getFirstName() + " " + curLec.getLastName()) + "');\n\r");
-									}%>
+			for (Lecturer curLec : exam.getSubLecturers()) {
+
+				out.append("addNewLecturer(" + curLec.getUserID() + ",'"
+						+ (curLec.getFirstName() + " " + curLec.getLastName()) + "');\n\r");
+			}%>
 									
 								</script>
 
@@ -353,7 +358,7 @@
 				</tbody>
 			</table>
 			<input class="start" onclick="EnibleEditing()" type="button"
-				value="გამოცდის დაწყება">
+				value="Save "> <input type="submit" value="Submit">
 		</div>
 	</form>
 </body>

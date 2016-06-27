@@ -23,9 +23,11 @@ import models.Student;
 
 public class ExamManager {
 
-	public static final int NO_EXAM_ID = -1;// id of exam which isnot found in
-											// db
-	public static final Exam EMPTY_EXAM = new Exam(NO_EXAM_ID);
+	public static final int NO_EXAM_ID = -1;// id of exam which is not found in db
+	public static final Exam WRONG_EXAM = new Exam(NO_EXAM_ID);
+	
+	public static final int NEW_EXAM_ID = 0;//id of new empty exam 
+	public static final Exam EMPTY_EXAM = new Exam(NEW_EXAM_ID);
 
 	private Map<Integer, Exam> exams;
 
@@ -207,10 +209,10 @@ public class ExamManager {
 
 	/**
 	 * Simply gets the exam by its id. if this exam doesnot exists returns
-	 * EMPTY_EXAM;
+	 * WRONG_EXAM;
 	 */
 	public Exam getExamByExamId(int examID) {
-		Exam result = EMPTY_EXAM;
+		Exam result = WRONG_EXAM;
 		if (examID > 0) {
 			String getExamQuery = "select * from exam where ExamID =" + examID + ";";
 			DBConnector connector = new DBConnector();
@@ -218,7 +220,7 @@ public class ExamManager {
 			if (queryResult.isSuccess()) {
 				result = new Exam(queryResult.getResultSet());
 				if (result.isEmptyExam()) // if no Exam found
-					result = EMPTY_EXAM;
+					result = WRONG_EXAM;
 			}
 			connector.dispose();
 		}
@@ -332,7 +334,8 @@ public class ExamManager {
 		return result;
 	}
 
-	/** checks if user id can access exam @examid */
+	/** checks if user id can access exam @examid if exam doesnot exists with that id 
+	 *  false is returned  */
 	public boolean CanUserAccessExam(EAUser user, int examId) {
 		boolean result = false;
 		String getExamQuery = getSqlQueryForUserAccessExam(user.getUserID(), examId);
