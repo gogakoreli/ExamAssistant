@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 
 import data_managers.AccountManager;
 import data_managers.ExamManager;
+import helper.DBConnector;
 import models.EAUser;
 import models.Exam;
 import models.Lecturer;
@@ -35,16 +36,6 @@ public class ChatroomServerEndpoint {
 	public void onOpen(Session userSession, EndpointConfig config) {
 		HttpSession httpSession = (HttpSession) config.getUserProperties().get(HttpSession.class.getName());
 		sessions.put(userSession, httpSession);
-		/*
-		AccountManager accountManager = AccountManager.getAccountManager(httpSession);
-		EAUser user = accountManager.getCurrentUser(httpSession);
-		chatroomUsers.put(userSession, user);
-		if (user instanceof Student) {
-			ExamManager examManager = ExamManager.getExamManager(httpSession);
-			Student student = (Student) accountManager.getCurrentUser(httpSession);
-			studentExam.put(student, examManager.getExamForStudent(student));
-		} 
-		*/
 	}
 	
 	private EAUser getUserFromSession(Session session){
@@ -69,40 +60,65 @@ public class ChatroomServerEndpoint {
 	@OnMessage
 	public void onMessage(String msg, Session session) throws IOException {
 		EAUser user = getUserFromSession(session);
-		
+		HttpSession httpSession = sessions.get(session);
+		ExamManager examManager = ExamManager.getExamManager(httpSession);
+		AccountManager accountManager = AccountManager.getAccountManager(httpSession);
 		Iterator<Session> it = sessions.keySet().iterator();
 		while (it.hasNext()) {
-			Session s = it.next();
-			if(s.isOpen()){
+			Session curSession = it.next();
+			//TODO ak sheileba sheicvalos da bazashi werdes
+			if(curSession.isOpen()){
 				//TODO ak unda chaisvas generateMessage()
-				if(s.equals(session)){
-					s.getBasicRemote().sendText(buildJson("You", msg));
+				generateMessage(session, curSession, user, msg, examManager, accountManager);
+				//updateMessageTableInDB(2, 3, "bla");
+				/*
+				if(curSession.equals(session)){
+					curSession.getBasicRemote().sendText(buildJson("You", msg));
 					continue;
 				}else{
-					s.getBasicRemote().sendText(buildJson(user.getFirstName(), msg));
+					curSession.getBasicRemote().sendText(buildJson(user.getFirstName(), msg));
 				}
+				*/
 			}
 		}
 		
 	}
 	
-	private void generateMessage(Session curSession, Session mainSession, EAUser user, String msg) throws IOException{
+	/** 
+	 * generates message from mainSession to curSession if it is valid
+	 * user is user which entered from mainSession
+	 */
+	
+	private void generateMessage(Session mainSession, Session curSession, EAUser user, 
+			String msg, ExamManager examManager, AccountManager accountManager) throws IOException{
 		mainSession.getBasicRemote().sendText(buildJson("You", msg));
 		if(curSession.equals(mainSession)) return;
 			
-		HttpSession httpSession = sessions.get(curSession);
-		ExamManager examManager = ExamManager.getExamManager(httpSession);
-		AccountManager accountManager = AccountManager.getAccountManager(httpSession);
-		if(sessionIsStudent(curSession)){
+		HttpSession httpSession = sessions.get(mainSession);
+		if(sessionIsStudent(mainSession) && sessionIsLecturer(curSession)){
 			Student student = (Student) accountManager.getCurrentUser(httpSession);
+			Lecturer curLecturer = (Lecturer) accountManager.getCurrentUser(sessions.get(curSession));
 			Exam curExam = examManager.getExamForStudent(student);
-			//List<Lecturer> lecturers = curExam.getSubLecturers();
+			List<Lecturer> lecturers = examManager.downloadSubLecturers(curExam);
+			for(Lecturer lecturer : lecturers){
+				if(lecturer.equals(curLecturer)){
+					//TODO gaugzavne am lektors message
+					curSession.getBasicRemote().sendText(buildJson(user.getFirstName(), msg));
+				}
+			}
+			
 		}else if (sessionIsLecturer(curSession)){
 			
 		}
 		//s.getBasicRemote().sendText(buildJson(user.getFirstName(), msg));
 	}
 	
+	private void updateMessageTableInDB(int fromId, int toId, String msg){
+		String updateQuery = "insert into message (fromId, toId, messageText, time) values("+fromId+", "+toId+", '"+msg+"', now());";
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(updateQuery);
+		connector.dispose();
+	}
 	
 	private String buildJson(String userName, String message) {
 		String json = new Gson().toJson(userName + " :" + message);
