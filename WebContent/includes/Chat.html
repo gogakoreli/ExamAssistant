@@ -6,20 +6,18 @@
  src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js">
 </script >
 
- <script >
+<script>
 
-$(document).ready(function(){
-    $("#hide").click(function(){
- $(".dd").hide();
-   $("input[type=button]").hide();
-   $(".chat").hide();
-    });
-    $("#show").click(function(){
-        $(".dd").show();
-   $("input[type=button]").show();
-   $(".chat").show();
-    });
-});
+$(
+	document).ready(function() {
+		$("#hide").click(function() {
+			$(".chat").hide();
+		});
+		$("#show").click(function() {
+			$("input[type=button]").show();
+			$(".chat").show();
+		});
+	});
 </script>
 
 
@@ -105,7 +103,7 @@ body {
 </head>
 <body>
  <div class="chat-title">
-  CHAT <button id = "show"> Show chat</button>
+  <h2> CHAT </h2> <button id = "show"> Show chat</button>
   <button id = "hide"> Hide chat </button>
  </div>
  <div class="chat">
