@@ -44,23 +44,23 @@ public class LecturerServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		//sdoPost(request, response);
+		// sdoPost(request, response);
 		HttpSession session = request.getSession();
 		ExamManager examManager = ExamManager.getExamManager(session);
 		SecurityChecker checker = new SecurityChecker(request, null);
 		if (checker.CheckPermissions()) {
-			Lecturer lecturer = (Lecturer)checker.getUser();
+			Lecturer lecturer = (Lecturer) checker.getUser();
 			request.setAttribute("lecturer", lecturer);
-			
+
 			ArrayList<Exam> exams = examManager.getAllExamsForLecturer(lecturer);
 			request.setAttribute("exams", exams);
-			
+
 			RequestDispatcher dispatch = request.getRequestDispatcher("Lecturer.jsp");
 			dispatch.forward(request, response);
-		}else{
+		} else {
 			checker.redirectToValidPage(response);
 		}
-		
+
 	}
 
 	/**
@@ -69,20 +69,20 @@ public class LecturerServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		/* SecurityChecker checker = new SecurityChecker(request, null);
-		if (checker.CheckPermissions()) {
-			if (request.getParameter("newExam") != null) {// new exam
-				//newExamClicked(request, response);
-			}
-		} else {
-			checker.redirectToValidPage(response);
-		}*/
+		/*
+		 * SecurityChecker checker = new SecurityChecker(request, null); if
+		 * (checker.CheckPermissions()) { if (request.getParameter("newExam") !=
+		 * null) {// new exam //newExamClicked(request, response); } } else {
+		 * checker.redirectToValidPage(response); }
+		 */
 
 	}
 
-	/* private void newExamClicked(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		request.setAttribute("status", ModifyExamServlet.NEW_EXAM_STATUS);
-		response.sendRedirect("/ExamAssistant/ModifyExam");
-	} */
+	/*
+	 * private void newExamClicked(HttpServletRequest request,
+	 * HttpServletResponse response) throws IOException, ServletException {
+	 * request.setAttribute("status", ModifyExamServlet.NEW_EXAM_STATUS);
+	 * response.sendRedirect("/ExamAssistant/ModifyExam"); }
+	 */
 
 }
