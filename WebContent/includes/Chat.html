@@ -11,17 +11,38 @@
 	webSocket.onmessage = function processMessage(message) {
 		//var json = JSON.parse(message);
 
-		//var msgFromId = json.messageFromId;
-		//var msgFromName = json.messageFromName;
-		//var msgText = json.messageText;
-		console.log("called from " + message.data);
-		var gson = message.data;
-		messageTextArea.value += gson + "\n";
-		
-		document.getElementById('textid');
-		
-		
-		
+		var msgFromId = json.messageFromId;
+		var msgFromName = json.messageFromName;
+		var msgText = json.messageText;
+
+		var chatdivid = 'chat' + msgFromId;
+		var chatdiv = document.getElementById(chatdivid);
+		if (chatdiv === null) {
+			addChatWith(msgFromId, msgFromName);
+			chatdiv = document.getElementById(chatdivid);
+		}
+
+		//iDiv.appendChild(innerDiv);	
+
+		//console.log("called from " + message.data);
+		//var gson = message.data;
+		//messageTextArea.value += gson + "\n";
+		//document.getElementById('textid');
+	}
+
+	//adds chat window 
+	function addChatWith(msgFromId, msgFromName) {
+		var chatdivid = 'chat' + msgFromId;
+		var div = document.createElement('div');
+		div.setAttribute("id", chatdivid);
+		div.className = "chat";
+		div.innerHTML = '<div class="chat-title" id="divchattitle' + msgFromId + '"> <p>'
+				+ msgFromName
+				+ '</p> </div> <div class="dd" id="divmsgflow' + msgFromId + '"> <textarea id="messageswith' + msgFromId + '" style="color: green; border: 1px solid #ffaa00;" ' +
+		'readonly="readonly" rows="10" cols="45"></textarea></div> <textarea class="message-input" placeholder="Type message..." id="messagetext' + msgFromId + '"> </textarea> <input type="button" value="Send" onclick="sendMessage('
+				+ msgFromId + ');" />';
+
+		document.getElementById('chatsys').appendChild(div);
 	}
 
 	function sendMessage() {
@@ -82,63 +103,14 @@ body {
 
 <body>
 
-	<div id=chatsys>
-		<div class="chat" id="chat">
-			<div class="chat-title">
-				<p>leqtoris saxeli</p>
-			</div>
-			<div class="dd">
-				<textarea style="color: green; border: 1px solid #ffaa00;"
-					id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
-			</div>
-			<textarea class="message-input" id="messageText"
-				placeholder="Type message..."> </textarea>
-			<input type="button" value="Send" onclick="sendMessage();" />
-		</div>
+	<div id='chatsys'>
 		
-		
+		<script>
+			addChatWith(131, 'amiran melia');
+			addChatWith(132, 'gela magaltadze');
+		</script>
 
 
-	
-
-		<div class="chat" id="chat131">
-			<div class="chat-title" id="divchattitle131">
-				<p>leqtoris saxeli</p>
-			</div>
-
-			<div class="dd" id="divmsgflow131">
-
-				<textarea id="messageswith131"
-					style="color: green; border: 1px solid #ffaa00;"
-					readonly="readonly" rows="10" cols="45"></textarea>
-
-			</div>
-			<textarea class="message-input" placeholder="Type message..."
-				id="messagetext131"> </textarea>
-			<input type="button" value="Send" onclick="sendMessage(131);" />
-		</div>
-
-
-
-
-
-
-		<div class="chat" id="chatwith131">
-			<div class="chat-title">
-				<p>leqtoris saxeli</p>
-			</div>
-			<div class="dd">
-				<textarea style="color: green; border: 1px solid #ffaa00;"
-					id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
-			</div>
-			<textarea class="message-input" id="messageText"
-				placeholder="Type message..."> </textarea>
-			<input type="button" value="Send" onclick="sendMessage();" />
-		</div>
-		
-		
-		
-		
 
 	</div>
 
