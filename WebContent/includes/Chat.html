@@ -9,11 +9,16 @@
 			"ws://localhost:8080/ExamAssistant/ChatroomServerEndpoint");
 
 	webSocket.onmessage = function processMessage(message) {
-		//var json = JSON.parse(message);
 
-		var msgFromId = json.messageFromId;
-		var msgFromName = json.messageFromName;
-		var msgText = json.messageText;
+		//console.log(message);
+		var json = JSON.parse(message.data);
+
+		var msgFromId = json.fromId;
+		var msgFromName = json.name;
+		var msgText = json.message;
+		console
+				.log("called!  " + msgFromId + " " + msgFromName + " "
+						+ msgText);
 
 		var chatdivid = 'chat' + msgFromId;
 		var chatdiv = document.getElementById(chatdivid);
@@ -22,12 +27,8 @@
 			chatdiv = document.getElementById(chatdivid);
 		}
 
-		//iDiv.appendChild(innerDiv);	
-
-		//console.log("called from " + message.data);
-		//var gson = message.data;
-		//messageTextArea.value += gson + "\n";
-		//document.getElementById('textid');
+		var msgtxtarea = document.getElementById('messageswith' + msgFromId);
+		msgtxtarea.value += msgText + "\n";
 	}
 
 	//adds chat window 
@@ -45,9 +46,17 @@
 		document.getElementById('chatsys').appendChild(div);
 	}
 
-	function sendMessage() {
-		webSocket.send(messageText.value);
-		messageText.value = "";
+	function sendMessage(sendTo) {
+		
+		console.log("sending message !  ");
+		var messagetext = document.getElementById('messagetext' + sendTo);
+		webSocket.send(JSON.stringify({
+			sendto : sendTo,
+			message : messagetext.value
+		}));
+		var msgtxtarea = document.getElementById('messageswith' + sendTo);
+		msgtxtarea.value += 'You: ' + messagetext.value + "\n";
+		messagetext.value = "";
 	}
 </script>
 
@@ -104,9 +113,9 @@ body {
 <body>
 
 	<div id='chatsys'>
-		
+
 		<script>
-			addChatWith(131, 'amiran melia');
+			addChatWith(2, 'goga koreli');
 			addChatWith(132, 'gela magaltadze');
 		</script>
 

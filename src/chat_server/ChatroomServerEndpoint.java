@@ -91,7 +91,7 @@ public class ChatroomServerEndpoint {
 	
 	private void generateMessage(Session mainSession, Session curSession, EAUser user, 
 			String msg, ExamManager examManager, AccountManager accountManager) throws IOException{
-		mainSession.getBasicRemote().sendText("You :"+msg);
+		//mainSession.getBasicRemote().sendText("You :"+msg);
 		if(curSession.equals(mainSession)) return;
 			
 		HttpSession httpSession = sessions.get(mainSession);
