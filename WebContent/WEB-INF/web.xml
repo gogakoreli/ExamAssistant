@@ -15,7 +15,7 @@
     <description>Location to store uploaded file</description> 
     <param-name>file-upload</param-name> 
     <param-value>
-        D:\oop\ExamAssistant\FileUploads\
+        D:\FileUploads
      </param-value> 
 </context-param>
 

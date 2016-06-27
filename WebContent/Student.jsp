@@ -9,6 +9,7 @@
 
 
 <%@ include file="includes/logoutscripts.html" %>
+<%@ include file="includes/Chat.html" %>
 
 <style>
 body {

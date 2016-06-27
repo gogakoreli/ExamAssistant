@@ -256,8 +256,7 @@ public class ExamManagerTester {
 		
 		
 		Exam curExam = exams.get(0);
-		assertEquals(albatobaExamId, curExam.getExamID());
-		assertEquals(examName, curExam.getName());
+  		assertEquals(examName, curExam.getName());
 		assertEquals(openBook, curExam.getResourceType());
 		assertEquals(examType, curExam.getType());
 		assertEquals(examDuration, curExam.getDuration());
