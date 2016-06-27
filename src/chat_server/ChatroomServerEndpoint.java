@@ -1,5 +1,8 @@
 package chat_server;
 
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,9 +59,17 @@ public class ChatroomServerEndpoint {
 	public void onClose(Session session) {
 		sessions.remove(session);
 	}
-
+	
+	
+	private GsonMessage fromGsonToGsonMessage(String json){
+		Type gsonMessageType = new TypeToken<GsonMessage>(){}.getType();
+		GsonMessage msg = new Gson().fromJson(json, gsonMessageType);
+		return msg;
+	}
+	
 	@OnMessage
-	public void onMessage(String msg, Session session) throws IOException {
+	public void onMessage(String json, Session session) throws IOException {
+		GsonMessage myMessage = fromGsonToGsonMessage(json);
 		EAUser user = getUserFromSession(session);
 		HttpSession httpSession = sessions.get(session);
 		ExamManager examManager = ExamManager.getExamManager(httpSession);
@@ -69,7 +80,7 @@ public class ChatroomServerEndpoint {
 			//TODO ak sheileba sheicvalos da bazashi werdes
 			if(curSession.isOpen()){
 				//TODO ak unda chaisvas generateMessage()
-				generateMessage(session, curSession, user, msg, examManager, accountManager);
+				generateMessage(session, curSession, user, myMessage, examManager, accountManager);
 				//updateMessageTableInDB(2, 3, "bla");
 				/*
 				if(curSession.equals(session)){
@@ -90,8 +101,8 @@ public class ChatroomServerEndpoint {
 	 */
 	
 	private void generateMessage(Session mainSession, Session curSession, EAUser user, 
-			String msg, ExamManager examManager, AccountManager accountManager) throws IOException{
-		mainSession.getBasicRemote().sendText("You :"+msg);
+			GsonMessage myMessage, ExamManager examManager, AccountManager accountManager) throws IOException{
+		//TODO javascriptshi unda daiweros you: da texti rac gaagzavne
 		if(curSession.equals(mainSession)) return;
 			
 		HttpSession httpSession = sessions.get(mainSession);
@@ -103,14 +114,13 @@ public class ChatroomServerEndpoint {
 			for(Lecturer lecturer : lecturers){
 				if(lecturer.equals(curLecturer)){
 					//TODO gaugzavne am lektors message
-					curSession.getBasicRemote().sendText(buildJson(user, msg));
+					curSession.getBasicRemote().sendText(buildJson(user, myMessage.message));
+					break;
 				}
 			}
-			
 		}else if (sessionIsLecturer(curSession)){
 			
 		}
-		//s.getBasicRemote().sendText(buildJson(user.getFirstName(), msg));
 	}
 	
 	private void updateMessageTableInDB(int fromId, int toId, String msg){
