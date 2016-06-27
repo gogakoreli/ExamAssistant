@@ -115,9 +115,8 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 		boolean isNewExamFromGet = (request.getParameter("newExam") != null);
 
-		String examIdstr = getParametherFromRequest(request, EXAM_ID_PARAM_NAME, "" + ExamManager.NO_EXAM_ID);
-		int ExamID = Integer.getInteger(examIdstr, ExamManager.NO_EXAM_ID);
-		boolean isNewExamFromPost = (ExamID == ExamManager.NEW_EXAM_ID);
+		int examID = getExamIdFromRequest(request);
+		boolean isNewExamFromPost = (examID == ExamManager.NEW_EXAM_ID);
 
 		return isNewExamFromGet || isNewExamFromPost;
 	}
@@ -127,13 +126,18 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	 * retriving NO_EXAM_ID is returned
 	 */
 	private int getExamIdFromRequest(HttpServletRequest request) {
-		int examID = ExamManager.NO_EXAM_ID;
-		Object param = request.getParameterValues(EXAM_ID_PARAM_NAME);
-		try {
-			examID = Integer.parseInt((String) param);
-		} catch (Exception ignored) {
+		String examIdstr = getParametherFromRequest(request, EXAM_ID_PARAM_NAME, "" + ExamManager.NO_EXAM_ID);
+		int ExamID = getIntFromString(examIdstr, ExamManager.NO_EXAM_ID);
+		return ExamID;
+	}
+	
+	/* gets integer from string if error happened during parsing defVal is returned */
+	private int getIntFromString(String toParse, int defVal){
+		try{
+			return Integer.parseInt(toParse);
+		}catch(Exception e){
+			return defVal;
 		}
-		return examID;
 	}
 
 	/* checks if user @user has permission to view exam @examId */
@@ -258,7 +262,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 	/* returns new duration set in request */
 	private int getNewDuration(HttpServletRequest request, int defaultduration) {
-		return Integer.getInteger(getParametherFromRequest(request, "examDuration", "" + defaultduration),
+		return getIntFromString(getParametherFromRequest(request, "examDuration", "" + defaultduration),
 				defaultduration);
 	}
 	

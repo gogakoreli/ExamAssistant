@@ -7,10 +7,21 @@
 <script type="text/javascript">
 	var webSocket = new WebSocket(
 			"ws://localhost:8080/ExamAssistant/ChatroomServerEndpoint");
-	
+
 	webSocket.onmessage = function processMessage(message) {
+		//var json = JSON.parse(message);
+
+		//var msgFromId = json.messageFromId;
+		//var msgFromName = json.messageFromName;
+		//var msgText = json.messageText;
+		console.log("called from " + message.data);
 		var gson = message.data;
 		messageTextArea.value += gson + "\n";
+		
+		document.getElementById('textid');
+		
+		
+		
 	}
 
 	function sendMessage() {
@@ -21,11 +32,12 @@
 
 <style>
 .chat {
-	width: 80%;
+	width: 300px;
 	height: 300px;
 	overflow: hidden;
 	background: rgba(0, 0, 0, .5);
 	border-radius: 20px;
+	display: inline-block;
 }
 
 .dd {
@@ -63,28 +75,73 @@ body {
 	text-align: left;
 	padding: 10px 10px 10px 50px;
 }
-
-
-
 </style>
 
 
 </head>
 
 <body>
-	<div class="chat">
-		<div class="chat-title">
-			<p>leqtoris saxeli </p>
-		</div>
-		<div class = "dd"> 
-		<textarea style="color:green; border: 1px solid #ffaa00;" 
-		id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
-		</div>
-		<textarea class="message-input" id="messageText"
-			placeholder="Type message..."> </textarea>
-		<input type="button"  value="Send"  onclick="sendMessage();" />
+
+	<div id=chatsys>
+		<div class="chat" id="chat">
+			<div class="chat-title">
+				<p>leqtoris saxeli</p>
+			</div>
+			<div class="dd">
+				<textarea style="color: green; border: 1px solid #ffaa00;"
+					id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
+			</div>
+			<textarea class="message-input" id="messageText"
+				placeholder="Type message..."> </textarea>
+			<input type="button" value="Send" onclick="sendMessage();" />
 		</div>
 		
+		
+
+
+	
+
+		<div class="chat" id="chat131">
+			<div class="chat-title" id="divchattitle131">
+				<p>leqtoris saxeli</p>
+			</div>
+
+			<div class="dd" id="divmsgflow131">
+
+				<textarea id="messageswith131"
+					style="color: green; border: 1px solid #ffaa00;"
+					readonly="readonly" rows="10" cols="45"></textarea>
+
+			</div>
+			<textarea class="message-input" placeholder="Type message..."
+				id="messagetext131"> </textarea>
+			<input type="button" value="Send" onclick="sendMessage(131);" />
+		</div>
+
+
+
+
+
+
+		<div class="chat" id="chatwith131">
+			<div class="chat-title">
+				<p>leqtoris saxeli</p>
+			</div>
+			<div class="dd">
+				<textarea style="color: green; border: 1px solid #ffaa00;"
+					id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
+			</div>
+			<textarea class="message-input" id="messageText"
+				placeholder="Type message..."> </textarea>
+			<input type="button" value="Send" onclick="sendMessage();" />
+		</div>
+		
+		
+		
+		
+
+	</div>
+
 </body>
 
 </html>
