@@ -2,7 +2,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html;" charset="UTF-8">
+<meta charset="UTF-8">
+<title>Title of the document</title>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js">
+	
+</script>
+<script type="text/javascript">
+	function open_chatbox() {
+		$('#chat').fadeOut(400);
+		$('#chatBox').fadeIn(600);
+	}
+	function closeChat() {
+		$('#chatBox').fadeOut(400);
+		$('#chat').fadeIn(500);
+	}
+</script>
+
 
 <script type="text/javascript">
 	var webSocket = new WebSocket(
@@ -36,15 +52,15 @@
 		var chatdivid = 'chat' + msgFromId;
 		var div = document.createElement('div');
 		div.setAttribute("id", chatdivid);
+
 		div.className = "chat";
 		div.innerHTML = '<div class="chat-title" id="divchattitle' + msgFromId + '"> <p>'
 				+ msgFromName
 				+ '</p> </div> <div class="dd" id="divmsgflow' + msgFromId + '"> <textarea id="messageswith' + msgFromId + '" style="color: green; border: 1px solid #ffaa00;  resize: none; font-size: 16px;" ' +
-		'readonly="readonly" rows="13" cols="45" ></textarea></div> <div class="chatfooter"> <textarea class="message-input" placeholder="Type message..." id="messagetext'
+  'readonly="readonly" rows="13" cols="45" ></textarea></div> <div class="chatfooter"> <textarea class="message-input" placeholder="Type message..." id="messagetext'
 				+ msgFromId
 				+ '" onkeypress="return textfieldKeyPressed(event,'
-				+ msgFromId
-				+ ')" > </textarea> </div>';
+				+ msgFromId + ')" > </textarea> </div>';
 
 		document.getElementById('chatsys').appendChild(div);
 	}
@@ -61,14 +77,15 @@
 		msgtxtarea.value += 'You: ' + messagetext.value + "\n";
 		messagetext.value = "";
 	}
-	
+
 	function textfieldKeyPressed(e, id) {
-	    if (e.keyCode == 13) {
-	    	sendMessage(id);
-	        return false;
-	    }
+		if (e.keyCode == 13) {
+			sendMessage(id);
+			return false;
+		}
 	}
 </script>
+
 
 <style>
 .chat {
@@ -114,7 +131,6 @@ body {
 	color: #fff;
 	text-transform: capitalize;
 	text-align: left;
-	/* padding: 10px 10px 10px 20px; */
 	padding-left: 20px;
 	padding-top: 5px;
 	padding-bottom: 5px;
@@ -134,22 +150,71 @@ body {
 </style>
 
 
+<style>
+#chatnow {
+	bottom: 0px;
+	position: fixed;
+	right: 0px;
+	width: 200px;
+	height: auto;
+	padding: 10px;
+	background: #088A68;
+	color: #EDEDED;
+	text-align: center;
+	font-family: Cambria;
+	font-size: 20px;
+	bottom: 0px;
+	right: 15px;
+	cursor: pointer;
+}
+
+#chatBox {
+    bottom: 0px;
+	position: fixed;
+	right: 0px;
+	display: none;
+	width: 300px;
+	height: 353px;
+	padding: 10px;
+	background: #EDEDED;
+	color: #FF7700;
+	text-align: center;
+	font-family: Cambria;
+	font-size: 20px;
+	bottom: 0px;
+	right: 15px;
+	cursor: pointer;
+}
+
+#close {
+	position: absolute;
+	width: 30px;
+	height: 30px;
+	text-align: center;
+	background: rgba(0, 0, 0, 0.8);
+	color: #FF7700;
+	font-family: Cambria;
+	right: 0px;
+	top: 0px;
+}
+</style>
 </head>
 
 <body>
+	<div id="chatnow" onClick="open_chatbox();">Chat Now</div>
+	<div id="chatBox">
 
-	<div id='chatsys' class='chatsysclass'>
+		<div id='chatsys' class='chatsysclass'>
+			<script>
+				addChatWith(2, 'goga koreli');
+				addChatWith(132, 'gela magaltadze');
+			</script>
+		</div>
 
-		<script>
-			addChatWith(2, 'goga koreli');
-			addChatWith(132, 'gela magaltadze');
-		</script>
-
-
+		<div onclick="closeChat()" id="close">X</div>
+		<br> <br>
 
 	</div>
-
 </body>
 
 </html>
-
