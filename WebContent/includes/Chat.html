@@ -51,7 +51,7 @@
 		console.log("sending message !  ");
 		var messagetext = document.getElementById('messagetext' + sendTo);
 		webSocket.send(JSON.stringify({
-			sendto : sendTo,
+			fromId : sendTo,
 			message : messagetext.value
 		}));
 		var msgtxtarea = document.getElementById('messageswith' + sendTo);
