@@ -32,11 +32,12 @@ public class DownloadServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String fileName = request.getParameter("fileName");
+		String fileLocation = request.getParameter("fileLocation");
+		String fileName = fileLocation.substring(fileLocation.lastIndexOf('\\') + 1);
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
 
-		File file = new File(getServletContext().getRealPath(""), "\\Download\\" + fileName);
+		File file = new File(getServletContext().getRealPath(""), fileLocation);
 		FileInputStream fileIn = new FileInputStream(file);
 		ServletOutputStream out = response.getOutputStream();
 
@@ -44,10 +45,9 @@ public class DownloadServlet extends HttpServlet {
 		int length = 0;
 		DataInputStream in = new DataInputStream(new FileInputStream(file));
 
-	    while ((in != null) && ((length = in.read(outputByte)) != -1))
-	    {
-	    	out.write(outputByte,0,length);
-	    }
+		while ((in != null) && ((length = in.read(outputByte)) != -1)) {
+			out.write(outputByte, 0, length);
+		}
 		fileIn.close();
 		out.flush();
 		out.close();

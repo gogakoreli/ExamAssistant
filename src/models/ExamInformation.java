@@ -26,7 +26,7 @@ public class ExamInformation {
 					this.setPlaceID(resultSet.getInt("PlaceID"));
 					this.setVariant(resultSet.getInt("Variant"));
 					this.setStartTime(resultSet.getDate("StartTime"));
-					this.setEndTime(resultSet.getDate("EndDate"));
+					this.setEndTime(resultSet.getDate("EndTime"));
 					this.setIp(resultSet.getString("IP"));
 					this.setPlaceNumber(resultSet.getInt("Number"));
 					this.setWorking(resultSet.getBoolean("IsWorking"));

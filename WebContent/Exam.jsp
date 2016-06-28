@@ -4,12 +4,21 @@
 <html>
 <%
 	Exam exam = (Exam) request.getAttribute("exam");
+	Student student = (Student) request.getAttribute("student");
+	ArrayList<ExamMaterial> materials = (ArrayList<ExamMaterial>) request.getAttribute("materials");
 %>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title><%=exam.getName()%></title>
 </head>
 <body>
-	<!-- <a href="Download?fileName=" +<%=exam.getExamID()%>> </a>  -->
+
+	<%
+		for (int i = 0; i < materials.size(); i++) {
+	%>
+	<a href="Download?fileLocation=<%=materials.get(i).getLocation()%>"><%=materials.get(i).getMaterial()%></a>
+	<%
+		}
+	%>
 </body>
 </html>

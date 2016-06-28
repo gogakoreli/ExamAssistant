@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -21,6 +22,7 @@ import helper.DBInfo;
 import helper.LogManager;
 import models.EAUser;
 import models.Exam;
+import models.ExamMaterial;
 import models.Student;
 
 @WebServlet("/Student")
@@ -46,12 +48,13 @@ public class StudentServlet extends HttpServlet {
 		Student student = (Student) accountManager.getCurrentUser(session);
 		if (student != null) {
 			Exam exam = examManager.getExamForStudent(student);
-
+			examManager.canStartExam(student, exam);
 			request.setAttribute("student", student);
 			request.setAttribute("exam", exam);
 
 			RequestDispatcher dispatch = request.getRequestDispatcher("Student.jsp");
 			dispatch.forward(request, response);
+
 		} else {
 			response.sendRedirect("/ExamAssistant/Login");
 		}
@@ -71,10 +74,13 @@ public class StudentServlet extends HttpServlet {
 		if (student != null) {
 			Exam exam = (Exam) session.getAttribute("exam");
 			session.removeAttribute("exam");
-			
+
 			if (exam != null) {
 				request.setAttribute("exam", exam);
+				request.setAttribute("student", student);
 				// examManager.startExam(student, exam);
+				ArrayList<ExamMaterial> materials = examManager.getExamMaterialsForStudent(student, exam);
+				request.setAttribute("materials", materials);
 				RequestDispatcher dispatch = request.getRequestDispatcher("Exam.jsp");
 				dispatch.forward(request, response);
 			}

@@ -18,15 +18,17 @@ import listeners.ContextStartupListener;
 import models.EAUser;
 import models.Exam;
 import models.ExamInformation;
+import models.ExamMaterial;
 import models.Lecturer;
 import models.Student;
 
 public class ExamManager {
 
-	public static final int NO_EXAM_ID = -1;// id of exam which is not found in db
+	public static final int NO_EXAM_ID = -1;// id of exam which is not found in
+											// db
 	public static final Exam WRONG_EXAM = new Exam(NO_EXAM_ID);
-	
-	public static final int NEW_EXAM_ID = 0;//id of new empty exam 
+
+	public static final int NEW_EXAM_ID = 0;// id of new empty exam
 	public static final Exam EMPTY_EXAM = new Exam(NEW_EXAM_ID);
 
 	private Map<Integer, Exam> exams;
@@ -334,8 +336,10 @@ public class ExamManager {
 		return result;
 	}
 
-	/** checks if user id can access exam @examid if exam doesnot exists with that id 
-	 *  false is returned  */
+	/**
+	 * checks if user id can access exam @examid if exam doesnot exists with
+	 * that id false is returned
+	 */
 	public boolean CanUserAccessExam(EAUser user, int examId) {
 		boolean result = false;
 		String getExamQuery = getSqlQueryForUserAccessExam(user.getUserID(), examId);
@@ -358,20 +362,21 @@ public class ExamManager {
 	}
 
 	/* for given Exam @exam returns list of its subLecturers */
-	public List<Lecturer> downloadSubLecturers(Exam exam){
+	public List<Lecturer> downloadSubLecturers(Exam exam) {
 		List<Lecturer> lecturers = new ArrayList<Lecturer>();
 		String getExamSubLecQuery = getSqlQueryForExamSubLecturers(exam.getExamID());
 		DBConnector connector = new DBConnector();
 		SqlQueryResult queryResult = connector.getQueryResult(getExamSubLecQuery);
 		if (queryResult.isSuccess()) {
 			ResultSet rs = queryResult.getResultSet();
-			while (true){
+			while (true) {
 				Lecturer lec = new Lecturer(rs);
 				if (lec.getUserID() == EAUser.NO_USER_ID)
-					break;//means end of resultset found
+					break;// means end of resultset found
 				lecturers.add(lec);
 			}
 		}
+		connector.dispose();
 		return lecturers;
 	}
 
@@ -381,5 +386,39 @@ public class ExamManager {
 				+ examId + ") as e on e.UserID = u.UserID";
 
 		return sqlQuery;
+	}
+
+	/**
+	 * Get exam materials for student and the exam which he is writing right
+	 * now. If variant is -1 it means that material is general for all students
+	 * and it is book, pdf, or other type. If variant is more than 0 it means
+	 * that it is the variant which has to be written by the student
+	 * 
+	 * @param student
+	 * @param exam
+	 * @return list of materials which are useful for student. Those are books
+	 *         and specific exam variant which is created by lecturer
+	 */
+	public ArrayList<ExamMaterial> getExamMaterialsForStudent(Student student, Exam exam) {
+		ArrayList<ExamMaterial> result = null;
+		String sqlQuery = "select * from examassistant.exammaterial where ExamID = " + exam.getExamID()
+				+ " AND (Variant = " + student.getExamInformation().getVariant() + " OR Variant = -1)";
+		DBConnector connector = new DBConnector();
+		SqlQueryResult queryResult = connector.getQueryResult(sqlQuery);
+		ResultSet rs = queryResult.getResultSet();
+		try {
+			if (rs.next()) {
+				rs.beforeFirst();
+				result = new ArrayList<ExamMaterial>();
+				while (!rs.isLast()) {
+					ExamMaterial tmpExamMaterial = new ExamMaterial(queryResult.getResultSet());
+					result.add(tmpExamMaterial);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		connector.dispose();
+		return result;
 	}
 }
