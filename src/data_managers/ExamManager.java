@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimerTask;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -144,6 +145,8 @@ public class ExamManager {
 		connector.dispose();
 		return res;
 	}
+	
+	
 
 	/**
 	 * First check if the user has started exam before or not. Start exam :
@@ -165,7 +168,34 @@ public class ExamManager {
 		}
 		connector.dispose();
 	}
-
+	
+	
+	/**
+	 * Changes exams status to started. This happens, when exam actually starts.
+	 * @param exam
+	 * @return 
+	 */
+	public void startingExam( Exam exam) {
+		String startExamQuery = "UPDATE exam SET status = \"started\" WHERE ExamID =" + exam.getExamID();
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(startExamQuery);
+		connector.dispose();
+	}
+	
+	
+	/**
+	 * Gets exam and changes its status to finished. 
+	 * @param exam
+	 */
+	public void finishingExam( Exam exam) {
+		String startExamQuery = "UPDATE exam SET status = \"finished\" WHERE ExamID =" + exam.getExamID();
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(startExamQuery);
+		connector.dispose();
+	}
+	
+	
+	
 	/**
 	 * Get the exam from the database which is in 30 minutes or closer. If
 	 * student didn't clicked start exam earlier he is allowed to do so. Else he
@@ -420,5 +450,14 @@ public class ExamManager {
 		}
 		connector.dispose();
 		return result;
+	}
+
+	public ArrayList<Exam> getExamsForEachDay() {
+		Exam ex = getExamByExamId(1);
+	    System.out.println(ex.toString());
+
+		ArrayList<Exam> res = new ArrayList<>();
+		res.add(ex);
+		return res;
 	}
 }
