@@ -89,8 +89,7 @@ public class ChatroomServerEndpoint {
 			if (curSession.isOpen()) {
 				//if address user is offline notify him
 				if (!generateMessage(session, curSession, user, myMessage, examManager, accountManager)
-						&& sessions.size() != 1) {
-					System.out.println("ver moizebna lektori");
+						|| sessions.size() == 1) {
 					curSession.getBasicRemote().sendText(buildJson(user, "System: Address user is offline, please try later"));
 				}
 			}
