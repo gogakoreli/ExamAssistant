@@ -71,16 +71,16 @@ public class StudentServlet extends HttpServlet {
 		if (student != null) {
 			Exam exam = (Exam) session.getAttribute("exam");
 			session.removeAttribute("exam");
-
-//			examManager.startExam(student, exam);
 			
-			RequestDispatcher dispatch = request.getRequestDispatcher("Student.jsp");
-			dispatch.forward(request, response);
+			if (exam != null) {
+				request.setAttribute("exam", exam);
+				// examManager.startExam(student, exam);
+				RequestDispatcher dispatch = request.getRequestDispatcher("Exam.jsp");
+				dispatch.forward(request, response);
+			}
 		} else {
 			response.sendRedirect("/ExamAssistant/Login");
 		}
-		// TODO: redirect him to the /Exam.jsp page which is not yet written
-		// response.sendRedirect("/ExamAssistant/Exam");
 	}
 
 }
