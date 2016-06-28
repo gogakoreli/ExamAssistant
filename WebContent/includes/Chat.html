@@ -39,15 +39,18 @@
 		div.className = "chat";
 		div.innerHTML = '<div class="chat-title" id="divchattitle' + msgFromId + '"> <p>'
 				+ msgFromName
-				+ '</p> </div> <div class="dd" id="divmsgflow' + msgFromId + '"> <textarea id="messageswith' + msgFromId + '" style="color: green; border: 1px solid #ffaa00;" ' +
-		'readonly="readonly" rows="10" cols="45"></textarea></div> <textarea class="message-input" placeholder="Type message..." id="messagetext' + msgFromId + '"> </textarea> <input type="button" value="Send" onclick="sendMessage('
-				+ msgFromId + ');" />';
+				+ '</p> </div> <div class="dd" id="divmsgflow' + msgFromId + '"> <textarea id="messageswith' + msgFromId + '" style="color: green; border: 1px solid #ffaa00;  resize: none; font-size: 16px;" ' +
+		'readonly="readonly" rows="13" cols="45" ></textarea></div> <div class="chatfooter"> <textarea class="message-input" placeholder="Type message..." id="messagetext'
+				+ msgFromId
+				+ '" onkeypress="return textfieldKeyPressed(event,'
+				+ msgFromId
+				+ ')" > </textarea> </div>';
 
 		document.getElementById('chatsys').appendChild(div);
 	}
 
 	function sendMessage(sendTo) {
-		
+
 		console.log("sending message !  ");
 		var messagetext = document.getElementById('messagetext' + sendTo);
 		webSocket.send(JSON.stringify({
@@ -58,16 +61,24 @@
 		msgtxtarea.value += 'You: ' + messagetext.value + "\n";
 		messagetext.value = "";
 	}
+	
+	function textfieldKeyPressed(e, id) {
+	    if (e.keyCode == 13) {
+	    	sendMessage(id);
+	        return false;
+	    }
+	}
 </script>
 
 <style>
 .chat {
 	width: 300px;
-	height: 300px;
+	height: 350px;
 	overflow: hidden;
 	background: rgba(0, 0, 0, .5);
-	border-radius: 20px;
 	display: inline-block;
+	margin-right: 15px;
+	margin-bottom: 5px;
 }
 
 .dd {
@@ -101,15 +112,24 @@ body {
 	position: relative;
 	background: rgba(0, 0, 0, 0.2);
 	color: #fff;
-	text-transform: uppercase;
+	text-transform: capitalize;
 	text-align: left;
-	padding: 10px 10px 10px 50px;
+	/* padding: 10px 10px 10px 20px; */
+	padding-left: 20px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	text-align: left;
+	cursor: pointer;
 }
 
-.chatsysclass{
-    bottom: 0px;
-    position: fixed;
-    right: 0px;
+.chatsysclass {
+	bottom: 0px;
+	position: fixed;
+	right: 0px;
+}
+
+.chatfooter {
+	
 }
 </style>
 
