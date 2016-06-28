@@ -413,7 +413,7 @@ public class ExamManager {
 	/* returns sql Query for CanUserAcessExam */
 	private String getSqlQueryForExamSubLecturers(int examId) {
 		String sqlQuery = "select u.* from examassistant.user as u right join (select UserID FROM examassistant.userexam where ExamID = "
-				+ examId + ") as e on e.UserID = u.UserID";
+				+ examId + ") as e on e.UserID = u.UserID and u.Role='lecturer'";
 
 		return sqlQuery;
 	}

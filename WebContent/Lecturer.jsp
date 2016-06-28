@@ -6,7 +6,7 @@
 <head>
 
 <%@ include file="includes/logoutscripts.html"%>
-<%@ include file="includes/Chat.html" %>
+
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Lecturer Page</title>
 <style>
@@ -59,7 +59,7 @@ p {
 
 <body>
 	<jsp:directive.include file="includes/LogoutButton.jsp" />
-
+	<jsp:include page="includes/chat.jsp" />
 	<div id="header">
 		<h1>Lecturer</h1>
 	</div>
