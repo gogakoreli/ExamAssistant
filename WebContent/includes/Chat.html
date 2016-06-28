@@ -9,35 +9,76 @@
 			"ws://localhost:8080/ExamAssistant/ChatroomServerEndpoint");
 
 	webSocket.onmessage = function processMessage(message) {
-		//var json = JSON.parse(message);
 
-		//var msgFromId = json.messageFromId;
-		//var msgFromName = json.messageFromName;
-		//var msgText = json.messageText;
-		console.log("called from " + message.data);
-		var gson = message.data;
-		messageTextArea.value += gson + "\n";
-		
-		document.getElementById('textid');
-		
-		
-		
+		//console.log(message);
+		var json = JSON.parse(message.data);
+
+		var msgFromId = json.fromId;
+		var msgFromName = json.name;
+		var msgText = json.message;
+		console
+				.log("called!  " + msgFromId + " " + msgFromName + " "
+						+ msgText);
+
+		var chatdivid = 'chat' + msgFromId;
+		var chatdiv = document.getElementById(chatdivid);
+		if (chatdiv === null) {
+			addChatWith(msgFromId, msgFromName);
+			chatdiv = document.getElementById(chatdivid);
+		}
+
+		var msgtxtarea = document.getElementById('messageswith' + msgFromId);
+		msgtxtarea.value += msgText + "\n";
 	}
 
-	function sendMessage() {
-		webSocket.send(messageText.value);
-		messageText.value = "";
+	//adds chat window 
+	function addChatWith(msgFromId, msgFromName) {
+		var chatdivid = 'chat' + msgFromId;
+		var div = document.createElement('div');
+		div.setAttribute("id", chatdivid);
+		div.className = "chat";
+		div.innerHTML = '<div class="chat-title" id="divchattitle' + msgFromId + '"> <p>'
+				+ msgFromName
+				+ '</p> </div> <div class="dd" id="divmsgflow' + msgFromId + '"> <textarea id="messageswith' + msgFromId + '" style="color: green; border: 1px solid #ffaa00;  resize: none; font-size: 16px;" ' +
+		'readonly="readonly" rows="13" cols="45" ></textarea></div> <div class="chatfooter"> <textarea class="message-input" placeholder="Type message..." id="messagetext'
+				+ msgFromId
+				+ '" onkeypress="return textfieldKeyPressed(event,'
+				+ msgFromId
+				+ ')" > </textarea> </div>';
+
+		document.getElementById('chatsys').appendChild(div);
+	}
+
+	function sendMessage(sendTo) {
+
+		console.log("sending message !  ");
+		var messagetext = document.getElementById('messagetext' + sendTo);
+		webSocket.send(JSON.stringify({
+			fromId : sendTo,
+			message : messagetext.value
+		}));
+		var msgtxtarea = document.getElementById('messageswith' + sendTo);
+		msgtxtarea.value += 'You: ' + messagetext.value + "\n";
+		messagetext.value = "";
+	}
+	
+	function textfieldKeyPressed(e, id) {
+	    if (e.keyCode == 13) {
+	    	sendMessage(id);
+	        return false;
+	    }
 	}
 </script>
 
 <style>
 .chat {
 	width: 300px;
-	height: 300px;
+	height: 350px;
 	overflow: hidden;
 	background: rgba(0, 0, 0, .5);
-	border-radius: 20px;
 	display: inline-block;
+	margin-right: 15px;
+	margin-bottom: 5px;
 }
 
 .dd {
@@ -71,9 +112,24 @@ body {
 	position: relative;
 	background: rgba(0, 0, 0, 0.2);
 	color: #fff;
-	text-transform: uppercase;
+	text-transform: capitalize;
 	text-align: left;
-	padding: 10px 10px 10px 50px;
+	/* padding: 10px 10px 10px 20px; */
+	padding-left: 20px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	text-align: left;
+	cursor: pointer;
+}
+
+.chatsysclass {
+	bottom: 0px;
+	position: fixed;
+	right: 0px;
+}
+
+.chatfooter {
+	
 }
 </style>
 
@@ -82,63 +138,14 @@ body {
 
 <body>
 
-	<div id=chatsys>
-		<div class="chat" id="chat">
-			<div class="chat-title">
-				<p>leqtoris saxeli</p>
-			</div>
-			<div class="dd">
-				<textarea style="color: green; border: 1px solid #ffaa00;"
-					id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
-			</div>
-			<textarea class="message-input" id="messageText"
-				placeholder="Type message..."> </textarea>
-			<input type="button" value="Send" onclick="sendMessage();" />
-		</div>
-		
-		
+	<div id='chatsys' class='chatsysclass'>
+
+		<script>
+			addChatWith(2, 'goga koreli');
+			addChatWith(132, 'gela magaltadze');
+		</script>
 
 
-	
-
-		<div class="chat" id="chat131">
-			<div class="chat-title" id="divchattitle131">
-				<p>leqtoris saxeli</p>
-			</div>
-
-			<div class="dd" id="divmsgflow131">
-
-				<textarea id="messageswith131"
-					style="color: green; border: 1px solid #ffaa00;"
-					readonly="readonly" rows="10" cols="45"></textarea>
-
-			</div>
-			<textarea class="message-input" placeholder="Type message..."
-				id="messagetext131"> </textarea>
-			<input type="button" value="Send" onclick="sendMessage(131);" />
-		</div>
-
-
-
-
-
-
-		<div class="chat" id="chatwith131">
-			<div class="chat-title">
-				<p>leqtoris saxeli</p>
-			</div>
-			<div class="dd">
-				<textarea style="color: green; border: 1px solid #ffaa00;"
-					id="messageTextArea" readonly="readonly" rows="10" cols="45"></textarea>
-			</div>
-			<textarea class="message-input" id="messageText"
-				placeholder="Type message..."> </textarea>
-			<input type="button" value="Send" onclick="sendMessage();" />
-		</div>
-		
-		
-		
-		
 
 	</div>
 

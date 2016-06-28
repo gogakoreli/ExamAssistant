@@ -55,13 +55,16 @@ body {
 }
 
 .chat-title {
-	flex: 0 1 45px;
-	position: relative;
-	background: rgba(0, 0, 0, 0.2);
-	color: #fff;
-	text-transform: uppercase;
-	text-align: left;
-	padding: 10px 10px 10px 50px;
+	    flex: 0 1 45px;
+    position: relative;
+    background: rgba(0, 0, 0, 0.2);
+    color: #fff;
+    /* text-transform: uppercase; */
+    text-align: left;
+    /* padding: 10px 10px 10px 20px; */
+    padding-left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 
