@@ -9,7 +9,7 @@
 
 
 <%@ include file="includes/logoutscripts.html" %>
-<%@ include file="includes/Chat.html" %>
+<jsp:include page="includes/chat.jsp" />
 
 <style>
 body {
@@ -17,7 +17,7 @@ body {
 }
 
 
-div {
+#sudentmaindiv div {
 	heigth: 300px;
 	width: 500px;
 	text-align: center;
@@ -28,7 +28,7 @@ div {
 	margin: auto;
 }
 
-input.start {
+#sudentmaindiv  input.start {
 	background-color: #4CAF50;
 	border: none;
 	color: white;
@@ -38,7 +38,7 @@ input.start {
 	cursor: pointer;
 }
 
-p {
+#sudentmaindiv  p {
 	font-family: "Arial";
 	font-size: 20px;
 	text-align: left;
@@ -46,14 +46,14 @@ p {
 	font-weight: light;
 }
 
-p.title {
+#sudentmaindiv  p.title {
 	font-size: 27px;
 	text-align: center;
 	margin: 14px 90px;
 	font-weight: 600;
 }
 
-#startExam {
+#sudentmaindiv  #startExam {
 	text-align: center;
 }
 
@@ -63,9 +63,10 @@ p.title {
 
 <jsp:directive.include file="includes/LogoutButton.jsp"/>
     
-<jsp:directive.include file="includes/UserProfile.jsp"/>
 
-<body>    
+<body>
+	<div id="sudentmaindiv">    
+    <jsp:directive.include file="includes/UserProfile.jsp"/>
     
     <p> </p>
 	<%
@@ -74,7 +75,7 @@ p.title {
 		request.getSession().setAttribute("exam", exam);
 	%>
 	<form action="Student" method="post">
-		<div id="startExam">
+		<div id="startExam" class="divclass">
 			<p class="title">${exam.getType() } გამოცდა</p>
 			<br>
 			<p>სტუდენტი : ${student.getFirstName()} ${student.getLastName() }</p>
@@ -84,5 +85,6 @@ p.title {
 				value="გამოცდის დაწყება">
 		</div>
 	</form>
+	</div>
 </body>
 </html>

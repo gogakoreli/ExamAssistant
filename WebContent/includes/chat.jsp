@@ -1,4 +1,16 @@
 
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@page import="models.Student"%>
+<%@page import="models.Lecturer"%>
+<%@page import="models.EAUser"%>
+<%@page import="data_managers.AccountManager"%>
+<%
+	AccountManager accManager = AccountManager.getAccountManager(request.getSession());
+	EAUser user = accManager.getCurrentUser(request.getSession());
+%>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,26 +24,36 @@
 	function open_chatbox() {
 
 		/* only student supports this */
-		sendJsonToServer(0, 'შეკითხვა მასწავლებელთან.');
+		if(student)
+			getChatDiv(0, 'შეკითხვა მასწავლებელთან.');
 
 		$('#chat').fadeOut(400);
 		$('#chatBox').fadeIn(600);
 	}
 
 	function closeChat(id) {
-		if (student){
+		if (student) {
 			$('#chatBox').fadeOut(400);
 			$('#chat').fadeIn(500);
-		}else{
-			var chatdiv= getChatDiv(msgFromId);
+		} else {
+			var chatdiv = getChatDiv(id, '');
 			chatdiv.parentNode.removeChild(chatdiv);
 		}
+	}
+	
+	function openChatBox(){
+		var chdiv = document.getElementById('chatBox');
+		chdiv.style.display = 'inline';
+		//chdiv.setAttribute("display", "incline");
 	}
 </script>
 
 
 <script type="text/javascript">
-	var student = 0;
+	var student =<%if (user instanceof Lecturer)
+				out.append('0');
+			else
+				out.append('1');%>;
 	var webSocket = new WebSocket(
 			"ws://localhost:8080/ExamAssistant/ChatroomServerEndpoint");
 
@@ -46,17 +68,19 @@
 
 		if (student)
 			msgFromId = 0;
+		else
+			openChatBox();
 		console
 				.log("called!  " + msgFromId + " " + msgFromName + " "
 						+ msgText);
-
-		var chatdivid = getChatDiv(msgFromId);
+		
+		var chatdivid = getChatDiv(msgFromId, msgFromName);
 
 		var msgtxtarea = document.getElementById('messageswith' + msgFromId);
 		msgtxtarea.value += msgFromName + ": " + msgText + "\n";
 	}
 
-	function getChatDiv(msgFromId) {
+	function getChatDiv(msgFromId, msgFromName) {
 		var chatdivid = 'chat' + msgFromId;
 		var chatdiv = document.getElementById(chatdivid);
 		if (chatdiv === null) {
@@ -69,6 +93,7 @@
 
 	//adds chat window 
 	function addChatWith(msgFromId, msgFromName) {
+		console.log("adding chat");
 		var chatdivid = 'chat' + msgFromId;
 		var div = document.createElement('div');
 		div.setAttribute("id", chatdivid);
@@ -78,7 +103,7 @@
 				+ msgFromName
 				+ '</p> <div onclick="closeChat('
 				+ msgFromId
-				+ ')" id="close">X</div> </div> <div class="dd" id="divmsgflow' + msgFromId + '"> <textarea id="messageswith' + msgFromId + '" style="color: green; border: 1px solid #ffaa00;  resize: none; font-size: 16px;" ' +
+				+ ')" class="chatclosebtn">X</div> </div> <div class="dd" id="divmsgflow' + msgFromId + '"> <textarea id="messageswith' + msgFromId + '" style="color: green; border: 1px solid #ffaa00;  resize: none; font-size: 16px;" ' +
   'readonly="readonly" rows="13" cols="45" ></textarea></div> <div class="chatfooter"> <textarea class="message-input" placeholder="Type message..." id="messagetext'
 				+ msgFromId
 				+ '" onkeypress="return textfieldKeyPressed(event,'
@@ -173,6 +198,13 @@ body {
 .chatfooter {
 	
 }
+
+.chat-title p{
+    padding: 0;
+    font-family: "Arial", cursive, sans-serif;
+    font-size: 17px;
+    margin: 0px 0px;
+}
 </style>
 
 
@@ -212,7 +244,7 @@ body {
 	cursor: pointer;
 }
 
-.close {
+.chatclosebtn {
 	position: absolute;
 	width: 30px;
 	height: 30px;
@@ -223,14 +255,21 @@ body {
 	right: 0px;
 	top: 0px;
 }
+
+.visiblechat{
+	display: inline;
+}
+
 </style>
 </head>
 
 <body>
 
-	<div id="chatnow" onClick="open_chatbox();">Chat Now</div>--if student 
+	<% if (user instanceof Student) out.print("<div id=\"chatnow\" onClick=\"open_chatbox();\">Chat Now</div>"); %>
+	
 
-	<div id="chatBox">
+
+	<div id="chatBox" >
 
 		<div id='chatsys' class='chatsysclass'>
 			<script>
@@ -240,6 +279,7 @@ body {
 		<br> <br>
 
 	</div>
+		<% //if (user instanceof Lecturer) out.print("<script>open_chatbox();</script>"); %>
 </body>
 
 </html>
