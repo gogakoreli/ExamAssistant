@@ -62,6 +62,7 @@ public class ChatroomServerEndpoint {
 	}
 
 	private GsonMessage fromGsonToGsonMessage(String json) {
+		System.out.println(json);
 		Type gsonMessageType = new TypeToken<GsonMessage>() {}.getType();
 		GsonMessage msg = new Gson().fromJson(json, gsonMessageType);
 		return msg;
