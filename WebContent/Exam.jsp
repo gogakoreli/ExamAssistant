@@ -16,7 +16,8 @@
 	<%
 		for (int i = 0; i < materials.size(); i++) {
 	%>
-	<a href="Download?fileLocation=<%=materials.get(i).getLocation()%>"><%=materials.get(i).getMaterial()%></a>
+	<a href="Download?fileLocation=<%=materials.get(i).getLocation()%>"><%=i+1%> : <%=materials.get(i).getMaterial()%></a>
+	<br>
 	<%
 		}
 	%>
