@@ -6,13 +6,15 @@
 <script type="text/javascript">
 	var webSocket = new WebSocket(
 			"ws://localhost:8080/ExamAssistant/NotificationServerEndpoint");
-
+ 
 	webSocket.onmessage = function processMessage(message) {
+		console.log("Received message: "+message);
 		var gson = message.data;
 		messageTextArea.value += gson + "\n";
 	}
 
 	function sendMessage() {
+		console.log("Sending message: "+messageText.value);
 		webSocket.send(messageText.value);
 		messageText.value = "";
 	}
