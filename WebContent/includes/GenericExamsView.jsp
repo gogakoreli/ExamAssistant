@@ -78,6 +78,7 @@
 					<th>Resource</th>
 					<th>Variants</th>
 					<th>Status</th>
+					
 				</tr>
 			</thead>
 			<tbody>

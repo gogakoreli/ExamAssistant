@@ -11,12 +11,14 @@
 		response.sendRedirect("ErrorPage.jsp");
 %>
 
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;" charset="UTF-8">
 <title>Student Page</title>
+
+<jsp:include page="includes/Notification.html" />
+
 <style>
 #logout {
 	margin-top: 5px;
@@ -25,6 +27,7 @@
 	top: 0;
 	right: 0;
 }
+
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=2">
 <link rel="stylesheet"
@@ -43,7 +46,6 @@
 	//show hide open note option 
 	$(document).ready(function() {
 		$('#openbookcb').click(function() {
-
 			$("#opennodediv").toggle();
 		});
 	});
@@ -164,16 +166,21 @@
 </script>
 
 </head>
+
 <body>
+
+	
+
 	<!-- 
          <a id="logout" href="Logout" class="btn btn-info btn-lg"> <span
          	class="glyphicon glyphicon-log-out"> </span> Log out
          </a>
          -->
+         
 	<a id="logout" href="Logout" class="btn btn-info btn-lg"> <span
 		class="glyphicon glyphicon-log-out"> </span> Log out
 	</a>
-	<h1>This is Exams page</h1>
+		
 	<form action="ModifyExam" method="post" >
 	
 	<input type="hidden" name="<%=ModifyExamServlet.EXAM_ID_PARAM_NAME %>" value="<%=exam.getExamID()%>">

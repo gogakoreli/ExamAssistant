@@ -20,7 +20,5 @@ div.profile {
 	<h2 class="font-semibold mgbt-xs-5"><%=user.getFirstName() + " " + user.getLastName()%></h2>
 	<h4> <%=user.getRole() %> </h4>
 	<h4> <%=user.getMail() %> </h4>
-	
-	<h4>MACS/ESM/NONE</h4>
-	
+		
 </div>

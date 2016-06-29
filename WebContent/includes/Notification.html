@@ -14,7 +14,7 @@ $(document).ready(function(){
 <style>
 
 input[type=text], select {
-    width: 100%;
+    width: 80%;
     padding: 12px 20px;
     margin: 8px 0;
     display: inline-block;
@@ -24,7 +24,7 @@ input[type=text], select {
 }
 
 input[type=submit] {
-    width: 100%;
+    width: 20%;
     background-color: #4CAF50;
     color: white;
     padding: 14px 20px;
@@ -35,7 +35,7 @@ input[type=submit] {
 }
 
 #but {
-    width: 80%;
+    width: 20%;
     background-color: #4CAF50; 
     color: white;
 	padding: 12px 20px;
@@ -43,6 +43,7 @@ input[type=submit] {
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
+	position: left;
 }
 
 input[type=submit]:hover {
@@ -63,27 +64,20 @@ input[type=submit]:hover {
 
 <div id = "div1">
 
-    <label for="lname"> Notification </label>
-    <input type="text" id="lname" name="lastname">
-    
-    <label for="lname"> ExamID </label>
-    <input type="text" id="lname" name="lastname">
+		<label for="lname"> Notification </label> <br /> <input type="text"
+			id="lname" name="lastname"> <br /> <label for="lname">
+			ExamID </label> <br /> <input type="text" id="lname" name="lastname"> <br /> 
+			<label for="country"> Variant </label> <br /> 
+			<select id="country" name="country">
+			<option>I</option>
+			<option>II</option>
+			<option>Both</option>
 
-    <label for="country"> Variant </label>
-    <select id="country" name="country">
-      <option > 1 </option>
-      <option > 2 </option>
-      <option > Both </option>
-      
-    </select>
-  
-    <input type="submit" value="Submit">
+		</select> <input type="submit" value="Submit">
     
 </div>
 
 </body>
 </html>
-
-
 
 

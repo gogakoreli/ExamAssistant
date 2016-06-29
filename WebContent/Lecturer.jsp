@@ -22,7 +22,7 @@
 	line-height: 30px;
 	background-color: #eeeeee;
 	height: 700px;
-	width: 300px;
+	width: 260px;
 	float: left;
 	padding: 9px;
 }
@@ -80,13 +80,10 @@ p {
 		<form action="ModifyExam" method="get">
 			<br /> <button name="newExam" class="btnclass" type="submit" value="1" >New Exam</button>
 		</form>
-			<jsp:include page="includes/Notification.html" />
 		
 	</div>
 
 	<jsp:include page="includes/GenericExamsView.jsp"></jsp:include>
 	
-	
-
 </body>
 </html>

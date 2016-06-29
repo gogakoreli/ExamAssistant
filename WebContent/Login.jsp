@@ -14,18 +14,21 @@ body {
 
 input[type=submit] {
 	width: 45%;
+	height: 45px;
 	background-color: #ffaa00;
 	color: white;
 	padding: 12px 20px;
-	margin: 8px 0;
+	margin: 20px 0;
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
 }
 
+
 input {
 	width: 45%;
-	padding: 12px 20xp;
+	height: 25px;
+	padding: 20px 25xp;
 	margin: 12px 4px;
 	border: 1px solid #ccc;
 	border-radius: 4px;
@@ -34,7 +37,7 @@ input {
 
 div {
 	text-align: center;
-	width: 470px;
+	width: 480px;
 	border: 3px solid #ffaa00;
 	border-radius: 5px;
 	background-color: white;
