@@ -4,7 +4,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script>
 $(document).ready(function(){
-    $("button").click(function(){
+    $("#but").click(function(){
         $("#div1").fadeToggle();
     });
 });
@@ -34,20 +34,22 @@ input[type=submit] {
     cursor: pointer;
 }
 
-button {
-    width: 20%;
-    background-color: #4CAF50;
+#but {
+    width: 80%;
+    background-color: #4CAF50; 
     color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border-radius: 4px;
+	padding: 12px 20px;
+	margin: 8px 0;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
 }
 
 input[type=submit]:hover {
     background-color: #45a049;
 }
 
-div {
+#div1 {
     display:none;
     border-radius: 5px;
     background-color: #f2f2f2;
@@ -56,22 +58,27 @@ div {
 </style>
 <body>
 
-<button>Show Notifications</button><br><br>
+<button id = "but"> Create Notification </button><br><br>
 
 
 <div id = "div1">
 
     <label for="lname"> Notification </label>
     <input type="text" id="lname" name="lastname">
+    
+    <label for="lname"> ExamID </label>
+    <input type="text" id="lname" name="lastname">
 
     <label for="country"> Variant </label>
     <select id="country" name="country">
       <option > 1 </option>
       <option > 2 </option>
+      <option > Both </option>
       
     </select>
   
     <input type="submit" value="Submit">
+    
 </div>
 
 </body>

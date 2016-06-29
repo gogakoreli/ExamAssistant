@@ -54,12 +54,7 @@
 </style>
 
 
-
-
-
 <!-- end of new desgined boxes  -->
-
-
 
 
 </head>
@@ -105,6 +100,7 @@
 					<td><%=ex.getResourceType()%></td>
 					<td><%=ex.getNumVariants()%></td>
 					<td><%=ex.getStatus()%></td>
+					
 				</tr>
 				<%
 					}
@@ -116,8 +112,8 @@
 		</table>
 
 		<script type='text/javascript' src="includes/js/list.min.js">
-			//<![CDATA[
 
+		
 		</script>
 		
 </div>
