@@ -164,10 +164,12 @@ public class ChatroomServerEndpoint {
 	 * This method saves in database messages
 	 */
 	private void updateMessageTableInDB(int fromId, int toId, String msg) {
+		//TODO uncomment and run in different thread 
+		
 		String updateQuery = "insert into message (fromId, toId, messageText, time) values(" + fromId + ", " + toId
 				+ ", '" + msg + "', now());";
 		DBConnector connector = new DBConnector();
-		connector.updateDatabase(updateQuery);
+		//connector.updateDatabase(updateQuery);
 		connector.dispose();
 	}
 

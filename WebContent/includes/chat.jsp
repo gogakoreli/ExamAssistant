@@ -37,7 +37,8 @@
 			$('#chat').fadeIn(500);
 		} else {
 			var chatdiv = getChatDiv(id, '');
-			chatdiv.parentNode.removeChild(chatdiv);
+			chdiv.style.display = 'none';
+			//chatdiv.parentNode.removeChild(chatdiv);
 		}
 	}
 	
@@ -46,6 +47,37 @@
 		chdiv.style.display = 'inline';
 		//chdiv.setAttribute("display", "incline");
 	}
+	
+	/* before we leave this page */
+	window.onbeforeunload = function (e) {
+		sessionStorage.clear();
+		sessionStorage.chatObj = document.getElementById('beforechat').innerHTML;
+		$('*[id*=messageswith]').each(function() {
+			current=$(this);
+			var currentId = current.attr('id');
+			//console.log("saveing" + currentId);
+			//console.log("saveing value " + current.val());
+			sessionStorage.setItem(currentId, current.val());
+			sessionStorage.currentId = current.val();
+		});
+	}
+	
+	function updatechatinterface(){
+		if (sessionStorage.chatObj){
+			document.getElementById('beforechat').innerHTML = sessionStorage.chatObj;
+			$('*[id*=messageswith]').each(function() {
+				current=$(this);
+				//console.log(current);
+				var currentId = $(current).attr('id');
+				//console.log("getting old" + currentId);
+				//console.log("old =" + sessionStorage.getItem(currentId));
+				if (sessionStorage.getItem(currentId))
+					current.val(sessionStorage.getItem(currentId));
+			});
+		}
+	}
+		
+		
 </script>
 
 
@@ -78,6 +110,7 @@
 
 		var msgtxtarea = document.getElementById('messageswith' + msgFromId);
 		msgtxtarea.value += msgFromName + ": " + msgText + "\n";
+		msgtxtarea.set
 	}
 
 	function getChatDiv(msgFromId, msgFromName) {
@@ -110,22 +143,24 @@
 				+ msgFromId + ')" > </textarea> </div>';
 
 		document.getElementById('chatsys').appendChild(div);
+		//sendJsonToServer(msgFromId,'',true);
 	}
 
 	function sendMessage(sendTo) {
 
 		console.log("sending message !  ");
 		var messagetext = document.getElementById('messagetext' + sendTo);
-		sendJsonToServer(sendTo, messagetext.value);
+		sendJsonToServer(sendTo, messagetext.value, false);
 		var msgtxtarea = document.getElementById('messageswith' + sendTo);
 		msgtxtarea.value += 'You: ' + messagetext.value + "\n";
 		messagetext.value = "";
 	}
 
-	function sendJsonToServer(sendTo, message) {
+	function sendJsonToServer(sendTo, message, isUpdate) {
 		webSocket.send(JSON.stringify({
 			fromId : sendTo,
-			message : message
+			message : message,
+			updateChatWindowText : false
 		}));
 	}
 
@@ -268,16 +303,17 @@ body {
 	<% if (user instanceof Student) out.print("<div id=\"chatnow\" onClick=\"open_chatbox();\">Chat Now</div>"); %>
 	
 
-
+	<div id="beforechat">
 	<div id="chatBox" >
 
 		<div id='chatsys' class='chatsysclass'>
-			<script>
-				//addChatWith(132, 'gela magaltadze');
-			</script>
 		</div>
 		<br> <br>
 
+	</div>
+	<script>
+		updatechatinterface();
+	</script>
 	</div>
 		<% //if (user instanceof Lecturer) out.print("<script>open_chatbox();</script>"); %>
 </body>

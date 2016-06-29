@@ -5,9 +5,12 @@ import helper.LogManager;
 
 public abstract class EAUser {
 
-	/* user id for not valid EaUser this means that user was not created successfully */
+	/*
+	 * user id for not valid EaUser this means that user was not created
+	 * successfully
+	 */
 	public static final int NO_USER_ID = -1;
-	
+
 	/** enum for roles of Ea User */
 	public enum EAUserRole {
 		NO_ROLE, ADMIN, STUDENT, LECTURER, BOARD
@@ -38,23 +41,21 @@ public abstract class EAUser {
 			parseUserResultSet(rs);
 		}
 	}
-	
+
 	public EAUser(int userID, EAUserRole role, String mail, String firstName, String lastName, String image,
 			String googleID) {
 		this.userID = userID;
 		this.role = role;
 		this.mail = mail;
 		this.firstName = firstName;
-		this.lastName =lastName;
+		this.lastName = lastName;
 		this.image = image;
 		this.googleID = googleID;
 	}
-	
-	
+
 	public EAUser() {
-		
+
 	}
-	
 
 	/*
 	 * if null isnot returned parse result set which contains data about user
@@ -69,7 +70,7 @@ public abstract class EAUser {
 				setMail(rs.getString("Mail"));
 				setRole(getRoleByString(rs.getString("Role")));
 				setUserID(rs.getInt("UserID"));
-			}else{
+			} else {
 				setUserID(NO_USER_ID);
 			}
 		} catch (Exception e) {
@@ -82,6 +83,8 @@ public abstract class EAUser {
 	 * enum
 	 */
 	public static EAUserRole getRoleByString(String roleString) {
+		if (roleString == null)
+			return EAUserRole.valueOf("NO_ROLE");
 		switch (roleString) {
 		case "board":
 			return EAUserRole.valueOf("BOARD");
@@ -169,28 +172,30 @@ public abstract class EAUser {
 	public String getGoogleID() {
 		return this.googleID;
 	}
-	
-	
-	
-	/** override of toString() 
-	 * writes its user and eMAIL*/
+
+	/**
+	 * override of toString() writes its user and eMAIL
+	 */
 	@Override
-	public String toString(){
+	public String toString() {
 		return "username = " + getFirstName() + "  Email = " + getMail();
 	}
-	
-	/** override of equals method 
-	 *  we suppose 2 acc are equal if they have same id */
-	@Override
-	public boolean equals(Object obj){
-		if((obj == null) || (obj.getClass() != this.getClass())) { return false; }
 
-		return ((Lecturer)obj).getUserID() == this.getUserID();
-	}
-	
+	/**
+	 * override of equals method we suppose 2 acc are equal if they have same id
+	 */
 	@Override
-	public int hashCode(){
+	public boolean equals(Object obj) {
+		if ((obj == null) || (obj.getClass() != this.getClass())) {
+			return false;
+		}
+
+		return ((Lecturer) obj).getUserID() == this.getUserID();
+	}
+
+	@Override
+	public int hashCode() {
 		return ("" + getUserID()).hashCode();
 	}
-	
+
 }

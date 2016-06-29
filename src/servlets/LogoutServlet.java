@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import data_managers.AccountManager;
 import listeners.ContextStartupListener;
@@ -37,6 +38,9 @@ public class LogoutServlet extends HttpServlet {
 		AccountManager manager = (AccountManager) context
 				.getAttribute(ContextStartupListener.ACCOUNT_MANEGER_ATTRIBUTE_NAME);
 		manager.removeCurrentUser(request.getSession());
+		HttpSession session = request.getSession(false);
+		if (session != null)
+			session.invalidate();
 		response.sendRedirect("/ExamAssistant/Login");
 	}
 
