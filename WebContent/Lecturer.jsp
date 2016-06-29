@@ -22,7 +22,7 @@
 	line-height: 30px;
 	background-color: #eeeeee;
 	height: 700px;
-	width: 250px;
+	width: 300px;
 	float: left;
 	padding: 9px;
 }
@@ -40,7 +40,7 @@ p {
 }
 
 .btnclass {
-	width: 63%;
+	width: 80%;
 	background-color: #ffaa00;
 	color: white;
 	padding: 12px 20px;
@@ -60,6 +60,7 @@ p {
 <body>
 	<jsp:directive.include file="includes/LogoutButton.jsp" />
 	<jsp:include page="includes/chat.jsp" />
+	
 	<div id="header">
 		<h1>Lecturer</h1>
 	</div>
@@ -79,9 +80,13 @@ p {
 		<form action="ModifyExam" method="get">
 			<br /> <button name="newExam" class="btnclass" type="submit" value="1" >New Exam</button>
 		</form>
+			<jsp:include page="includes/Notification.html" />
+		
 	</div>
 
 	<jsp:include page="includes/GenericExamsView.jsp"></jsp:include>
+	
+	
 
 </body>
 </html>
