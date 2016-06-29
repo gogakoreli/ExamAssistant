@@ -10,6 +10,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("#but").click(function(){
+        $("#div1").fadeToggle();
+    });
+});
+</script>
+
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
 
@@ -38,6 +48,59 @@
 	href="http://mottie.github.com/tablesorter/css/theme.ice.css">
 <link rel="stylesheet" type="text/css"
 	href="http://mottie.github.com/tablesorter/css/theme.black-ice.css">
+	
+
+<style>
+
+input[type=text], select {
+    width: 80%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=submit] {
+    width: 25%;
+    background-color: green;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#but {
+    width: 100%;
+    background-color: #4CAF50; 
+    color: white;
+	padding: 10px 0px;
+	margin: 0px 0;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	position: left;
+}
+
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+
+#div1 {
+	position: bottom;
+    display:none;
+    border-radius: 5px;
+    background-color: #f2f2f2; 
+    border: 3px solid green;
+    padding: 20px;
+    margin:auto; 
+    margin-top:170px;
+    width: 550px;
+}
+</style>
 
 
 
@@ -60,6 +123,8 @@
 </head>
 <body>
 
+
+
 <div id="section">
 
 		<%
@@ -78,6 +143,7 @@
 					<th>Resource</th>
 					<th>Variants</th>
 					<th>Status</th>
+					<th>Notification</th>
 					
 				</tr>
 			</thead>
@@ -101,6 +167,8 @@
 					<td><%=ex.getResourceType()%></td>
 					<td><%=ex.getNumVariants()%></td>
 					<td><%=ex.getStatus()%></td>
+					<td>  <button id = "but"> Notification </button>
+					</td>
 					
 				</tr>
 				<%
@@ -111,13 +179,28 @@
 
 
 		</table>
-
+		
 		<script type='text/javascript' src="includes/js/list.min.js">
-
 		
 		</script>
-		
+	
 </div>
+
+<div id = "div1">
+
+		<label for="lname"> Notification </label> <br /> <input type="text"
+			id="lname" name="lastname"> <br /> 
+			<label for="country"> Variant </label> <br /> 
+			<select id="country" name="country">
+			<option>I</option>
+			<option>II</option>
+			<option>Both</option>
+
+		</select> <input type="submit" value="Submit">
+    
+</div>
+
+
 
 </body>
 </html>

@@ -17,7 +17,6 @@
 <meta http-equiv="Content-Type" content="text/html;" charset="UTF-8">
 <title>Student Page</title>
 
-<jsp:include page="includes/Notification.html" />
 
 <style>
 #logout {
