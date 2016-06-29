@@ -50,9 +50,8 @@ public class Exam {
 	private String resourceType = "";
 	private int numVariants = 0;
 	private String status = "";
-	private int creatorId;
+	private int creatorId = -1;
 	private EAUser creator;// user who created exam
-	private EAUser editor;// user who is editing current isntance of exam
 	List<Lecturer> subLectuers = new ArrayList<Lecturer>();
 	
 	//files attached to exam 
@@ -115,46 +114,13 @@ public class Exam {
 		return this.noteType;
 	}
 
-	/** sets editor user for given exam */
-	public void setExamEditor(EAUser editor) {
-		this.editor = editor;
-	}
-
-	/** returns name of creator of exam as whole for displaying */
-	public String getCreatorName() {
-		return this.getCreator().getFirstName() + " " + this.getCreator().getLastName();
-	}
+	
 
 	/** sets sub lecturers from db for current exam */
 	public void setSubLecturers(List<Lecturer> subLectuers) {
 		this.subLectuers = subLectuers;
 	}
 
-	/** returns only date when exam should be started format : YYYY-MM-DD */
-	public String getExamStartDate() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(startTime);
-		return "" + calendar.get(Calendar.YEAR) + "-" + getDateStringFromInt(calendar.get(Calendar.MONTH)) + "-"
-				+ getDateStringFromInt(calendar.get(Calendar.DAY_OF_MONTH));
-	}
-
-	/*
-	 * gets string which is 2 in length for month and day if they are between
-	 * 1-9 we should write 08 not 8
-	 */
-	private String getDateStringFromInt(int x) {
-		String s = "" + x;
-		if (x <= 9)
-			s = "0" + s;
-		return s;
-	}
-
-	/** returns exam start time format : HH:MM */
-	public String getExamStartTime() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(startTime);
-		return "" + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE);
-	}
 
 	/**
 	 * gets sub lecturers from db for current exam subLecturers in db contains
@@ -180,7 +146,7 @@ public class Exam {
 
 	/** checks if given exam is empty end not valid for precessiong */
 	public boolean isEmptyExam() {
-		return getExamID() == ExamManager.NO_EXAM_ID;
+		return getExamID() == ExamManager.NEW_EXAM_ID;
 	}
 
 	/** Returns the id of the exam. */

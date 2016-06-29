@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import com.sun.swing.internal.plaf.synth.resources.synth;
+
 import listeners.ContextStartupListener;
 import helper.DBConnector;
 import helper.DBConnector.SqlQueryResult;
@@ -43,22 +45,40 @@ public class AccountManager {
 
 	}
 
-	// TODO make threadsafe account manager xeli ar axlot aravin !!!!!!
-
 	/******************************/
 	/******** get user ***********/
 	/******************************/
 
-	/** returns EAUser for given httpsession */
+	/**
+	 * returns EAUser for given httpsession if its not in logedinusers returns
+	 * null
+	 */
 	public EAUser getCurrentUser(HttpSession httpSession) {
-		return (EAUser) httpSession.getAttribute(USER_ID_IN_SESSION);
+		if (logedUsers.containsKey(httpSession.getId()))
+			return (EAUser) httpSession.getAttribute(USER_ID_IN_SESSION);
+		return null;
 	}
 
 	/** removes user for given httpsession from loged in system */
 	public void removeCurrentUser(HttpSession httpSession) {
-		//TODO check if user quit without saving info  (shemtxvevit tu gavarda )
+		// TODO check if user quit without saving info (shemtxvevit tu gavarda )
 		httpSession.removeAttribute(USER_ID_IN_SESSION);
-		logedUsers.remove(httpSession.getId());
+		removeUserFromLogedUsers(httpSession.getId());
+
+	}
+
+	/* removes user from loged users (locks it first then removes it ) */
+	private void removeUserFromLogedUsers(String id) {
+		synchronized (logedUsers) {
+			logedUsers.remove(id);
+		}
+	}
+
+	/* puts user in loged in users (locks it first ) */
+	private void putUserInLogedUsers(String id, EAUser user) {
+		synchronized (logedUsers) {
+			logedUsers.put(id, user);
+		}
 	}
 
 	/**
@@ -213,7 +233,8 @@ public class AccountManager {
 			return;
 		}
 		httpSession.setAttribute(USER_ID_IN_SESSION, user);
-		logedUsers.put(httpSession.getId(), user);
+		putUserInLogedUsers(httpSession.getId(), user);
+
 	}
 
 	/*

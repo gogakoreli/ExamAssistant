@@ -26,7 +26,8 @@
 		/* only student supports this */
 		if(student)
 			getChatDiv(0, 'შეკითხვა მასწავლებელთან.');
-
+	
+		$('#chatnow').hide();
 		$('#chat').fadeOut(400);
 		$('#chatBox').fadeIn(600);
 	}
@@ -35,16 +36,22 @@
 		if (student) {
 			$('#chatBox').fadeOut(400);
 			$('#chat').fadeIn(500);
+			$('#chatnow').show();
 		} else {
 			var chatdiv = getChatDiv(id, '');
-			chdiv.style.display = 'none';
+			chatdiv.style.display = 'none';
 			//chatdiv.parentNode.removeChild(chatdiv);
 		}
 	}
 	
-	function openChatBox(){
+	function openChatBox(id){
 		var chdiv = document.getElementById('chatBox');
 		chdiv.style.display = 'inline';
+		
+		var chatdivid = 'chat' + id;
+		var chatdiv = document.getElementById(chatdivid);
+		if (chatdiv)
+			chatdiv.style.display = 'inherit';
 		//chdiv.setAttribute("display", "incline");
 	}
 	
@@ -101,7 +108,7 @@
 		if (student)
 			msgFromId = 0;
 		else
-			openChatBox();
+			openChatBox(msgFromId);
 		console
 				.log("called!  " + msgFromId + " " + msgFromName + " "
 						+ msgText);
@@ -269,7 +276,7 @@ body {
 	width: 300px;
 	height: 353px;
 	padding: 10px;
-	background: #EDEDED;
+	/* background: #EDEDED; */
 	color: #FF7700;
 	text-align: center;
 	font-family: Cambria;
