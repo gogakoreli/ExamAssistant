@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import com.sun.swing.internal.plaf.synth.resources.synth;
 
 import listeners.ContextStartupListener;
 import helper.DBConnector;

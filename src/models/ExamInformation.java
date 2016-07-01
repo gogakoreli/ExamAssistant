@@ -36,6 +36,13 @@ public class ExamInformation {
 			}
 		}
 	}
+	
+	/**
+	 * Constructor.
+	 */
+	public ExamInformation() {
+	
+	}
 
 	/*****************************/
 	/***** getters/setters ******/

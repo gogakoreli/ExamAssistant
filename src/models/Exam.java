@@ -3,7 +3,6 @@ package models;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import data_managers.ExamManager;
@@ -253,10 +252,5 @@ public class Exam {
 		return res;
 	}
 
-	public boolean equals(Exam ex) {
-		if (ex.getName().equals(this.getName()) && ex.getExamID() == this.getExamID()) {
-			return true;
-		}
-		return false;
-	}
+	
 }

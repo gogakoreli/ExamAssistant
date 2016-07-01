@@ -2,6 +2,7 @@ package models;
 
 import java.sql.ResultSet;
 
+
 public class Lecturer extends EAUser{
 
 	
@@ -9,9 +10,13 @@ public class Lecturer extends EAUser{
 		super(rs);
 	}
 	
-	
 	public Lecturer() {
 		super();
+	}
+	
+	public Lecturer(int userID, EAUserRole role, String mail, String firstName, String lastName, String image,
+			String googleID) {
+		super(userID, role, mail, firstName, lastName, image, googleID);
 	}
 
 	@Override

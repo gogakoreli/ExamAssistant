@@ -12,6 +12,11 @@ public class Admin extends EAUser {
 	public Admin() {
 		super();
 	}
+	
+	public Admin(int userID, EAUserRole role, String mail, String firstName, String lastName, String image,
+			String googleID) {
+		super(userID, role, mail, firstName, lastName, image, googleID);
+	}
 
 	@Override
 	public void downloadAditionalInfo() {

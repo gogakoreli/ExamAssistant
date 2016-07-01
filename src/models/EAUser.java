@@ -189,8 +189,7 @@ public abstract class EAUser {
 		if ((obj == null) || (obj.getClass() != this.getClass())) {
 			return false;
 		}
-
-		return ((Lecturer) obj).getUserID() == this.getUserID();
+		return ((EAUser) obj).getUserID() == this.getUserID();
 	}
 
 	@Override
