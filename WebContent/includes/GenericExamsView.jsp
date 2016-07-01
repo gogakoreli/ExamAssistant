@@ -35,19 +35,19 @@
 	function sendMessage() {
 		console.log("Sending message: "+messageText.value);
 		var messagetext = document.getElementById('messagetext');
-		sendJsonToServer(messagetext, 2, null);
-		//webSocket.send(messageText.value);
+		//sendJsonToServer(messagetext, 2, null);
+		webSocket.send(messageText.value);
 		messageText.value = "";
 	}
 
 	
-	function sendJsonToServer(message, examId, variants) {
-		webSocket.send(JSON.stringify({
-			message : message,
-			examId: examId,
-			variants: ArrayList<Integer> variants
-		}));
-	}
+// 	function sendJsonToServer(message, examId, variants) {
+// 		webSocket.send(JSON.stringify({
+// 			message : message,
+// 			examId: examId,
+// 			variants: variants
+// 		}));
+// 	}
 
 </script>
 
@@ -245,8 +245,9 @@ input[type=submit]:hover {
 		</div>
 
 
-		<label for="lname" id="messageText"> Notification </label> <br /> <input type="text"
-			id="lname" name="lastname"> <br />   <br /> <label> Variant </label>
+		<label  > Notification </label> <br /> 
+		<input type="text"  id="messageText"> <br />   <br /> 
+			<label> Variant </label>
 		<br />
 
 		<%
@@ -256,9 +257,11 @@ input[type=submit]:hover {
 
 
 		<input type="checkbox" name="option3" value="All"> All <br> <input
-			type="text" id="lname" name="lastname" value="I"> <br /> 
+			type="text"  name="lastname" value="I"> <br /> 
 			
-		<input  type="submit" value="Submit" onclick="sendMessage();">
+	
+	     <input type="submit" value="Send" onclick="sendMessage();" />
+			
 
 	</div>
 </body>
