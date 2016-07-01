@@ -1,3 +1,5 @@
+<%@page import="models.EAUser"%>
+<%@page import="models.SecureExam"%>
 <%@page import="models.Lecturer"%>
 <%@page import="servlets.ModifyExamServlet"%>
 <%@ page import="models.Exam"%>
@@ -6,9 +8,11 @@
 
 
 <%
-	Exam exam = (Exam) request.getAttribute("exam");
+	Exam exam = (Exam) (request.getAttribute("exam"));
+	EAUser user = (EAUser) (request.getAttribute("user"));
 	if (exam == null)
 		response.sendRedirect("ErrorPage.jsp");
+	SecureExam sExam = new SecureExam(exam);
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -27,6 +31,10 @@
 	right: 0;
 }
 
+.dispInline{display: inline-flex;}
+.disabledfieldwidth{
+    width: 200px;
+}
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=2">
 <link rel="stylesheet"
@@ -50,6 +58,12 @@
 	});
 </script>
 <script>
+	var userType =
+<%if (user instanceof Lecturer)
+				out.print("'lecturer'");
+			else
+				out.print("'examboard'");%>
+	;
 	function hasClass(elem, klass) {
 		return (" " + elem.className + " ").indexOf(" " + klass + " ") > -1;
 	}
@@ -61,7 +75,7 @@
 		var arrayLength = x.length;
 		for (var i = 0; i < arrayLength; i++) {
 
-			if (hasClass(x[i], 'lecturer')) {
+			if (hasClass(x[i], userType)) {
 				//alert("I am an alert box!");
 				x[i].removeAttribute("disabled");
 				if (!hasClass(x[i], 'visibletextbox')) {
@@ -180,18 +194,26 @@
 		class="glyphicon glyphicon-log-out"> </span> Log out
 	</a>
 		
-	<form action="ModifyExam" method="post" >
-	
-	<input type="hidden" name="<%=ModifyExamServlet.EXAM_ID_PARAM_NAME %>" value="<%=exam.getExamID()%>">
-	
+	<form action="ModifyExam" method="post">
+
+		<input type="hidden" name="<%=ModifyExamServlet.EXAM_ID_PARAM_NAME%>"
+			value="<%=sExam.getExamID()%>">
+
 		<div id="startExam">
-			<p class="title">გამოცდა</p>
+			<div class="dispInline"><p class="title">გამოცდა</p><input onclick="EnibleEditing()" type="button" value="Edit"> </div>
 			<table class="detail-car-table">
 				<tbody>
 					<tr>
 						<th class="th-left">
 							<div class="th-key">მასწავლებელი:</div>
-							<div class="th-value"><%=exam.getCreatorName()%></div> <!--  <div class="th-value">ამირან მელია</div>  -->
+							<div class="th-value">
+								<%
+									if (sExam.isExamNew())
+										out.print(user.getFirstName() + " " + user.getLastName());
+									else
+										out.print(sExam.getCreatorName());
+								%>
+							</div> <!--  <div class="th-value">ამირან მელია</div>  -->
 						</th>
 					</tr>
 					<tr>
@@ -199,7 +221,7 @@
 							<div class="th-key">დასახელება:</div>
 							<div class="th-value">
 								<input type="text" id="examName" name="examName"
-									class="disabledfield lecturer" value="<%=exam.getName()%>"
+									class="disabledfield lecturer disabledfieldwidth" value="<%=sExam.getName()%>"
 									disabled>
 							</div>
 						</th>
@@ -223,7 +245,7 @@
 							<div class="th-value">
 
 								<input type="text" id="fname" name="examDuration"
-									class="disabledfield lecturer" value="<%=exam.getDuration()%>"
+									class="disabledfield lecturer disabledfieldwidth" value="<%=sExam.getDuration()%>"
 									disabled> წუთი.
 
 							</div>
@@ -236,8 +258,8 @@
 							<div class="th-key">თარიღი:</div>
 							<div class="th-value">
 								<input type="date" id="myDate" name="examStartDate"
-									class="disabledfield examboard"
-									value="<%=exam.getExamStartDate()%>" disabled>
+									class="disabledfield examboard disabledfieldwidth"
+									value="<%=sExam.getExamStartDate()%>" disabled>
 							</div>
 						</th>
 					</tr>
@@ -250,8 +272,8 @@
 
 
 								<input type="text" id="fname" name="examStartTime"
-									class="disabledfield examboard"
-									value="<%=exam.getExamStartTime()%>" disabled>
+									class="disabledfield examboard disabledfieldwidth" 
+									value="<%=sExam.getExamStartTime()%>" disabled>
 							</div>
 						</th>
 					</tr>
@@ -260,10 +282,13 @@
 						<th class="th-left">
 							<div class="th-key">Open Book:</div>
 							<div class="th-value">
-								<input type="checkbox" name="openbookcb" id="openbookcb" value=
-									<%=Exam.NoteType.OPEN_BOOK%>>
+								<input type="checkbox" name="openbookcb" id="openbookcb" class="disabledfield lecturer"
+									value="
+									<%=Exam.NoteType.OPEN_BOOK%>" disabled>
 								<div id="opennodediv" class="hiddencb">
-									Open Note: <input type="checkbox" name="openNote" id="openNote">
+									Open Note: <input type="checkbox" name="openNote" id="openNote"
+										value="
+									<%=Exam.NoteType.OPEN_NOTE%>" class="disabledfield lecturer" disabled>
 								</div>
 							</div>
 						</th>
@@ -282,7 +307,7 @@
 									<div class="drp_search">
 										<input type="text" id="tfaddlectuers" name="examName"
 											oninput="getLectuerersSuggestions()"
-											class="disabledfield lecturer" value=""
+											class="disabledfield lecturer disabledfieldwidth" value=""
 											placeholder="მასწავლებლის სახელი..." autocomplete="off"
 											disabled>
 										<ul class="drp_results" id="suggestionsList">
@@ -319,7 +344,7 @@
 								<script type='text/javascript'>
 									
 								<%/* adding sub lecturers to exam */
-			for (Lecturer curLec : exam.getSubLecturers()) {
+			for (Lecturer curLec : sExam.getSubLecturers()) {
 
 				out.append("addNewLecturer(" + curLec.getUserID() + ",'"
 						+ (curLec.getFirstName() + " " + curLec.getLastName()) + "');\n\r");
@@ -340,7 +365,7 @@
 						<th class="th-left">
 							<div class="th-key">გამოსაყენებელი მასალა:</div>
 							<div class="th-value">
-								<input type="file" name="file" />
+								<input type="file" name="file" class="disabledfield lecturer disabledfieldwidth" disabled/>
 							</div>
 						</th>
 					</tr>
@@ -348,7 +373,7 @@
 						<th class="th-left">
 							<div class="th-key">ვარიანტები:</div>
 							<div class="th-value">
-								<input type="file" name="file" />
+								<input type="file" name="file" class="disabledfield lecturer disabledfieldwidth" disabled/>
 							</div>
 						</th>
 					</tr>
@@ -356,7 +381,7 @@
 						<th class="th-left">
 							<div class="th-key">სტუდენტების სია:</div>
 							<div class="th-value">
-								<input type="file" name="file" />
+								<input type="file" name="file" class="disabledfield examboard disabledfieldwidth" disabled/>
 
 							</div>
 						</th>

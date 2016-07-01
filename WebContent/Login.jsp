@@ -6,6 +6,13 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Log In</title>
+	<script>
+		function removeStorage(){
+			sessionStorage.clear();
+			console.log("cleared");
+		}
+		removeStorage();
+	</script>
 <style>
 body {
 	background-color: #f2f2f2;

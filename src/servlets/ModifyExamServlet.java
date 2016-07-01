@@ -39,6 +39,7 @@ import helper.SecurityChecker;
 import models.EAUser;
 import models.Exam;
 import models.Lecturer;
+import models.SecureExam;
 
 /**
  * Servlet implementation class CreateExamServlet
@@ -72,6 +73,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			Exam examToEdit = getEditExam(request);
 			fillExamWithAditionalInfo(examToEdit, request);
 			request.setAttribute("exam", examToEdit);
+			request.setAttribute("user", checker.getUser());
 			RequestDispatcher dispatch = request.getRequestDispatcher("ModifyExam.jsp");
 			dispatch.forward(request, response);
 		} else {
@@ -86,7 +88,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	 * creator info
 	 */
 	private void fillExamWithAditionalInfo(Exam examToEdit, HttpServletRequest request) {
-		// TODO Auto-generated method stub
+		if (examToEdit.isEmptyExam()) return;
 		setCreatorNameForExam(examToEdit, request);
 		setSubLecturersForExam(examToEdit, request);
 	}
@@ -193,10 +195,10 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			if (examToEdit == null) {
 				response.sendRedirect("/ExamAssistant/ErrorPage.jsp");
 			}
-
+			SecureExam sExam = new SecureExam(examToEdit);
 			// here we have valid exam to edit and paramethers for this editing.
-			examToEdit.setExamEditor(checker.getUser());
-			editAndSaveExam(examToEdit, request);
+			sExam.setExamEditor(checker.getUser());
+			editAndSaveExam(sExam, request);
 
 		} else {
 			checker.redirectToValidPage(response);
@@ -210,9 +212,9 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	/***************************************************************/
 
 	/* filles examtoEdit with new values and processes its save in database */
-	private void editAndSaveExam(Exam examToEdit, HttpServletRequest request) {
+	private void editAndSaveExam(SecureExam examToEdit, HttpServletRequest request) {
 		setNewBasicValues(examToEdit, request);
-		printExamForTesting(examToEdit);
+		//printExamForTesting(examToEdit);
 		updateExamInDb(examToEdit, request);
 
 	}
@@ -228,7 +230,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	 * changeble for given user or at all in that case fields are saved
 	 * unchanged
 	 */
-	private void setNewBasicValues(Exam examToEdit, HttpServletRequest request) {
+	private void setNewBasicValues(SecureExam examToEdit, HttpServletRequest request) {
 		examToEdit.setName(getParametherFromRequest(request, "examName", examToEdit.getName()));
 		examToEdit.setType(getParametherFromRequest(request, "examType", examToEdit.getType()));
 		examToEdit.setDuration(getNewDuration(request, examToEdit.getDuration()));
@@ -273,7 +275,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	 * passes this exam @examToEdit to ExamManager to process update of given
 	 * exam in db
 	 */
-	private void updateExamInDb(Exam examToEdit, HttpServletRequest request) {
+	private void updateExamInDb(SecureExam examToEdit, HttpServletRequest request) {
 		// TODO Auto-generated method stub
 
 	}
