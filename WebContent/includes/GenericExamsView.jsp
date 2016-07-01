@@ -20,6 +20,37 @@
 	});
 </script>
 
+
+<script type="text/javascript">
+	var webSocket = new WebSocket(
+			"ws://localhost:8080/ExamAssistant/NotificationServerEndpoint");
+ 
+	webSocket.onmessage = function processMessage(message) {
+		console.log("Received message: "+message);
+		var gson = message.data;
+		messageTextArea.value += gson + "\n";
+	}
+
+	
+	function sendMessage() {
+		console.log("Sending message: "+messageText.value);
+		var messagetext = document.getElementById('messagetext');
+		sendJsonToServer(messagetext, 2, null);
+		//webSocket.send(messageText.value);
+		messageText.value = "";
+	}
+
+	
+	function sendJsonToServer(message, examId, variants) {
+		webSocket.send(JSON.stringify({
+			message : message,
+			examId: examId,
+			variants: ArrayList<Integer> variants
+		}));
+	}
+
+</script>
+
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
 
@@ -214,7 +245,7 @@ input[type=submit]:hover {
 		</div>
 
 
-		<label for="lname"> Notification </label> <br /> <input type="text"
+		<label for="lname" id="messageText"> Notification </label> <br /> <input type="text"
 			id="lname" name="lastname"> <br />   <br /> <label> Variant </label>
 		<br />
 
@@ -227,7 +258,7 @@ input[type=submit]:hover {
 		<input type="checkbox" name="option3" value="All"> All <br> <input
 			type="text" id="lname" name="lastname" value="I"> <br /> 
 			
-		<input  type="submit" value="Submit">
+		<input  type="submit" value="Submit" onclick="sendMessage();">
 
 	</div>
 </body>
