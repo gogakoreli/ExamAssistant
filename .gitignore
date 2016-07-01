@@ -3,3 +3,4 @@
 .classpath
 /bin
 WebContent/test.html
+src/helper/DBInfo.java
