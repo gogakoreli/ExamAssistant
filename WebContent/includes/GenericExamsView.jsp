@@ -4,20 +4,20 @@
 <%@ page import="listeners.ContextStartupListener"%>
 <%@ page import="models.EAUser"%>
 <%@ page import="models.Exam"%>
+<%@ page import="models.Lecturer"%>
 <%@ page import="java.util.ArrayList"%>
 
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html >
 <html>
 <head>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script>
-$(document).ready(function(){
-    $("#but").click(function(){
-        $("#div1").fadeToggle();
-    });
-});
+	$(document).ready(function() {
+		$("button").click(function() {
+			$("#div1").fadeToggle();
+		});
+	});
 </script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -63,7 +63,7 @@ input[type=text], select {
 }
 
 input[type=submit] {
-    width: 25%;
+    width: 47%;
     background-color: green;
     color: white;
     padding: 14px 20px;
@@ -85,19 +85,26 @@ input[type=submit] {
 	position: left;
 }
 
+#but1 {
+    width: 25px;
+    font-family: tahoma; 
+    
+}
+
 input[type=submit]:hover {
     background-color: #45a049;
 }
 
 #div1 {
-	position: bottom;
+	position: relative;
+ 	z-index:1200;
     display:none;
     border-radius: 5px;
     background-color: #f2f2f2; 
     border: 3px solid green;
     padding: 20px;
     margin:auto; 
-    margin-top:170px;
+    margin-top:160px;
     width: 550px;
 }
 </style>
@@ -117,20 +124,19 @@ input[type=submit]:hover {
 </style>
 
 
-<!-- end of new desgined boxes  -->
-
 
 </head>
 <body>
 
+	<%
+		ArrayList<Exam> exams = (ArrayList<Exam>) request.getAttribute("exams");
+		EAUser user = (EAUser) request.getAttribute("lecturer");
 
+		if (exams != null) {
+	%>
 
-<div id="section">
-
-		<%
-			ArrayList<Exam> exams = (ArrayList<Exam>) request.getAttribute("exams");
-			if (exams != null) {
-		%>
+	<div id="section" >
+		
 		<table class="tablesorter">
 			<tr>
 			<thead>
@@ -143,8 +149,13 @@ input[type=submit]:hover {
 					<th>Resource</th>
 					<th>Variants</th>
 					<th>Status</th>
+					<%
+						if (user instanceof Lecturer) {
+					%>
 					<th>Notification</th>
-					
+					<%
+						}
+					%>
 				</tr>
 			</thead>
 			<tbody>
@@ -167,9 +178,18 @@ input[type=submit]:hover {
 					<td><%=ex.getResourceType()%></td>
 					<td><%=ex.getNumVariants()%></td>
 					<td><%=ex.getStatus()%></td>
-					<td>  <button id = "but"> Notification </button>
+					<%
+						if (user instanceof Lecturer) {
+							String name = "but"+i;
+							request.setAttribute(name, i);
+					%>
+					<td>
+						<button id="but">Notification</button>
 					</td>
-					
+					<%
+						}
+					%>
+
 				</tr>
 				<%
 					}
@@ -183,24 +203,32 @@ input[type=submit]:hover {
 		<script type='text/javascript' src="includes/js/list.min.js">
 		
 		</script>
-	
-</div>
+	  </div>
 
-<div id = "div1">
+
+	<div id="div1">
+
+		<div style="text-align: right;">
+			<button id="but2"> X </button>
+			<br />
+		</div>
+
 
 		<label for="lname"> Notification </label> <br /> <input type="text"
-			id="lname" name="lastname"> <br /> 
-			<label for="country"> Variant </label> <br /> 
-			<select id="country" name="country">
-			<option>I</option>
-			<option>II</option>
-			<option>Both</option>
+			id="lname" name="lastname"> <br />   <br /> <label> Variant </label>
+		<br />
 
-		</select> <input type="submit" value="Submit">
-    
-</div>
+		<%
+			//int ex = (int) request.getAttribute("but0");
+			String name = (String) request.getParameter("name");
+		%>
 
 
+		<input type="checkbox" name="option3" value="All"> All <br> <input
+			type="text" id="lname" name="lastname" value="I"> <br /> 
+			
+		<input  type="submit" value="Submit">
 
+	</div>
 </body>
 </html>

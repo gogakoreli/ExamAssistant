@@ -44,16 +44,7 @@ p {
 	margin: 0px 0px;
 }
 
-input[type=submit] {
-	width: 47%;
-	background-color: #ffaa00;
-	color: white;
-	padding: 12px 20px;
-	margin: 8px 0;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-}
+
 </style>
 </head>
 <body>

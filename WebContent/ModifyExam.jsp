@@ -260,7 +260,7 @@
 						<th class="th-left">
 							<div class="th-key">Open Book:</div>
 							<div class="th-value">
-								<input type="checkbox" name="openbookcb" id="openbookcb" value
+								<input type="checkbox" name="openbookcb" id="openbookcb" value=
 									<%=Exam.NoteType.OPEN_BOOK%>>
 								<div id="opennodediv" class="hiddencb">
 									Open Note: <input type="checkbox" name="openNote" id="openNote">
