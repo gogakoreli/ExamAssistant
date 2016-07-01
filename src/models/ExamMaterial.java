@@ -32,6 +32,10 @@ public class ExamMaterial {
 			}
 		}
 	}
+	
+	public ExamMaterial() {
+		
+	}
 
 	/**
 	 * @return the materialID

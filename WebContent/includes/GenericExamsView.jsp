@@ -83,6 +83,7 @@
 
 <style>
 
+
 input[type=text], select {
     width: 80%;
     padding: 12px 20px;
