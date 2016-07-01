@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, models.*"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
 
 <%@ include file="includes/logoutscripts.html"%>
-<%@ include file="includes/LecturerNotification.html"%>
+<%-- <%@ include file="includes/LecturerNotification.html"%> --%>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Lecturer Page</title>
@@ -23,7 +23,7 @@
 	line-height: 30px;
 	background-color: #eeeeee;
 	height: 700px;
-	width: 300px;
+	width: 260px;
 	float: left;
 	padding: 9px;
 }
@@ -55,6 +55,8 @@ p {
 	text-align: center;
 	margin-left: 20ox;
 }
+
+
 </style>
 </head>
 
@@ -79,15 +81,12 @@ p {
 
 		</form>
 		<form action="ModifyExam" method="get">
-			<br /> <button name="newExam" class="btnclass" type="submit" value="1" >New Exam</button>
+			<br /> <input  name="newExam" class="btnclass" type="submit" value="New Exam" >
 		</form>
-			<jsp:include page="includes/Notification.html" />
 		
 	</div>
 
 	<jsp:include page="includes/GenericExamsView.jsp"></jsp:include>
 	
-	
-
 </body>
 </html>
