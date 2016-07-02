@@ -226,7 +226,7 @@ public class ExamManager {
 	 * @param exam
 	 * @return
 	 */
-	public void updateStudentExamInformation(Student student, Exam exam, DBConnector connector) {
+	public static void updateStudentExamInformation(Student student, Exam exam, DBConnector connector) {
 		ExamInformation examInfo = null;
 		String examInformationQuery = "SELECT up.*, p.IP, p.Number, p.IsWorking FROM userplace as up JOIN userexam as ue on ue.UserExamID = up.UserExamID"
 				+ " JOIN user as u on u.UserID = ue.UserID JOIN exam as e on e.ExamID = ue.ExamID JOIN place as p on p.PlaceID = up.PlaceID WHERE u.UserID = "
