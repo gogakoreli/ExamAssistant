@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
@@ -245,7 +246,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	}
 
 	/* returns new starttime for given exam by commbining its start date and start clock */
-	private Date getNewStartTime(HttpServletRequest request, Date defaultDate) {
+	private Timestamp getNewStartTime(HttpServletRequest request, Timestamp defaultDate) {
 		String startDate = getParametherFromRequest(request, "examStartDate", "");
 		String startTime = getParametherFromRequest(request, "examStartTime", "");
 		if (startDate.equals("") || startTime.equals(""))
@@ -258,7 +259,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		} catch (ParseException e) {
 			return defaultDate;
 		}
-		Date newDate = new Date(parsed.getTime());
+		Timestamp newDate = new Timestamp(parsed.getTime());
 		return newDate;
 	}
 

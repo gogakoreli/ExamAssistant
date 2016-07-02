@@ -1,8 +1,7 @@
 package models;
 
-import java.sql.Date;
+import java.util.Date;
 import java.sql.ResultSet;
-
 
 public class Student extends EAUser {
 
@@ -15,7 +14,7 @@ public class Student extends EAUser {
 	public Student() {
 		super();
 	}
-	
+
 	public Student(int userID, EAUserRole role, String mail, String firstName, String lastName, String image,
 			String googleID) {
 		super(userID, role, mail, firstName, lastName, image, googleID);

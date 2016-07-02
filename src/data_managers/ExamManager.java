@@ -236,7 +236,6 @@ public class ExamManager {
 			examInfo = new ExamInformation(queryResult.getResultSet());
 			student.setExamInformation(examInfo);
 		}
-		connector.dispose();
 	}
 
 	/**

@@ -1,9 +1,10 @@
 package models;
 
-import java.sql.Date;
+import java.util.Date;
 import java.sql.ResultSet;
 
 import helper.LogManager;
+import helper.TimeSpan;
 
 public class ExamInformation {
 
@@ -16,7 +17,7 @@ public class ExamInformation {
 	private String ip;
 	private int placeNumber;
 	private boolean isWorking;
-	
+
 	public ExamInformation(ResultSet resultSet) {
 		if (resultSet != null) {
 			try {
@@ -36,12 +37,20 @@ public class ExamInformation {
 			}
 		}
 	}
-	
+
 	/**
 	 * Constructor.
 	 */
 	public ExamInformation() {
-	
+
+	}
+
+	public Date getTimeLeft(Exam exam) {
+		Date result = null;
+		Date finishTime = new Date(exam.getStartTime().getTime() + (long) exam.getDuration() * 60 * 1000);
+		Date now = new Date();
+		result = new Date(finishTime.getTime() - now.getTime());
+		return result;
 	}
 
 	/*****************************/

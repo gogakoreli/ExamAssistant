@@ -1,12 +1,14 @@
 package models;
 
-import java.sql.Date;
+import java.util.Date;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import data_managers.ExamManager;
 import helper.LogManager;
+
 
 public class Exam {
 	
@@ -44,7 +46,7 @@ public class Exam {
 	private String name = "";
 	private String type = "";
 	private String noteType = "";
-	private Date startTime;
+	private Timestamp startTime;
 	private int duration = 0; // in minutes
 	private String resourceType = "";
 	private int numVariants = 0;
@@ -67,7 +69,7 @@ public class Exam {
 					this.setExamID(rs.getInt("ExamID"));
 					this.setName(rs.getString("Name"));
 					this.setType(rs.getString("Type"));
-					this.setStartTime(rs.getDate("StartTime"));
+					this.setStartTime(rs.getTimestamp("StartTime"));
 					this.setDuration(rs.getInt("Duration"));
 					this.setResourceType(rs.getString("ResourceType"));
 					this.setNumVariants(rs.getInt("NumVariants"));
@@ -83,7 +85,7 @@ public class Exam {
 		}
 	}
 
-	public Exam(int examID, String name, String type, Date startTime, int duration, String resourceType,
+	public Exam(int examID, String name, String type, Timestamp startTime, int duration, String resourceType,
 			int numVariants, String status) {
 		this.examID = examID;
 		this.name = name;
@@ -184,12 +186,12 @@ public class Exam {
 	}
 
 	/** Sets the start time of the exam. */
-	public void setStartTime(Date startTime) {
+	public void setStartTime(Timestamp startTime) {
 		this.startTime = startTime;
 	}
 	
 	/** Sets the start time of the exam. */
-	public Date getStartDateTime() {
+	public Timestamp getStartDateTime() {
 		return this.startTime;
 	}
 
