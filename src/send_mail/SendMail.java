@@ -1,43 +1,21 @@
 package send_mail;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
-import com.mysql.jdbc.UpdatableResultSet;
-
 import data_managers.AccountManager;
 import data_managers.ExamManager;
 import helper.DBConnector;
-import helper.OpResult;
+import helper.DBConnector.SqlQueryResult;
 import models.EAUser;
 import models.Exam;
 import models.Lecturer;
 import models.Student;
 
 public class SendMail {
-
-	private static String USER_NAME = "ggona14@freeuni.edu.ge"; // GMail user
-																// name (just
-																// the part
-																// before
-																// "@gmail.com")
-	private static String PASSWORD = "botigavafree"; // GMail password
-
-	public static void main(String[] args) {
-		String subject = "Java send mail example";
-		String body = "Welcome to JavaMail!";
-
-		ArrayList<EAUser> recipients = new ArrayList<EAUser>();
-		AccountManager acm = new AccountManager();
-		OpResult<EAUser> user = acm.getUserById(3);
-		Student gona = (Student) user.getOpResult();
-		recipients.add(gona);
-		ExamManager exM = new ExamManager();
-		Exam exam = exM.getExamForStudent(gona);
-
-		sendMailFromE(recipients, subject, body, USER_NAME, PASSWORD, exam);
-	}
 
 	/**
 	 * returns appropriate EAUser to session
@@ -49,8 +27,7 @@ public class SendMail {
 	 * messages
 	 */
 
-	public static void sendMailFromE(ArrayList<EAUser> recipients, String subject, String mailtext, String userName,
-			String password, Exam exam) {
+	public static void sendMails(ArrayList<EAUser> recipients, String userName, String password, Exam exam) {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.socketFactory.port", "465");
@@ -76,13 +53,18 @@ public class SendMail {
 					message.setSubject("საგამოცდო რეგისტრაცია");
 					Student student = (Student) user;
 					message.setText(emailMessageForStudent(student, exam));
+					Transport.send(message);
 				} else if (user instanceof Lecturer) {
-					message.setSubject("მომავალი გამოცდა");
-					Lecturer lecturer = (Lecturer) user;
-					message.setText(emailMessageForLecturer(lecturer, exam));
+					// TODO lektors davukomentare rom ar gaugzavnos jerjerobit
+					/*
+					 * message.setSubject("მომავალი გამოცდა"); Lecturer lecturer
+					 * = (Lecturer) user;
+					 * message.setText(emailMessageForLecturer(lecturer, exam));
+					 * Transport.send(message);
+					 */
 				}
 
-				Transport.send(message);
+				// TODO Transport.send(message);
 			}
 
 			System.out.println("All Emails are send");
@@ -92,7 +74,10 @@ public class SendMail {
 		}
 	}
 
-	private static String emailMessageForStudent(Student student, Exam exam) {
+	/**
+	 * returns email message text for student
+	 */
+	public static String emailMessageForStudent(Student student, Exam exam) {
 		DBConnector connector = new DBConnector();
 		ExamManager.updateStudentExamInformation(student, exam, connector);
 		String msg = "ძვირფასო  " + student.getFirstName() + " " + student.getLastName() + "\n";
@@ -107,7 +92,10 @@ public class SendMail {
 		return msg;
 	}
 
-	private static String emailMessageForLecturer(Lecturer lecturer, Exam exam) {
+	/**
+	 * returns email message text for student
+	 */
+	public static String emailMessageForLecturer(Lecturer lecturer, Exam exam) {
 		String msg = "ძვირფასო  " + lecturer.getFirstName() + " " + lecturer.getLastName() + " \n";
 
 		msg += "გიგზავნით მომავალი გამოცდის  ინფორმაციას:" + "\n";
@@ -116,5 +104,35 @@ public class SendMail {
 		msg += "საათი: " + exam.getStartDateTime() + "\n";
 
 		return msg;
+	}
+
+	/**
+	 * This is static method which send all mails to students and lectures with
+	 * corresponding exam
+	 */
+	public static void sendAllMailsForExam(int examId, String userName, String Password) {
+		DBConnector connector = new DBConnector();
+		String getUsers = "select * from userexam join user on userexam.UserID=user.UserID and ExamID=" + examId + ";";
+		SqlQueryResult queryResult = connector.getQueryResult(getUsers);
+		AccountManager acm = new AccountManager();
+		ExamManager exm = new ExamManager();
+		ArrayList<EAUser> users = new ArrayList<EAUser>();
+		if (queryResult.isSuccess()) {
+			ResultSet res = queryResult.getResultSet();
+			try {
+				while (res.next()) {
+					int userId = res.getInt("UserID");
+					EAUser user = acm.getUserById(userId).getOpResult();
+					System.out.println(user);
+					users.add(user);
+				}
+			} catch (SQLException e) {
+				connector.dispose();
+				e.printStackTrace();
+			}
+		}
+		connector.dispose();
+		Exam exam = exm.getExamByExamId(examId);
+		sendMails(users, userName, Password, exam);
 	}
 }
