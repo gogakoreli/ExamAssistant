@@ -231,7 +231,6 @@ public class ExamManager {
 			examInfo = new ExamInformation(queryResult.getResultSet());
 			student.setExamInformation(examInfo);
 		}
-		connector.dispose();
 	}
 
 	/**
@@ -513,14 +512,28 @@ public class ExamManager {
 		return students;
 	}
 
+	/**
+	 * 
+	 * @return array list of exams for the present day.
+	 */
 	public ArrayList<Exam> getExamsForEachDay() {
-		Exam ex = getExamByExamId(133);
-		System.out.println(ex.getName());
-		System.out.println(ex.getExamID());
-
-
-		ArrayList<Exam> res = new ArrayList<>();
-		res.add(ex);
+		ArrayList<Exam> res = new ArrayList<Exam>();
+		String st = "SELECT * FROM examassistant.exam "
+				+ " where  StartTime between curdate() and date_add(curdate(), interval 1 day);";
+		DBConnector connector = new DBConnector();
+		SqlQueryResult queryResult = connector.getQueryResult(st);
+		if (queryResult.isSuccess()) {
+			ResultSet rs = queryResult.getResultSet();
+			try {
+				while (!rs.isLast()) {
+					Exam exam = new Exam(rs);
+					res.add(exam);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		connector.dispose();
 		return res;
 	}
 }

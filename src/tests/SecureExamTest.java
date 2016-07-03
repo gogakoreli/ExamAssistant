@@ -2,11 +2,9 @@ package tests;
 
 import static org.junit.Assert.assertEquals;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-
 import org.junit.Test;
-
 import models.EAUser.EAUserRole;
 import models.Exam;
 import models.Exam.ExamStatus;
@@ -16,6 +14,7 @@ import models.ExamBoard;
 import models.Lecturer;
 import models.SecureExam;
 import models.Student;
+
 
 public class SecureExamTest {
 	Exam examToSecure = new Exam();
@@ -70,14 +69,14 @@ public class SecureExamTest {
 	
 	@Test
 	public void test4() {	
-		examToSecure.setStartTime(new Date(20));
+		examToSecure.setStartTime(new Timestamp(20));
 		examToSecure.setExamID(2);
 
 		exam = new SecureExam(examToSecure);
 		
 		assertEquals(exam.getExamStartTime(), "04:00" );
-		assertEquals(exam.getExamStartDate(), "2016-06-02" );
-		assertEquals(exam.getStartDateTime(), new Date(20));
+		assertEquals(exam.getExamStartDate(), "2016-06-03" );
+		assertEquals(exam.getStartDateTime(), new Timestamp(20));
 	}
 	
 	@Test
@@ -178,24 +177,24 @@ public class SecureExamTest {
 	public void test9() {	
 		Lecturer editor = new Lecturer();
 		exam.setExamEditor(editor);
-		exam.setStartTime(new Date(12));
+		exam.setStartTime(new Timestamp(12));
 		assertEquals(exam.getStartDateTime(), null);
 		
 		exam.setExamEditor(editor);
 		examToSecure.setStatus(ExamStatus.PENDING);
-		exam.setStartTime(new Date(12));
+		exam.setStartTime(new Timestamp(12));
 		assertEquals(exam.getStartDateTime(), null);
 		
 		ExamBoard editor1 = new ExamBoard();
 		exam.setExamEditor(editor);
 		examToSecure.setStatus(ExamStatus.NEW);
-		exam.setStartTime(new Date(12));
+		exam.setStartTime(new Timestamp(12));
 		assertEquals(exam.getStartDateTime(), null);
 		
 		examToSecure.setStatus(ExamStatus.PENDING);
 		exam.setExamEditor(editor1);
-		exam.setStartTime(new Date(12));
-		assertEquals(exam.getStartDateTime(), new Date(12));
+		exam.setStartTime(new Timestamp(12));
+		assertEquals(exam.getStartDateTime(),new Timestamp(12));
 	}	
 	
 	@Test
@@ -227,5 +226,5 @@ public class SecureExamTest {
 		exam.setSubLecturers(lect);
 		assertEquals(exam.getSubLecturers().size(), 2);
 	}	
-
+ 
 }
