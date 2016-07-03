@@ -132,7 +132,7 @@ public class ExamManagerTester {
 	public void testGetExamById(){
 		//we asume that exam by id 1231231 is not in db if this test fails we should check if it was created 
 		Exam myExam = exManager.getExamByExamId(1231231);
-		assertEquals(true, myExam == ExamManager.WRONG_EXAM);
+		assertEquals(myExam , ExamManager.WRONG_EXAM);
 		
 		Exam myExam1 = exManager.getExamByExamId(1231232);
 		assertEquals(true, myExam1 == ExamManager.WRONG_EXAM);
