@@ -180,6 +180,7 @@ public class Exam {
 		this.type = type;
 	}
 
+	//TODO aman unda daabrunos tarigi da saati da abrunebs marto tarigs
 	/** Gets the start time of the exam. */
 	public Date getStartTime() {
 		return startTime;
@@ -190,6 +191,7 @@ public class Exam {
 		this.startTime = startTime;
 	}
 	
+	//TODO aman unda daabrunos marto gamocdis saati mara abrunebs marto tarigs
 	/** Sets the start time of the exam. */
 	public Timestamp getStartDateTime() {
 		return this.startTime;

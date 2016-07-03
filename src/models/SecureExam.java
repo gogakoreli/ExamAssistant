@@ -81,11 +81,12 @@ public class SecureExam {
 
 	/** returs exam id of secure exam */
 	public int getDuration() {
-		if (isExamNew())
+		if (isExamNew()) 
 			return DEFAULT_EXAM_DURATION;
 		return examToSecure.getDuration();
 	}
 	
+	/** returns the type of the exam. */
 	public String getType() {
 		return examToSecure.getType();
 	}
@@ -94,6 +95,7 @@ public class SecureExam {
 		return examToSecure.getStartDateTime();
 	}
 
+	/** returns the note type of the exam. */
 	public String getNoteType() {
 		return examToSecure.getNoteType();
 	}
@@ -102,7 +104,7 @@ public class SecureExam {
 	 * returns list of sublecturers
 	 */
 	public List<Lecturer> getSubLecturers() {
-		if (isExamNew())
+		if (isExamNew()) 
 			return new ArrayList<Lecturer>();
 		return examToSecure.getSubLecturers();
 	}
@@ -132,8 +134,10 @@ public class SecureExam {
 		return canChangeUser && isStatusNew;
 	}
 
+	
+	/* Sets the duration.*/
 	public void setDuration(int newDuration) {
-		if (!hasPermissionChangeDuration())
+		if (!hasPermissionChangeDuration()) 
 			return;		
 		examToSecure.setDuration(newDuration);
 	}
@@ -146,8 +150,9 @@ public class SecureExam {
 		return canChangeUser && isStatusNew;
 	}
 
+	/* sets the type.*/
 	public void setType(String type) {
-		if (!hasPermissionChangeType())
+		if (!hasPermissionChangeType()) 
 			return;		
 		examToSecure.setType(type);
 	}
@@ -159,6 +164,7 @@ public class SecureExam {
 		return canChangeUser;
 	}
 	
+	/* sets the note type. */
 	public void setNoteType(String newNoteType) {
 		if (!hasPermissionChangeNoteType())
 			return;		

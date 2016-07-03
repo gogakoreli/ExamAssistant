@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TimerTask;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -145,8 +144,6 @@ public class ExamManager {
 		connector.dispose();
 		return res;
 	}
-	
-	
 
 	/**
 	 * First check if the user has started exam before or not. Start exam :
@@ -168,34 +165,32 @@ public class ExamManager {
 		}
 		connector.dispose();
 	}
-	
-	
+
 	/**
 	 * Changes exams status to started. This happens, when exam actually starts.
+	 * 
 	 * @param exam
-	 * @return 
+	 * @return
 	 */
-	public void startingExam( Exam exam) {
+	public void startingExam(Exam exam) {
 		String startExamQuery = "UPDATE exam SET status = \"started\" WHERE ExamID =" + exam.getExamID();
 		DBConnector connector = new DBConnector();
 		connector.updateDatabase(startExamQuery);
 		connector.dispose();
 	}
-	
-	
+
 	/**
-	 * Gets exam and changes its status to finished. 
+	 * Gets exam and changes its status to finished.
+	 * 
 	 * @param exam
 	 */
-	public void finishingExam( Exam exam) {
+	public void finishingExam(Exam exam) {
 		String startExamQuery = "UPDATE exam SET status = \"finished\" WHERE ExamID =" + exam.getExamID();
 		DBConnector connector = new DBConnector();
 		connector.updateDatabase(startExamQuery);
 		connector.dispose();
 	}
-	
-	
-	
+
 	/**
 	 * Get the exam from the database which is in 30 minutes or closer. If
 	 * student didn't clicked start exam earlier he is allowed to do so. Else he
@@ -226,7 +221,7 @@ public class ExamManager {
 	 * @param exam
 	 * @return
 	 */
-	public void updateStudentExamInformation(Student student, Exam exam, DBConnector connector) {
+	public static void updateStudentExamInformation(Student student, Exam exam, DBConnector connector) {
 		ExamInformation examInfo = null;
 		String examInformationQuery = "SELECT up.*, p.IP, p.Number, p.IsWorking FROM userplace as up JOIN userexam as ue on ue.UserExamID = up.UserExamID"
 				+ " JOIN user as u on u.UserID = ue.UserID JOIN exam as e on e.ExamID = ue.ExamID JOIN place as p on p.PlaceID = up.PlaceID WHERE u.UserID = "
@@ -332,6 +327,7 @@ public class ExamManager {
 	 * @param examId
 	 */
 	public void deleteExam(int examId) {
+		deleteUserPlaces(examId);
 		deleteAllExamsInUserExam(examId);
 		DBConnector connector = new DBConnector();
 		String removeQuery = "delete from exam where ExamID =" + examId + ";";
@@ -344,6 +340,41 @@ public class ExamManager {
 		DBConnector connector = new DBConnector();
 		String removeQuery = "delete from userexam where ExamID =" + examId + ";";
 		connector.updateDatabase(removeQuery);
+		connector.dispose();
+	}
+
+	/*
+	 * urodesac exam ishleba mashi unda waishalos UserPlaces cxrilidanac
+	 * shesabamisi monacemebi
+	 */
+	private void deleteUserPlaces(int examId) {
+		DBConnector connector = new DBConnector();
+		String sqlQuery = "select UserExamID from userexam where ExamID=" + examId + ";";
+		SqlQueryResult queryResult = connector.getQueryResult(sqlQuery);
+		ArrayList<Integer> userExamIDs = new ArrayList<Integer>();
+		if (queryResult.isSuccess()) {
+			ResultSet res = queryResult.getResultSet();
+			try {
+				while (res.next()) {
+					userExamIDs.add(res.getInt("UserExamID"));
+				}
+			} catch (SQLException e) {
+				connector.dispose();
+				e.printStackTrace();
+			}
+
+		}
+		connector.dispose();
+		removeFromUserPlaces(userExamIDs);
+	}
+
+	private void removeFromUserPlaces(ArrayList<Integer> userExamIDs) {
+		DBConnector connector = new DBConnector();
+		for (int i = 0; i < userExamIDs.size(); i++) {
+			int userExamID = userExamIDs.get(i);
+			String updateQuery = "delete from userplace where UserExamID=" + userExamID + ";";
+			connector.updateDatabase(updateQuery);
+		}
 		connector.dispose();
 	}
 
@@ -451,9 +482,38 @@ public class ExamManager {
 		return result;
 	}
 
+	/**
+	 * @param exam
+	 * @return list of students who write this exam
+	 */
+	public ArrayList<Student> getAllStudentWhoWritesThisExam(Exam exam) {
+		ArrayList<Student> students = new ArrayList<Student>();
+		String sqlQuery = "select user.UserID as UserID from userexam join user on userexam.UserID=user.UserID and ExamID="
+				+ exam.getExamID() + " where Role='student';";
+		DBConnector connector = new DBConnector();
+		SqlQueryResult queryResult = connector.getQueryResult(sqlQuery);
+		if (queryResult.isSuccess()) {
+			ResultSet rs = queryResult.getResultSet();
+			AccountManager acm = new AccountManager();
+			try {
+				while (rs.next()) {
+					int userId = rs.getInt("UserID");
+					Student student = (Student) acm.getUserById(userId).getOpResult();
+					students.add(student);
+				}
+			} catch (SQLException e) {
+				connector.dispose();
+				e.printStackTrace();
+			}
+
+		}
+		connector.dispose();
+		return students;
+	}
+
 	public ArrayList<Exam> getExamsForEachDay() {
 		Exam ex = getExamByExamId(1);
-	    System.out.println(ex.toString());
+		System.out.println(ex.toString());
 
 		ArrayList<Exam> res = new ArrayList<>();
 		res.add(ex);
