@@ -3,14 +3,15 @@ package helper;
 public class DBInfo {
 	
 	
-//	public static final String MYSQL_USERNAME = "root";
-//	public static final String MYSQL_PASSWORD = "root3";
-//	public static final String MYSQL_DATABASE_SERVER = "localhost:3306";
+	//online  database
+//	public static final String MYSQL_USERNAME = "examroot";
+//	public static final String MYSQL_PASSWORD = "root12";
+//	public static final String MYSQL_DATABASE_SERVER = "db4free.net:3306";
 //	public static final String MYSQL_DATABASE_NAME = "examassistant";
-//	
-	public static final String MYSQL_USERNAME = "examroot";
-	public static final String MYSQL_PASSWORD = "root12";
-	public static final String MYSQL_DATABASE_SERVER = "db4free.net:3306";
+	
+	//offline database
+	
+	public static final String MYSQL_PASSWORD = "root";
 	public static final String MYSQL_DATABASE_NAME = "examassistant";
 	
 }
