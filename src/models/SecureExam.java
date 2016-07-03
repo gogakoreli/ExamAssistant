@@ -1,6 +1,7 @@
 package models;
 
-import java.sql.Date;
+import java.util.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -90,8 +91,7 @@ public class SecureExam {
 		return examToSecure.getType();
 	}
 
-	/** returns the start time of the exam. */
-	public Date getStartDateTime() {
+	public Timestamp getStartDateTime() {
 		return examToSecure.getStartDateTime();
 	}
 
@@ -178,8 +178,7 @@ public class SecureExam {
 		return canChangeUser;
 	}
 
-	/* sets the start time.*/
-	public void setStartTime(Date newStartTime) {
+	public void setStartTime(Timestamp newStartTime) {
 		if (!hasPermissionChangeStartTime())
 			return;		
 		examToSecure.setStartTime(newStartTime);		

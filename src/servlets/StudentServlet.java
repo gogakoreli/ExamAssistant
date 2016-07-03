@@ -48,12 +48,15 @@ public class StudentServlet extends HttpServlet {
 		Student student = (Student) accountManager.getCurrentUser(session);
 		if (student != null) {
 			Exam exam = examManager.getExamForStudent(student);
-			examManager.canStartExam(student, exam);
-			request.setAttribute("student", student);
-			request.setAttribute("exam", exam);
+			if (examManager.canStartExam(student, exam)) {
+				request.setAttribute("student", student);
+				request.setAttribute("exam", exam);
 
-			RequestDispatcher dispatch = request.getRequestDispatcher("Student.jsp");
-			dispatch.forward(request, response);
+				RequestDispatcher dispatch = request.getRequestDispatcher("Student.jsp");
+				dispatch.forward(request, response);
+			} else {
+				goToStartedExam(request, response, student, exam, examManager);
+			}
 
 		} else {
 			response.sendRedirect("/ExamAssistant/Login");
@@ -75,17 +78,26 @@ public class StudentServlet extends HttpServlet {
 			Exam exam = (Exam) session.getAttribute("exam");
 			session.removeAttribute("exam");
 
-			if (exam != null) {
-				request.setAttribute("exam", exam);
-				request.setAttribute("student", student);
-				// examManager.startExam(student, exam);
-				ArrayList<ExamMaterial> materials = examManager.getExamMaterialsForStudent(student, exam);
-				request.setAttribute("materials", materials);
-				RequestDispatcher dispatch = request.getRequestDispatcher("Exam.jsp");
-				dispatch.forward(request, response);
-			}
+			goToStartedExam(request, response, student, exam, examManager);
 		} else {
 			response.sendRedirect("/ExamAssistant/Login");
+		}
+	}
+
+	private void goToStartedExam(HttpServletRequest request, HttpServletResponse response, Student student, Exam exam,
+			ExamManager examManager) {
+		if (exam != null) {
+			request.setAttribute("exam", exam);
+			request.setAttribute("student", student);
+			examManager.startExam(student, exam);
+			ArrayList<ExamMaterial> materials = examManager.getExamMaterialsForStudent(student, exam);
+			request.setAttribute("materials", materials);
+			RequestDispatcher dispatch = request.getRequestDispatcher("Exam.jsp");
+			try {
+				dispatch.forward(request, response);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
