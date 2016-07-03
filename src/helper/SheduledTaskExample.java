@@ -1,10 +1,10 @@
 package helper;
 
-import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;
@@ -33,11 +33,13 @@ public class SheduledTaskExample {
             public void run() {
                 try {
                     getDataFromDatabase();
+                	//System.out.println("Timer in onweee" + new Date());
+
                 }catch(Exception ex) {
                     ex.printStackTrace(); 
                 }
             }
-        }, 0, 2, TimeUnit.MINUTES);
+        }, 0, 3, TimeUnit.MINUTES);
     }
 
     private void getDataFromDatabase() {
@@ -45,20 +47,27 @@ public class SheduledTaskExample {
     	
     	ArrayList<Exam> exams = man.getExamsForEachDay();
     	
-
-		//while (exams.size() != 0) {
+    	System.out.println("aaa");
+    	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    	Date date = new Date();
+    	System.out.println(dateFormat.format(date)); 
+    	
+    	while (exams.size() != 0) {
 			Exam ex = exams.get(0);
-		    System.out.println("aaa");
 		    
+			System.out.println(ex.getStartDateTime());
+			System.out.println(ex.getStartTime());
+
 			Timer timer = new Timer();
-			// Use this if you want to execute it once
+			
 			timer.schedule(new TimerTask() {
 
 				@Override
 				public void run() {
+					System.out.println("We got here");
 					man.startingExam(ex);
 				}
-			}, ex.getStartDateTime());
+			}, ex.getStartDateTime(), 1);
 			
 //			 Date endTime = ex.getStartDateTime();
 //			 int mm = endTime.getMinutes() +  ex.getDuration();
@@ -72,8 +81,8 @@ public class SheduledTaskExample {
 //				}
 //			}, endTime);
 			
-			//exams.remove(0);
-		//}
+			exams.remove(0);
+		}
 		
 	}
 
