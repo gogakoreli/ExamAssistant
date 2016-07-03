@@ -87,7 +87,7 @@ public class SendMail {
 
 		msg += "საათი: " + exam.getStartDateTime() + "\n";
 
-		msg += "ადგილი: " + student.getExamInformation().getPlaceID() + "\n";
+		msg += "ადგილი: " + student.getExamInformation().getPlaceNumber() + "\n";
 		msg += "ვარიანტი: " + student.getExamInformation().getVariant() + "\n";
 		return msg;
 	}
