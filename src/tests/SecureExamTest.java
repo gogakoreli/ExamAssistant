@@ -70,7 +70,7 @@ public class SecureExamTest {
 	
 	@Test
 	public void test4() {	
-		examToSecure.setStartTime(new Date(20));
+		//examToSecure.setStartTime(new Date(20));
 		examToSecure.setExamID(2);
 
 		exam = new SecureExam(examToSecure);
@@ -178,23 +178,23 @@ public class SecureExamTest {
 	public void test9() {	
 		Lecturer editor = new Lecturer();
 		exam.setExamEditor(editor);
-		exam.setStartTime(new Date(12));
+		//exam.setStartTime(new Date(12));
 		assertEquals(exam.getStartDateTime(), null);
 		
 		exam.setExamEditor(editor);
 		examToSecure.setStatus(ExamStatus.PENDING);
-		exam.setStartTime(new Date(12));
+		//exam.setStartTime(new Date(12));
 		assertEquals(exam.getStartDateTime(), null);
 		
 		ExamBoard editor1 = new ExamBoard();
-		exam.setExamEditor(editor);
+		//exam.setExamEditor(editor);
 		examToSecure.setStatus(ExamStatus.NEW);
-		exam.setStartTime(new Date(12));
+		//exam.setStartTime(new Date(12));
 		assertEquals(exam.getStartDateTime(), null);
 		
 		examToSecure.setStatus(ExamStatus.PENDING);
 		exam.setExamEditor(editor1);
-		exam.setStartTime(new Date(12));
+		//exam.setStartTime(new Date(12));
 		assertEquals(exam.getStartDateTime(), new Date(12));
 	}	
 	
