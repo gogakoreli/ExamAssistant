@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, models.*, helper.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -77,15 +78,30 @@ h1 {
 			<span class="hours"></span>
 			<div class="smalltext">საათი</div>
 		</div>
+		
 		<div>
 			<span class="minutes"></span>
 			<div class="smalltext">წუთი</div>
 		</div>
+		
 		<div>
 			<span class="seconds"></span>
 			<div class="smalltext">წამი</div>
 		</div>
 	</div>
+	
+	<br>
+	<br>
+	
+	 <form method="POST" action="Upload" enctype="multipart/form-data" >
+            File:
+            <input type="file" name="file" id="file" />
+            <br>
+            Destination:
+            <input type="text" value="/tmp" name="destination"/>
+            <br>
+            <input type="submit" value="Upload" name="upload" id="upload" />
+       </form>
 
 	<script type="text/javascript">
 		function getTimeRemaining(endtime) {
