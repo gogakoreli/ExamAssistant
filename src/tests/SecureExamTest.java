@@ -77,6 +77,8 @@ public class SecureExamTest {
 		assertEquals(exam.getExamStartTime(), "04:00" );
 		assertEquals(exam.getExamStartDate(), "2016-06-03" );
 		assertEquals(exam.getStartDateTime(), new Timestamp(20));
+		assertEquals(exam.getExamStartDate(), "2016-06-02" );
+		assertEquals(exam.getStartDateTime(), new Date(20));
 	}
 	
 	@Test
@@ -186,7 +188,7 @@ public class SecureExamTest {
 		assertEquals(exam.getStartDateTime(), null);
 		
 		ExamBoard editor1 = new ExamBoard();
-		exam.setExamEditor(editor);
+		//exam.setExamEditor(editor);
 		examToSecure.setStatus(ExamStatus.NEW);
 		exam.setStartTime(new Timestamp(12));
 		assertEquals(exam.getStartDateTime(), null);

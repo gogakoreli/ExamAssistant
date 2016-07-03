@@ -1,6 +1,5 @@
 package helper;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -9,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.sql.Timestamp;
 
 import data_managers.ExamManager;
 import helper.DBConnector.SqlQueryResult;
@@ -38,7 +38,7 @@ public class SetPlaces {
 			try {
 				while (res.next()) {
 					int placeId = res.getInt("PlaceID");
-					Date startTime = res.getDate("StartTime");
+					Timestamp startTime = res.getTimestamp("StartTime");
 					int duration = res.getInt("Duration");
 					if (checkTimesIntercection(startTime, duration, exam)) {
 						freePlaces.remove(placeId);
@@ -134,9 +134,12 @@ public class SetPlaces {
 		connector.dispose();
 	}
 
-	// TODO ak unda shemoqmdes xoar emtxveva droshi
-	private static boolean checkTimesIntercection(Date startTime, int duration, Exam exam) {
-		return exam.getStartTime() == startTime;
+	// TODO ak unda shemowmdes xoar emtxveva droshi
+	private static boolean checkTimesIntercection(Timestamp startTime, int duration, Exam exam) {
+		long t = startTime.getTime();
+		long m = duration * 60 * 1000;
+		Timestamp curExamEndTime = new Timestamp(t + m);
+		return (startTime.after(exam.getEndDateTime()) || exam.getEndDateTime().after(curExamEndTime));
 	}
 
 	private static class Place implements Comparable<Place> {
@@ -175,6 +178,10 @@ public class SetPlaces {
 		}
 		connector.dispose();
 		return places;
+	}
+
+	public static void main(String[] args) {
+		setPlacesForStudentsByExam(3);
 	}
 
 }
