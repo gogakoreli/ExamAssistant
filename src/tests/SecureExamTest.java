@@ -71,7 +71,7 @@ public class SecureExamTest {
 	
 	@Test
 	public void test4() {	
-		examToSecure.setStartTime(new Date(20));
+		examToSecure.setStartTime(new Timestamp(20));
 		examToSecure.setExamID(2);
 
 		exam = new SecureExam(examToSecure);
