@@ -102,11 +102,10 @@ public class UploadServlet extends HttpServlet {
 	      // Process the uploaded file items
 	      Iterator i = fileItems.iterator();
 
-	      out.println("<html>");
-	      out.println("<head>");
-	      out.println("<title>Servlet upload</title>");  
-	      out.println("</head>");
-	      out.println("<body>");
+	      response.setContentType("text/html");  
+	      out.println("<script type=\"text/javascript\">");  
+	      out.println("alert('Upload Completed');");  
+	      out.println("</script>");
 	      while ( i.hasNext () ) 
 	      {
 	         FileItem fi = (FileItem)i.next();
@@ -127,14 +126,31 @@ public class UploadServlet extends HttpServlet {
 	               fileName.substring(fileName.lastIndexOf("\\")+1)) ;
 	            }
 	            fi.write( file ) ;
-	            out.println("Uploaded Filename: " + fileName + "<br>");
 	         }
 	      }
-	      out.println("</body>");
-	      out.println("</html>");
 	   }catch(Exception ex) {
 	       System.out.println(ex);
 	   }
+	      response.sendRedirect("Student");
+	}
+	
+	
+	private void deleteFile(String fileLocation)
+	{
+		try{
+    		
+    		File file = new File(fileLocation);
+        	
+    		if(file.delete()){
+    			System.out.println(file.getName() + " is deleted!");
+    		}else{
+    			System.out.println("Delete operation is failed.");
+    		}
+    	   
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		
+    	}
 	}
 
 }

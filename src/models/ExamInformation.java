@@ -1,6 +1,8 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.io.File;
 import java.sql.ResultSet;
 
 import helper.LogManager;
@@ -18,6 +20,13 @@ public class ExamInformation {
 	private int placeNumber;
 	private boolean isWorking;
 
+	private ArrayList<File> uploadedFiles;
+
+	/**
+	 * Constructor using resultset
+	 * 
+	 * @param resultSet
+	 */
 	public ExamInformation(ResultSet resultSet) {
 		if (resultSet != null) {
 			try {
@@ -31,26 +40,51 @@ public class ExamInformation {
 					this.setIp(resultSet.getString("IP"));
 					this.setPlaceNumber(resultSet.getInt("Number"));
 					this.setWorking(resultSet.getBoolean("IsWorking"));
+					uploadedFiles = new ArrayList<File>();
 				}
 			} catch (Exception e) {
 				LogManager.logErrorException(3000, "Error parsing ResultSet ", e);
 			}
 		}
+
 	}
 
 	/**
 	 * Constructor.
 	 */
 	public ExamInformation() {
+		uploadedFiles = new ArrayList<File>();
 
 	}
 
+	/*****************************/
+	/********** methods **********/
+	/*****************************/
+
+	/**
+	 * get time left from the currrent time to the finishing of the exam
+	 * 
+	 * @param exam
+	 * @return
+	 */
 	public Date getTimeLeft(Exam exam) {
 		Date result = null;
 		Date finishTime = new Date(exam.getStartTime().getTime() + (long) exam.getDuration() * 60 * 1000);
 		Date now = new Date();
 		result = new Date(finishTime.getTime() - now.getTime());
 		return result;
+
+	}
+
+	/**
+	 * store uploaded files in the arraylist , because I need reference to
+	 * delete, update in the future
+	 * 
+	 * @param file
+	 */
+	public void addUploadedFile(File file) {
+		uploadedFiles.add(file);
+
 	}
 
 	/*****************************/
@@ -190,6 +224,23 @@ public class ExamInformation {
 	 */
 	public void setWorking(boolean isWorking) {
 		this.isWorking = isWorking;
+	}
+
+	/**
+	 * @return the uploadedFiles
+	 */
+	public ArrayList<File> getUploadedFiles() {
+		return uploadedFiles;
+
+	}
+
+	/**
+	 * @param uploadedFiles
+	 *            the uploadedFiles to set
+	 */
+	public void setUploadedFiles(ArrayList<File> uploadedFiles) {
+		this.uploadedFiles = uploadedFiles;
+
 	}
 
 }
