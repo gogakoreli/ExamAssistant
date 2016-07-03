@@ -173,7 +173,7 @@ public class ExamManager {
 	 * @return
 	 */
 	public void startingExam(Exam exam) {
-		String startExamQuery = "UPDATE exam SET status = \"started\" WHERE ExamID =" + exam.getExamID();
+		String startExamQuery = "UPDATE exam SET status = \"live\" WHERE ExamID =" + exam.getExamID();
 		DBConnector connector = new DBConnector();
 		connector.updateDatabase(startExamQuery);
 		connector.dispose();
@@ -231,6 +231,7 @@ public class ExamManager {
 			examInfo = new ExamInformation(queryResult.getResultSet());
 			student.setExamInformation(examInfo);
 		}
+		connector.dispose();
 	}
 
 	/**
@@ -368,6 +369,7 @@ public class ExamManager {
 		removeFromUserPlaces(userExamIDs);
 	}
 
+	
 	private void removeFromUserPlaces(ArrayList<Integer> userExamIDs) {
 		DBConnector connector = new DBConnector();
 		for (int i = 0; i < userExamIDs.size(); i++) {
@@ -512,8 +514,10 @@ public class ExamManager {
 	}
 
 	public ArrayList<Exam> getExamsForEachDay() {
-		Exam ex = getExamByExamId(1);
-		System.out.println(ex.toString());
+		Exam ex = getExamByExamId(133);
+		System.out.println(ex.getName());
+		System.out.println(ex.getExamID());
+
 
 		ArrayList<Exam> res = new ArrayList<>();
 		res.add(ex);
