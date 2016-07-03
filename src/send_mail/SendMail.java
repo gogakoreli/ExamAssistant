@@ -40,38 +40,37 @@ public class SendMail {
 				return new PasswordAuthentication(userName, password);
 			}
 		});
+
+		for (int i = 0; i < recipients.size(); i++) {
+			EAUser user = recipients.get(i);
+			sendEmailToSingleUser(session, userName, user, exam);
+		}
+
+		System.out.println("All Emails are send");
+	}
+
+	private static void sendEmailToSingleUser(Session session, String userName, EAUser user, Exam exam) {
 		try {
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(userName));
 
-			for (int i = 0; i < recipients.size(); i++) {
-				Message message = new MimeMessage(session);
-				message.setFrom(new InternetAddress(userName));
+			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(user.getMail()));
 
-				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipients.get(i).getMail()));
-
-				EAUser user = recipients.get(i);
-				if (user instanceof Student) {
-					message.setSubject("საგამოცდო რეგისტრაცია");
-					Student student = (Student) user;
-					message.setText(emailMessageForStudent(student, exam));
-					Transport.send(message);
-				} else if (user instanceof Lecturer) {
-					// TODO lektors davukomentare rom ar gaugzavnos jerjerobit
-					/*
-					 * message.setSubject("მომავალი გამოცდა"); Lecturer lecturer
-					 * = (Lecturer) user;
-					 * message.setText(emailMessageForLecturer(lecturer, exam));
-					 * Transport.send(message);
-					 */
-				}
-
-				// TODO Transport.send(message);
+			if (user instanceof Student) {
+				message.setSubject("საგამოცდო რეგისტრაცია");
+				Student student = (Student) user;
+				message.setText(emailMessageForStudent(student, exam));
+			} else if (user instanceof Lecturer) {
+				message.setSubject("მომავალი გამოცდა");
+				Lecturer lecturer = (Lecturer) user;
+				message.setText(emailMessageForLecturer(lecturer, exam));
 			}
-
-			System.out.println("All Emails are send");
-
 		} catch (MessagingException e) {
+			System.out.println("Exception: " + user.getMail() + " is not valid Email");
 			e.printStackTrace();
 		}
+
+		// TODO Transport.send(message);
 	}
 
 	/**
