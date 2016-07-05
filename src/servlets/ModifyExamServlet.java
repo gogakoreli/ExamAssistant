@@ -1,5 +1,6 @@
 package servlets;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -89,7 +90,8 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	 * creator info
 	 */
 	private void fillExamWithAditionalInfo(Exam examToEdit, HttpServletRequest request) {
-		if (examToEdit.isEmptyExam()) return;
+		if (examToEdit.isEmptyExam())
+			return;
 		setCreatorNameForExam(examToEdit, request);
 		setSubLecturersForExam(examToEdit, request);
 	}
@@ -133,12 +135,15 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		int ExamID = getIntFromString(examIdstr, ExamManager.NO_EXAM_ID);
 		return ExamID;
 	}
-	
-	/* gets integer from string if error happened during parsing defVal is returned */
-	private int getIntFromString(String toParse, int defVal){
-		try{
+
+	/*
+	 * gets integer from string if error happened during parsing defVal is
+	 * returned
+	 */
+	private int getIntFromString(String toParse, int defVal) {
+		try {
 			return Integer.parseInt(toParse);
-		}catch(Exception e){
+		} catch (Exception e) {
 			return defVal;
 		}
 	}
@@ -192,37 +197,60 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			throws ServletException, IOException {
 		SecurityChecker checker = new SecurityChecker(request, this);
 		if (checker.CheckPermissions()) {
-			Exam examToEdit = getEditExam(request);
-			if (examToEdit == null) {
-				response.sendRedirect("/ExamAssistant/ErrorPage.jsp");
+			if (isSaveCommand(request) || isSaveAndChangeStatusCommand(request)) {
+				Exam examToEdit = getEditExam(request);
+				if (examToEdit == null) {
+					response.sendRedirect("/ExamAssistant/ErrorPage.jsp");
+				}
+				SecureExam sExam = new SecureExam(examToEdit);
+				// here we have valid exam to edit and paramethers for this
+				// editing.
+				sExam.setExamEditor(checker.getUser());
+				int changedExamId = editAndSaveExam(sExam, request);
+				if (isSaveAndChangeStatusCommand(request)) {
+					//exam updated now we change status 
+					changeExamStatus(sExam, request, changedExamId);
+				}
+				// update finished redirect to new page
+				redirectToResultPage(response, changedExamId);
 			}
-			SecureExam sExam = new SecureExam(examToEdit);
-			// here we have valid exam to edit and paramethers for this editing.
-			sExam.setExamEditor(checker.getUser());
-			editAndSaveExam(sExam, request);
-
 		} else {
 			checker.redirectToValidPage(response);
 		}
 
 	}
 
-	/***************************************************************/
+	
 
+	private boolean isSaveAndChangeStatusCommand(HttpServletRequest request) {
+		String submit = getParametherFromRequest(request, "saveAndSubmitButton", null);
+		//LogManager.logInfoMessage("submit pressed " + submit);
+		return (submit != null);
+	}
+
+	private boolean isSaveCommand(HttpServletRequest request) {
+		String save = getParametherFromRequest(request, "saveButton", null);
+		//LogManager.logInfoMessage("save pressed " + save);
+		return (save != null);
+	}
+
+	/* redirects page to see changed exam */
+	private void redirectToResultPage(HttpServletResponse response, int ExamId) throws IOException {
+		response.sendRedirect("ModifyExam?" + EXAM_ID_PARAM_NAME + "=" + ExamId);
+	}
+
+	/***************************************************************/
 	/*********** functions for modifying exam and saving ************/
 	/***************************************************************/
 
-	/* filles examtoEdit with new values and processes its save in database */
-	private void editAndSaveExam(SecureExam examToEdit, HttpServletRequest request) {
+	/*
+	 * filles examtoEdit with new values and processes its save in database
+	 * after its mofified/created returns its id
+	 */
+	private int editAndSaveExam(SecureExam examToEdit, HttpServletRequest request) {
 		setNewBasicValues(examToEdit, request);
-		//printExamForTesting(examToEdit);
-		updateExamInDb(examToEdit, request);
-
-	}
-
-	/* prints exams info for testing purposes on console */
-	private void printExamForTesting(Exam examToEdit) {
-		LogManager.logInfoMessage(examToEdit.toString());
+		int updatedExamId = updateExamInDb(examToEdit, request);
+		return updatedExamId;
 	}
 
 	/*
@@ -236,7 +264,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		examToEdit.setType(getParametherFromRequest(request, "examType", examToEdit.getType()));
 		examToEdit.setDuration(getNewDuration(request, examToEdit.getDuration()));
 		examToEdit.setStartTime(getNewStartTime(request, examToEdit.getStartDateTime()));
-		examToEdit.setNoteType(getNewNoteType(request, examToEdit.getNoteType()));
+		examToEdit.setResourceType(getNewNoteType(request, examToEdit.getResourceType()));
 	}
 
 	private String getNewNoteType(HttpServletRequest request, String noteType) {
@@ -245,7 +273,10 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		return isOpenNote;
 	}
 
-	/* returns new starttime for given exam by commbining its start date and start clock */
+	/*
+	 * returns new starttime for given exam by commbining its start date and
+	 * start clock
+	 */
 	private Timestamp getNewStartTime(HttpServletRequest request, Timestamp defaultDate) {
 		String startDate = getParametherFromRequest(request, "examStartDate", "");
 		String startTime = getParametherFromRequest(request, "examStartTime", "");
@@ -268,17 +299,31 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		return getIntFromString(getParametherFromRequest(request, "examDuration", "" + defaultduration),
 				defaultduration);
 	}
-	
-	
-	
 
 	/*
 	 * passes this exam @examToEdit to ExamManager to process update of given
 	 * exam in db
 	 */
-	private void updateExamInDb(SecureExam examToEdit, HttpServletRequest request) {
-		// TODO Auto-generated method stub
-
+	private int updateExamInDb(SecureExam examToEdit, HttpServletRequest request) {
+		int changedExamId = examToEdit.getExamID();
+		ExamManager examManager = ExamManager.getExamManager(request.getSession());
+		Exam editedExam = examToEdit.getEditedExam();
+		EAUser editor = examToEdit.getExamEditor();
+		if (examToEdit.isExamNew()) {
+			// creates new exam
+			changedExamId = examManager.createNewExam(editor.getUserID(), editedExam.getName(),
+					editedExam.getResourceType(), editedExam.getDuration(), editedExam.getNumVariants(),
+					editedExam.getType(), editor.getUserID());
+		} else {
+			if (editor instanceof Lecturer) {
+				examManager.modifyExamBasicForLecturer(editedExam.getExamID(), editedExam.getName(),
+						editedExam.getResourceType(), editedExam.getDuration(), editedExam.getType(),
+						editedExam.getNumVariants());
+			} else {
+				examManager.modifyExamBasicForBoard(editedExam.getExamID(), editedExam.getStartDateTime());
+			}
+		}
+		return changedExamId;
 	}
 
 	/*
@@ -287,7 +332,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	 */
 	private String getParametherFromRequest(HttpServletRequest request, String parametherName, String defaultValue) {
 		String[] paramVals = request.getParameterValues(parametherName);
-		//String paramVal = request.getParameter(parametherName);
+		// String paramVal = request.getParameter(parametherName);
 		if (paramVals == null || (paramVals.length == 0))
 			return defaultValue;
 		return paramVals[0];
@@ -340,6 +385,19 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 		} catch (Exception ex) {
 			System.out.println(ex);
+		}
+	}
+	
+	
+	/**************************/
+	/*** changing status ******/
+	/**************************/
+	/*changes exam status after user presses submit */
+	private void changeExamStatus(SecureExam sExam, HttpServletRequest request, int examId) {
+		OpResult<Boolean> result = sExam.canChangeStatus();
+		if (result.isSuccess()){
+			ExamManager eManager = ExamManager.getExamManager(request.getSession());
+			eManager.updateExamStatus(examId, sExam.getNextStatus(), sExam.getExamStatus());
 		}
 	}
 
@@ -405,10 +463,10 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	}
 
 	private String getExamResourceType(HttpServletRequest request) {
-		/* if (request.getParameter("examStatus") != null) {
-			return Exam.OPEN_BOOK;
-		} else
-			return Exam.CLOSED_BOOK; */
+		/*
+		 * if (request.getParameter("examStatus") != null) { return
+		 * Exam.OPEN_BOOK; } else return Exam.CLOSED_BOOK;
+		 */
 		return null;
 	}
 
@@ -436,8 +494,9 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		int numVariants = 1;
 		String examType = getExamType(request);
 		if (checkNewExam(request)) {
-			manager.createNewExam(user.getUserID(), examName, openBook, subLecturers, materials, examDuration,
-					numVariants, examType);
+			// manager.createNewExam(user.getUserID(), examName, openBook,
+			// subLecturers, materials, examDuration,
+			// numVariants, examType);
 		} else {
 			int examID = Integer.parseInt(request.getParameter("id"));
 			String examStatus = getExamStatus(request);

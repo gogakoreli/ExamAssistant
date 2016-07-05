@@ -41,8 +41,8 @@ p {
 }
 
 .btnclass {
-	width: 80%;
-	background-color: #ffaa00;
+	width: 47%;
+	background-color: #4CAF50;
 	color: white;
 	padding: 12px 20px;
 	margin: 8px 0;

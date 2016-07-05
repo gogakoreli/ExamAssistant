@@ -19,6 +19,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;" charset="UTF-8">
+<title>Exam</title>
 <title>Student Page</title>
 
 
@@ -31,10 +32,14 @@
 	right: 0;
 }
 
-.dispInline{display: inline-flex;}
-.disabledfieldwidth{
-    width: 200px;
+.dispInline {
+	display: inline-flex;
 }
+
+.disabledfieldwidth {
+	width: 200px;
+}
+
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=2">
 <link rel="stylesheet"
@@ -49,6 +54,81 @@
 <link rel="stylesheet" type="text/css"
 	href="../ExamAssistant/includes/css/dropdown.css">
 
+
+<script type="text/javascript">
+	var userType =
+	<%if (user instanceof Lecturer)
+				out.print("'lecturer'");
+			else
+				out.print("'examboard'");%>
+		;
+
+		var examstatus = '<%=sExam.getExamStatus()%>' + '_class';
+	
+		
+	function submitRequested(){
+		if (examstatus === 'new_class')
+			return newExamSubmitRequested();
+		else 
+			return finalSubmitRequested();
+		
+	}
+	
+	/* validates user can change status from new */
+	function newExamSubmitRequested(){
+		if (!$('#examName').val()){
+			alert("Cant submit exam without name!");
+			return false;
+		}
+		
+		if (!$('#examDuration').val()){
+			alert("Cant submit exam without duration!");
+			return false;
+		}
+		
+		//alert();
+		return confirm("After submitting You won't be able to change exams name and duration.\n "
+				+ "Board will be able to see your exam and set start time for it. \n Are you sure you want to continue? ");
+	}
+	
+	/* validates user can change status from new */
+	function finalSubmitRequested(){
+		if (userType === 'lecturer'){
+			if (!validateLecturer()) return false;
+		}else{
+			if (!validateBoard()) return false;
+		}
+		
+		return confirm("After submitting You won't be able to make any changes in exam\n "
+				+ "if you still want to continue changin exam info choose save instead. \n Are you sure you want to continue? ");
+	}
+	
+	function validateLecturer(){
+		if (!$('#examName').val()){
+			//alert("Cant submit exam without name!");
+			//return false;
+		}
+		
+		if (!$('#examDuration').val()){
+			//alert("Cant submit exam without duration!");
+			//return false;
+		}
+	}
+	
+	function validateBoard(){
+		if (!$('#examStartDate').val()){
+			alert("Cant submit exam without start date!");
+			return false;
+		}
+		
+		if (!$('#examStartTime').val()){
+			alert("Cant submit exam without start time!");
+			return false;
+		}
+	}
+
+</script>
+
 <script type="text/javascript">
 	//show hide open note option 
 	$(document).ready(function() {
@@ -57,13 +137,17 @@
 		});
 	});
 </script>
+
+<script type="text/javascript">
+	$("#file").change(function(){
+         //file uploaded 
+	});
+
+</script>
+
+
 <script>
-	var userType =
-<%if (user instanceof Lecturer)
-				out.print("'lecturer'");
-			else
-				out.print("'examboard'");%>
-	;
+	
 	function hasClass(elem, klass) {
 		return (" " + elem.className + " ").indexOf(" " + klass + " ") > -1;
 	}
@@ -75,7 +159,7 @@
 		var arrayLength = x.length;
 		for (var i = 0; i < arrayLength; i++) {
 
-			if (hasClass(x[i], userType)) {
+			if (hasClass(x[i], userType) && hasClass(x[i], examstatus)) {
 				//alert("I am an alert box!");
 				x[i].removeAttribute("disabled");
 				if (!hasClass(x[i], 'visibletextbox')) {
@@ -178,29 +262,44 @@
 	}
 </script>
 
+<style>
+.colored_purple{
+	background-color: #af4c9f;
+	    border: none;
+    color: white;
+    padding: 18px 40px;
+    text-decoration: none;
+    margin: 8px 2px;
+    cursor: pointer;
+}
+</style>
+
 </head>
 
 <body>
 
-	
+
 
 	<!-- 
          <a id="logout" href="Logout" class="btn btn-info btn-lg"> <span
          	class="glyphicon glyphicon-log-out"> </span> Log out
          </a>
          -->
-         
+
 	<a id="logout" href="Logout" class="btn btn-info btn-lg"> <span
 		class="glyphicon glyphicon-log-out"> </span> Log out
 	</a>
-		
+
 	<form action="ModifyExam" method="post">
 
 		<input type="hidden" name="<%=ModifyExamServlet.EXAM_ID_PARAM_NAME%>"
 			value="<%=sExam.getExamID()%>">
 
 		<div id="startExam">
-			<div class="dispInline"><p class="title">გამოცდა</p><input onclick="EnibleEditing()" type="button" value="Edit"> </div>
+			<div class="dispInline">
+				<p class="title">გამოცდა</p>
+				<input onclick="EnibleEditing()" type="button" value="Edit">
+			</div>
 			<table class="detail-car-table">
 				<tbody>
 					<tr>
@@ -221,8 +320,8 @@
 							<div class="th-key">დასახელება:</div>
 							<div class="th-value">
 								<input type="text" id="examName" name="examName"
-									class="disabledfield lecturer disabledfieldwidth" value="<%=sExam.getName()%>"
-									disabled>
+									class="disabledfield lecturer disabledfieldwidth new_class"
+									value="<%=sExam.getName()%>" disabled>
 							</div>
 						</th>
 					</tr>
@@ -231,11 +330,15 @@
 							<div class="th-key">გამოცდის ტიპი:</div>
 							<div class="th-value">
 								<input type="radio" name="examType" value="Final"
-									class="disabledfield lecturer" checked="checked" disabled />Final
-								<input type="radio" name="examType" value="Midterm"
-									class="disabledfield lecturer" disabled /> Midterm <input
-									type="radio" name="examType" value="Quizz"
-									class="disabledfield lecturer" disabled /> Quizz
+									class="disabledfield lecturer new_class pending_class board_ready_class"
+									<%if (sExam.getType().equals(Exam.ExamType.FINAL)) out.print("checked='checked'");  %>  disabled />Final <input type="radio"
+									name="examType" value="Midterm"
+									class="disabledfield lecturer new_class pending_class board_ready_class"
+									<%if (sExam.getType().equals(Exam.ExamType.MIDTERM)) out.print("checked='checked'");  %> disabled /> Midterm <input type="radio" name="examType"
+									value="Quizz"
+									class="disabledfield lecturer new_class pending_class board_ready_class"
+									<%if (sExam.getType().equals(Exam.ExamType.QUIZZ)) out.print("checked='checked'");  %>
+									disabled /> Quizz
 							</div>
 						</th>
 					</tr>
@@ -244,9 +347,9 @@
 							<div class="th-key">ხანგრძლივობა:</div>
 							<div class="th-value">
 
-								<input type="text" id="fname" name="examDuration"
-									class="disabledfield lecturer disabledfieldwidth" value="<%=sExam.getDuration()%>"
-									disabled> წუთი.
+								<input type="text" id="examDuration" name="examDuration"
+									class="disabledfield lecturer disabledfieldwidth new_class"
+									value="<%=sExam.getDuration()%>" disabled> წუთი.
 
 							</div>
 						</th>
@@ -257,8 +360,8 @@
 						<th class="th-left">
 							<div class="th-key">თარიღი:</div>
 							<div class="th-value">
-								<input type="date" id="myDate" name="examStartDate"
-									class="disabledfield examboard disabledfieldwidth"
+								<input type="date" id="examStartDate" name="examStartDate"
+									class="disabledfield examboard disabledfieldwidth pending_class lecturer_ready_class"
 									value="<%=sExam.getExamStartDate()%>" disabled>
 							</div>
 						</th>
@@ -271,9 +374,9 @@
 							<div class="th-value">
 
 
-								<input type="text" id="fname" name="examStartTime"
-									class="disabledfield examboard disabledfieldwidth" 
-									value="<%=sExam.getExamStartTime()%>" disabled>
+								<input type="text" id="examStartTime" name="examStartTime"
+									class="disabledfield examboard disabledfieldwidth pending_class lecturer_ready_class"
+									value="<%=sExam.getStartDateTime()%>" disabled>
 							</div>
 						</th>
 					</tr>
@@ -282,16 +385,37 @@
 						<th class="th-left">
 							<div class="th-key">Open Book:</div>
 							<div class="th-value">
-								<input type="checkbox" name="openbookcb" id="openbookcb" class="disabledfield lecturer"
+								<input type="checkbox" name="openbookcb" id="openbookcb"
+									class="disabledfield lecturer new_class pending_class board_ready_class"
 									value="
 									<%=Exam.NoteType.OPEN_BOOK%>" disabled>
 								<div id="opennodediv" class="hiddencb">
 									Open Note: <input type="checkbox" name="openNote" id="openNote"
 										value="
-									<%=Exam.NoteType.OPEN_NOTE%>" class="disabledfield lecturer" disabled>
+									<%=Exam.NoteType.OPEN_NOTE%>"
+										class="disabledfield lecturer new_class pending_class board_ready_class"
+										disabled>
 								</div>
 							</div>
 						</th>
+						
+						<!-- values of open book and open note -->
+						<script>
+						
+						var noteType='<%= sExam.getResourceType() %>';
+						function correctNoteTypecb(){
+							if (noteType==='Open Book'){
+								$('#openbookcb').prop('checked', true);
+								$("#opennodediv").toggle();
+							}else if (noteType==='Open Note'){
+								$('#openbookcb').prop('checked', true);
+								$('#openNote').prop('checked', true);
+								$("#opennodediv").toggle();
+							}
+								
+						}
+						correctNoteTypecb();
+						</script>
 					</tr>
 
 					<tr>
@@ -307,9 +431,9 @@
 									<div class="drp_search">
 										<input type="text" id="tfaddlectuers" name="examName"
 											oninput="getLectuerersSuggestions()"
-											class="disabledfield lecturer disabledfieldwidth" value=""
-											placeholder="მასწავლებლის სახელი..." autocomplete="off"
-											disabled>
+											class="disabledfield lecturer disabledfieldwidth new_class pending_class board_ready_class"
+											value="" placeholder="მასწავლებლის სახელი..."
+											autocomplete="off" disabled>
 										<ul class="drp_results" id="suggestionsList">
 											<li><a href="index.html">Search Result #1<br /> <span>Description...</span></a></li>
 										</ul>
@@ -365,7 +489,9 @@
 						<th class="th-left">
 							<div class="th-key">გამოსაყენებელი მასალა:</div>
 							<div class="th-value">
-								<input type="file" name="file" class="disabledfield lecturer disabledfieldwidth" disabled/>
+								<input type="file" name="file"
+									class="disabledfield lecturer disabledfieldwidth new_class pending_class board_ready_class"
+									disabled />
 							</div>
 						</th>
 					</tr>
@@ -373,7 +499,9 @@
 						<th class="th-left">
 							<div class="th-key">ვარიანტები:</div>
 							<div class="th-value">
-								<input type="file" name="file" class="disabledfield lecturer disabledfieldwidth" disabled/>
+								<input type="file" name="file"
+									class="disabledfield lecturer disabledfieldwidth new_class pending_class board_ready_class"
+									disabled />
 							</div>
 						</th>
 					</tr>
@@ -381,15 +509,18 @@
 						<th class="th-left">
 							<div class="th-key">სტუდენტების სია:</div>
 							<div class="th-value">
-								<input type="file" name="file" class="disabledfield examboard disabledfieldwidth" disabled/>
+								<input type="file" name="file"
+									class="disabledfield examboard disabledfieldwidth pending_class lecturer_ready_class"
+									disabled />
 
 							</div>
 						</th>
 					</tr>
 				</tbody>
 			</table>
-			<input class="start" onclick="EnibleEditing()" type="button"
-				value="Save "> <input type="submit" value="Submit">
+			<input class="start" type="submit" value="Save " name="saveButton"> <input
+				class="colored_purple" type="submit" name="saveAndSubmitButton" onclick="return submitRequested()"
+				value="Submit">
 		</div>
 	</form>
 </body>

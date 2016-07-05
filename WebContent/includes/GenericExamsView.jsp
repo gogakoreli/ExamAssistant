@@ -9,8 +9,9 @@
 
 <!DOCTYPE html >
 <html>
-<head>
 
+<head>
+<!-- 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
 <script>
 	$(document).ready(function() {
@@ -50,7 +51,7 @@
 // 	}
 
 </script>
-
+  -->
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
 
@@ -115,6 +116,10 @@ input[type=submit] {
 	border-radius: 4px;
 	cursor: pointer;
 	position: left;
+}
+
+#but:hover {
+    background-color: #45a049;
 }
 
 #but1 {

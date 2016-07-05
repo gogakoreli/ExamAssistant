@@ -111,13 +111,11 @@ public class ExamManagerTester {
 	public void test1() {
 		String examName = "albatoba";
 		String openBook = Exam.NoteType.CLOSED_BOOK;
-		String[] subLecturers = null;
-		File[] materials = null;
 		int examDuration = 100;
 		int numVariants = 1;
 		String examType = Exam.ExamType.FINAL;
-		int examId = exManager.createNewExam(lecturer.getUserID(), examName, openBook, subLecturers, materials,
-				examDuration, numVariants, examType);
+		int examId = exManager.createNewExam(lecturer.getUserID(), examName, openBook, 
+				examDuration, numVariants, examType, lecturer.getUserID());
 		Exam myExam = exManager.getExamByExamId(examId);
 		assertEquals(examId, myExam.getExamID());
 		assertEquals(examName, myExam.getName());
@@ -172,13 +170,11 @@ public class ExamManagerTester {
 	public void test2() {
 		String examName = "albatoba";
 		String openBook = Exam.NoteType.CLOSED_BOOK;
-		String[] subLecturers = null;
-		File[] materials = null;
 		int examDuration = 100;
 		int numVariants = 1;
 		String examType = Exam.ExamType.FINAL;
-		int examId = exManager.createNewExam(lecturer.getUserID(), examName, openBook, subLecturers, materials,
-				examDuration, numVariants, examType);
+		int examId = exManager.createNewExam(lecturer.getUserID(), examName, openBook, 
+				examDuration, numVariants, examType, lecturer.getUserID());
 		exManager.addExamForStudent(student1.getUserID(), examId);
 		Exam myExam = exManager.getExamForStudent((Student) student1);
 		assertEquals(examId, myExam.getExamID());
@@ -197,13 +193,11 @@ public class ExamManagerTester {
 	public void test3() {
 		String examName = "albatoba";
 		String openBook = Exam.NoteType.CLOSED_BOOK;
-		String[] subLecturers = null;
-		File[] materials = null;
 		int examDuration = 100;
 		int numVariants = 1;
 		String examType = Exam.ExamType.FINAL;
-		int examId = exManager.createNewExam(lecturer.getUserID(), examName, openBook, subLecturers, materials,
-				examDuration, numVariants, examType);
+		int examId = exManager.createNewExam(lecturer.getUserID(), examName, openBook,
+				examDuration, numVariants, examType, lecturer.getUserID());
 
 		String newExamName = "kalkulusi";
 		String newOpenBook = Exam.NoteType.OPEN_BOOK;
@@ -231,25 +225,20 @@ public class ExamManagerTester {
 	public void test4() {
 		String examName = "albatoba";
 		String openBook = Exam.NoteType.CLOSED_BOOK;
-		String[] subLecturers = null;
-		File[] materials = null;
 		int examDuration = 100;
 		int numVariants = 1;
 		String examType = Exam.ExamType.FINAL;
-		int albatobaExamId = exManager.createNewExam(lecturer.getUserID(), examName, openBook, subLecturers, materials,
-				examDuration, numVariants, examType);
+		int albatobaExamId = exManager.createNewExam(lecturer.getUserID(), examName, openBook, 
+				examDuration, numVariants, examType, lecturer.getUserID());
 		//Exam albatobaExam = exManager.getExamByExamId(albatobaExamId);
 
 		String newExamName = "kalkulusi";
 		String newOpenBook = Exam.NoteType.OPEN_BOOK;
-		String[] newSubLecturers = null;
-		File[] newMaterials = null;
 		int newExamDuration = 200;
 		int newNumVariants = 2;
 		String newExamType =  Exam.ExamType.MIDTERM;
 
-		int kalkulusiExamId = exManager.createNewExam(lecturer.getUserID(), newExamName, newOpenBook, newSubLecturers,
-				newMaterials, newExamDuration, newNumVariants, newExamType);
+		int kalkulusiExamId = exManager.createNewExam(lecturer.getUserID(), newExamName, newOpenBook, newExamDuration, newNumVariants, newExamType, lecturer.getUserID());
 		//Exam kalkulusiExam = exManager.getExamByExamId(kalkulusiExamId);
 		
 		ArrayList<Exam> exams = exManager.getAllExamsForLecturer((Lecturer) lecturer);

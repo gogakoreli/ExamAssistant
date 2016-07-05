@@ -9,16 +9,13 @@ import java.util.List;
 import data_managers.ExamManager;
 import helper.LogManager;
 
-
 public class Exam {
-	
+
 	public final class NoteType {
 		public static final String OPEN_BOOK = "Open book";
 		public static final String CLOSED_BOOK = "Closed book";
-		public static final String 	OPEN_NOTE = "Open Note";
+		public static final String OPEN_NOTE = "Open Note";
 	}
-	
-	
 
 	/*
 	 * enum for ExamStatus this names match with names we save exam status in db
@@ -26,7 +23,8 @@ public class Exam {
 	public final class ExamStatus {
 		public static final String NEW = "new";
 		public static final String PENDING = "pending";
-		public static final String READY = "ready";
+		public static final String LECTURER_READY = "lecturer_ready";
+		public static final String BOARD_READY = "board_ready";
 		public static final String PUBLISHED = "published";
 		public static final String LIVE = "live";
 		public static final String FINISHED = "finished";
@@ -45,7 +43,6 @@ public class Exam {
 	private int examID;
 	private String name = "";
 	private String type = "";
-	private String noteType = "";
 	private Timestamp startTime;
 	private int duration = 0; // in minutes
 	private String resourceType = "";
@@ -54,13 +51,11 @@ public class Exam {
 	private int creatorId = -1;
 	private EAUser creator;// user who created exam
 	List<Lecturer> subLectuers = new ArrayList<Lecturer>();
-	
-	//files attached to exam 
+
+	// files attached to exam
 	private List<String> variantUrls = new ArrayList<String>();
-	private List<String> materialsUrls =  new ArrayList<String>();
+	private List<String> materialsUrls = new ArrayList<String>();
 	private String studentsListUrl = "";
-	
-	
 
 	public Exam(ResultSet rs) {
 		if (rs != null) {
@@ -99,29 +94,30 @@ public class Exam {
 
 	public Exam(int examId) {
 		this.examID = examId;
+		if (examID == ExamManager.NEW_EXAM_ID)
+			this.status = Exam.ExamStatus.NEW;
 	}
 
 	public Exam() {
 
 	}
-	
-	/** sets Note Type for given exam */
+
+	/** sets Note Type for given exam 
+
+	/** sets Note Type for given exam 
 	public void setNoteType(String type) {
 		this.noteType = type;
-	}
+	} */
 
-	/** gets Note Type for given exam */
+	/** gets Note Type for given exam 
 	public String getNoteType() {
 		return this.noteType;
-	}
-
-	
+	}*/
 
 	/** sets sub lecturers from db for current exam */
 	public void setSubLecturers(List<Lecturer> subLectuers) {
 		this.subLectuers = subLectuers;
 	}
-
 
 	/**
 	 * gets sub lecturers from db for current exam subLecturers in db contains
@@ -148,6 +144,10 @@ public class Exam {
 	/** checks if given exam is empty end not valid for precessiong */
 	public boolean isEmptyExam() {
 		return getExamID() == ExamManager.NEW_EXAM_ID;
+	}
+	
+	public boolean isWrongExam(){
+		return getExamID() == ExamManager.NO_EXAM_ID;
 	}
 
 	/** Returns the id of the exam. */
@@ -180,9 +180,8 @@ public class Exam {
 		this.type = type;
 	}
 
-	//TODO aman unda daabrunos tarigi da saati da abrunebs marto tarigs
 	/** Gets the start time of the exam. */
-	public Date getStartTime() {
+	public Timestamp getStartTime() {
 		return startTime;
 	}
 
@@ -190,13 +189,18 @@ public class Exam {
 	public void setStartTime(Timestamp startTime) {
 		this.startTime = startTime;
 	}
-	
-	//TODO aman unda daabrunos marto gamocdis saati mara abrunebs marto tarigs
+
+	public Timestamp getEndDateTime() {
+		long t = startTime.getTime();
+		long m = duration * 60 * 1000;
+		Timestamp targetDeliveryStamp = new Timestamp(t + m);
+		return targetDeliveryStamp;
+	}
+
 	/** Sets the start time of the exam. */
 	public Timestamp getStartDateTime() {
 		return this.startTime;
 	}
-
 
 	/** Gets the duration of the exam. */
 	public int getDuration() {
@@ -256,5 +260,6 @@ public class Exam {
 		return res;
 	}
 
-	
 }
+
+

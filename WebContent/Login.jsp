@@ -14,40 +14,63 @@
 		removeStorage();
 	</script>
 <style>
-body {
+
+body { 
+
 	background-color: #f2f2f2;
 	text-align: center;
 }
 
 input[type=submit] {
-	width: 45%;
+	width: 65%;
 	height: 45px;
-	background-color: #ffaa00;
+ 	background-color: #ffaa00; 
 	color: white;
 	padding: 12px 20px;
 	margin: 20px 0;
 	border: none;
 	border-radius: 4px;
 	cursor: pointer;
+	font-family: "Comic Sans MS", cursive, sans-serif;
+	font-size: 18px;
 }
 
+input[type=submit]:hover {
+    background-color: #ffb31a;
+}
+
+
+input:focus {
+	box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.4), 0 1px 1px
+		rgba(255, 255, 255, 0.2);
+}
 
 input {
-	width: 45%;
-	height: 25px;
-	padding: 20px 25xp;
-	margin: 12px 4px;
-	border: 1px solid #ccc;
+	width: 60%;
+	margin-bottom: 10px;
+	background: rgba(0, 0, 0, 0.04);
+	outline: none;
+	padding: 10px;
+	font-size: 14px;
+ 	color: #fff; 
+	border: 1px solid rgba(0, 0, 0, 0.3);
 	border-radius: 4px;
-	box-sizing: border-box;
+	box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.2), 0 1px 1px
+		rgba(255, 255, 255, 0.2);
+ 	-webkit-transition: box-shadow .5s ease; 
+ 	-moz-transition: box-shadow .5s ease; 
+	-o-transition: box-shadow .5s ease; 
+ 	-ms-transition: box-shadow .5s ease; 
+ 	transition: box-shadow .5s ease; 
 }
+
 
 div {
 	text-align: center;
-	width: 480px;
+	width: 420px;
 	border: 3px solid #ffaa00;
-	border-radius: 5px;
-	background-color: white;
+	border-radius: 8px;
+ 	background-color: white; 
 	padding: 25px;
 	margin: auto;
 }
@@ -66,7 +89,7 @@ p.error {
 <body>
 	<form action="Login" method="post">
 		<div>
-			<img src="freeuni.GIF" style="width: 180px; height: 130px;"> <br />
+			<img src="freeuni.GIF" style="width: 200px; height: 157px;"> <br />
 			<%
 				String errorString = (String) request.getAttribute("errorString");
 				if (errorString != null) {

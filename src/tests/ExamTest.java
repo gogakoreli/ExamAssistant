@@ -19,7 +19,6 @@ public class ExamTest {
 	@Test
 	public void test1() {	
 		assertEquals(exam.getDuration(), 0);
-		assertEquals(exam.getNoteType(), "");
 		assertEquals(exam.getName(), "");
 		assertEquals(exam.getResourceType(), "");
 		assertEquals(exam.getNumVariants(), 0);
@@ -37,7 +36,6 @@ public class ExamTest {
 		exam.setDuration(120);
 		exam.setExamID(3);
 		exam.setName("Calculus");
-		exam.setNoteType(NoteType.OPEN_BOOK);
 		exam.setNumVariants(2);
 		exam.setResourceType("Open");
 		exam.setStartTime(new Timestamp(120));
@@ -49,7 +47,6 @@ public class ExamTest {
 		assertEquals(exam.getDuration(), 120);
 		assertEquals(exam.getExamID(), 3);
 		assertEquals(exam.getName(), "Calculus");
-		assertEquals(exam.getNoteType(), NoteType.OPEN_BOOK);
 		assertEquals(exam.getNumVariants(), 2);
 		assertEquals(exam.getResourceType(), "Open");
 		assertEquals(exam.getType(),ExamType.FINAL);
