@@ -26,7 +26,6 @@ public class SecureExamTest {
 		assertEquals(exam.isExamNew(), true);
 		assertEquals(exam.getCreatorName(), "");
 		assertEquals(exam.getDuration(), 0);
-		assertEquals(exam.getNoteType(), "");
 		assertEquals(exam.getName(), "");
 		assertEquals(exam.getType(), "");
 	}
@@ -41,7 +40,6 @@ public class SecureExamTest {
 		assertEquals(exam.getExamStartDate(), "UNDEFINED");
 		assertEquals(exam.getExamStartTime(), "UNDEFINED");
 		assertEquals(exam.getDuration(), 0);
-		assertEquals(exam.getNoteType(), "");
 		assertEquals(exam.getName(), "");
 		assertEquals(exam.getType(), "");
 	}
@@ -63,7 +61,6 @@ public class SecureExamTest {
 		assertEquals(exam.getCreatorName(), "Aleqsandre Meskhi");
 		assertEquals(exam.getExamID(), 2);
 		assertEquals(exam.getDuration(), 120);
-		assertEquals(exam.getNoteType(), "");
 		assertEquals(exam.getName(), "calculus");
 	}
 	
@@ -78,7 +75,7 @@ public class SecureExamTest {
 		assertEquals(exam.getExamStartDate(), "2016-06-03" );
 		assertEquals(exam.getStartDateTime(), new Timestamp(20));
 		assertEquals(exam.getExamStartDate(), "2016-06-02" );
-		assertEquals(exam.getStartDateTime(), new Date(20));
+		assertEquals(exam.getStartDateTime(), new Timestamp(20));
 	}
 	
 	@Test
@@ -164,15 +161,11 @@ public class SecureExamTest {
 	public void test8() {	
 		ExamBoard editor1 = new ExamBoard();
 		exam.setExamEditor(editor1);
-		exam.setNoteType(NoteType.OPEN_BOOK);
 		
-		assertEquals(exam.getNoteType(), "");
 		
 		Lecturer editor = new Lecturer();
 		exam.setExamEditor(editor);
-		exam.setNoteType(NoteType.OPEN_BOOK);
 		
-		assertEquals(exam.getNoteType(), NoteType.OPEN_BOOK);
 	}	
 	
 	@Test
