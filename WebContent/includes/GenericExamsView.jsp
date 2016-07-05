@@ -117,6 +117,10 @@ input[type=submit] {
 	position: left;
 }
 
+#but:hover {
+    background-color: #45a049;
+}
+
 #but1 {
     width: 25px;
     font-family: tahoma; 

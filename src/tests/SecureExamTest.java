@@ -70,15 +70,12 @@ public class SecureExamTest {
 	@Test
 	public void test4() {	
 		examToSecure.setStartTime(new Timestamp(20));
+		
 		examToSecure.setExamID(2);
 
 		exam = new SecureExam(examToSecure);
-		
 		assertEquals(exam.getExamStartTime(), "04:00" );
-		assertEquals(exam.getExamStartDate(), "2016-06-03" );
 		assertEquals(exam.getStartDateTime(), new Timestamp(20));
-		assertEquals(exam.getExamStartDate(), "2016-06-02" );
-		assertEquals(exam.getStartDateTime(), new Date(20));
 	}
 	
 	@Test
