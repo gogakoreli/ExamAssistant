@@ -51,6 +51,7 @@ public class ExamManager {
 		String getExamQuery = "SELECT e.* FROM user as u LEFT JOIN userexam as ue on ue.UserID = u.UserID LEFT JOIN "
 				+ "exam as e on ue.ExamID = e.ExamID WHERE u.UserID = " + student.getUserID()
 				+ " AND Status != 'Processing' ORDER BY e.StartTime asc LIMIT 1";
+		// AND now() between date_add(StartTime, interval -1 minute) and date_add(StartTime, interval 15 minute) 
 		DBConnector connector = new DBConnector();
 		SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
 		if (queryResult.isSuccess()) {
