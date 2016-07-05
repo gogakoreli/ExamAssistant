@@ -6,8 +6,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.media.jfxmedia.events.NewFrameEvent;
-
 import data_managers.ExamManager;
 import helper.LogManager;
 
