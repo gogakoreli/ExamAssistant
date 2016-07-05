@@ -4,6 +4,7 @@ package data_managers;
 import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -245,12 +246,87 @@ public class ExamManager {
 			SqlQueryResult queryResult = connector.getQueryResult(getExamQuery);
 			if (queryResult.isSuccess()) {
 				result = new Exam(queryResult.getResultSet());
-				if (result.isEmptyExam()) // if no Exam found
+				if (result.isWrongExam()) // if no Exam found
 					result = WRONG_EXAM;
 			}
 			connector.dispose();
 		}
 		return result;
+	}
+	
+	
+	
+	/**
+	 * Modify exam : updates basic info of exam for lecturers
+	 * 
+	 * returns Exam which was added for some tests
+	 */
+	public void modifyExamBasicForLecturer(int examID, String examName, String openBook, int examDuration,
+			String examType, int numVariants) {
+		String updateQuery = "update exam set exam.Name='" + examName + "', exam.Type='" + examType + "', "
+				+ "exam.Duration=" + examDuration + ", exam.ResourceType='" + openBook + "', exam.NumVariants="
+				+ numVariants + " where ExamID=" + examID + ";";
+
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(updateQuery);
+		connector.dispose();
+	}
+
+	/**
+	 * Modify exam : updates basic info of exam for board
+	 * 
+	 */
+	public void modifyExamBasicForBoard(int examID, Timestamp startTime) {
+		String updateQuery = "update exam set exam.StartTime='" + startTime.toString() + "' where exam.ExamID='"
+				+ examID;
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(updateQuery);
+		connector.dispose();
+	}
+
+	/**
+	 * updates status of given exam @examID from statusFrom to statusTo if
+	 * before update old status does not match with new that means someone
+	 * changed before us and we couldnot update it soon enought so status wont
+	 * be changed and user will have to change again
+	 */
+	public void updateExamStatus(int examID, String statusTo, String statusFrom) {
+		String updateQuery = "update exam set exam.status='" + statusTo + "' where (ExamID=" + examID
+				+ ") and (exam.status='" + statusFrom + "')  ;";
+
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(updateQuery);
+		connector.dispose();
+	}
+
+	/**
+	 * Creates new exam : insert into exam new value with setted parameter new
+	 * 
+	 * returns ExamID which was added
+	 */
+	public int createNewExam(int lecId, String examName, String openBook, int examDuration, int numVariants,
+			String examType, int CreatedBy) {
+		int examId = 0;
+		String insertNewExamQuery = "INSERT INTO exam (exam.status, exam.Name, exam.Type, exam.Duration, "
+				+ "exam.ResourceType, exam.NumVariants, exam.CreatedBy) VALUES ('new', '" + examName + "', '" + examType
+				+ "', " + examDuration + ", '" + openBook + "', " + numVariants + ", ' " + CreatedBy + "');";
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(insertNewExamQuery);
+
+		String getLastIdQuery = "select LAST_INSERT_ID() as lastInsertId;";
+		SqlQueryResult queryResult = connector.getQueryResult(getLastIdQuery);
+		if (queryResult.isSuccess()) {
+			ResultSet res = queryResult.getResultSet();
+			try {
+				if (res.next())
+					examId = res.getInt("lastInsertId");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		connector.dispose();
+		addRowInUserExam(lecId, examId);
+		return examId;
 	}
 
 	/**
@@ -272,35 +348,7 @@ public class ExamManager {
 		return getExamByExamId(examID);
 	}
 
-	/**
-	 * Creates new exam : insert into exam new value with setted parameter new
-	 * 
-	 * returns ExamID which was added
-	 */
-	public int createNewExam(int lecId, String examName, String openBook, String[] subLecturers, File[] materials,
-			int examDuration, int numVariants, String examType) {
-		int examId = 0;
-		String insertNewExamQuery = "INSERT INTO exam (exam.status, exam.Name, exam.Type, exam.Duration, "
-				+ "exam.ResourceType, exam.NumVariants) VALUES ('new', '" + examName + "', '" + examType + "', "
-				+ examDuration + ", '" + openBook + "', " + numVariants + ");";
-		DBConnector connector = new DBConnector();
-		connector.updateDatabase(insertNewExamQuery);
-
-		String getLastIdQuery = "select LAST_INSERT_ID() as lastInsertId;";
-		SqlQueryResult queryResult = connector.getQueryResult(getLastIdQuery);
-		if (queryResult.isSuccess()) {
-			ResultSet res = queryResult.getResultSet();
-			try {
-				if (res.next())
-					examId = res.getInt("lastInsertId");
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		connector.dispose();
-		addRowInUserExam(lecId, examId);
-		return examId;
-	}
+	
 
 	public void addExamForStudent(int userId, int examId) {
 		addRowInUserExam(userId, examId);

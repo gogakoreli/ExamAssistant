@@ -26,7 +26,6 @@ public class SecureExamTest {
 		assertEquals(exam.isExamNew(), true);
 		assertEquals(exam.getCreatorName(), "");
 		assertEquals(exam.getDuration(), 0);
-		assertEquals(exam.getNoteType(), "");
 		assertEquals(exam.getName(), "");
 		assertEquals(exam.getType(), "");
 	}
@@ -41,7 +40,6 @@ public class SecureExamTest {
 		assertEquals(exam.getExamStartDate(), "UNDEFINED");
 		assertEquals(exam.getExamStartTime(), "UNDEFINED");
 		assertEquals(exam.getDuration(), 0);
-		assertEquals(exam.getNoteType(), "");
 		assertEquals(exam.getName(), "");
 		assertEquals(exam.getType(), "");
 	}
@@ -63,7 +61,6 @@ public class SecureExamTest {
 		assertEquals(exam.getCreatorName(), "Aleqsandre Meskhi");
 		assertEquals(exam.getExamID(), 2);
 		assertEquals(exam.getDuration(), 120);
-		assertEquals(exam.getNoteType(), "");
 		assertEquals(exam.getName(), "calculus");
 	}
 	
@@ -75,6 +72,7 @@ public class SecureExamTest {
 
 		exam = new SecureExam(examToSecure);
 		assertEquals(exam.getExamStartTime(), "04:00" );
+		assertEquals(exam.getStartDateTime(), new Timestamp(20));
 		assertEquals(exam.getStartDateTime(), new Timestamp(20));
 	}
 	

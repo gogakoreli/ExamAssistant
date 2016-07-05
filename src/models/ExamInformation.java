@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.io.File;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 import helper.LogManager;
 import helper.TimeSpan;
@@ -14,8 +15,8 @@ public class ExamInformation {
 	private int userExamID;
 	private int placeID;
 	private int variant;
-	private Date startTime;
-	private Date endTime;
+	private Timestamp startTime;
+	private Timestamp endTime;
 	private String ip;
 	private int placeNumber;
 	private boolean isWorking;
@@ -35,8 +36,8 @@ public class ExamInformation {
 					this.setUserExamID(resultSet.getInt("UserExamID"));
 					this.setPlaceID(resultSet.getInt("PlaceID"));
 					this.setVariant(resultSet.getInt("Variant"));
-					this.setStartTime(resultSet.getDate("StartTime"));
-					this.setEndTime(resultSet.getDate("EndTime"));
+					this.setStartTime(resultSet.getTimestamp("StartTime"));
+					this.setEndTime(resultSet.getTimestamp("EndTime"));
 					this.setIp(resultSet.getString("IP"));
 					this.setPlaceNumber(resultSet.getInt("Number"));
 					this.setWorking(resultSet.getBoolean("IsWorking"));
@@ -154,7 +155,7 @@ public class ExamInformation {
 	/**
 	 * @return the startTime
 	 */
-	public Date getStartTime() {
+	public Timestamp getStartTime() {
 		return startTime;
 	}
 
@@ -162,14 +163,14 @@ public class ExamInformation {
 	 * @param startTime
 	 *            the startTime to set
 	 */
-	public void setStartTime(Date startTime) {
+	public void setStartTime(Timestamp startTime) {
 		this.startTime = startTime;
 	}
 
 	/**
 	 * @return the endTime
 	 */
-	public Date getEndTime() {
+	public Timestamp getEndTime() {
 		return endTime;
 	}
 
@@ -177,7 +178,7 @@ public class ExamInformation {
 	 * @param endTime
 	 *            the endTime to set
 	 */
-	public void setEndTime(Date endTime) {
+	public void setEndTime(Timestamp endTime) {
 		this.endTime = endTime;
 	}
 

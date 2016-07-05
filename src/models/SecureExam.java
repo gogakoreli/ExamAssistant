@@ -6,10 +6,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import helper.LogManager;
+import helper.OpResult;
+
 /**
  * this is class which contains exam as data model and secures it after setting
  * its modifier up it allows any changes in exam only if user has permission. it
  * also returns values for modifyExam.jsp to display.
+ * 
+ * 
+ * here is main logic about exam. Its statuses and fields
  */
 public class SecureExam {
 
@@ -18,9 +24,13 @@ public class SecureExam {
 	private static final String DEFAULT_EXAM_NAME = "";
 	private static final int DEFAULT_EXAM_DURATION = 0;
 	private static final String DEFAULT_EXAM_START_DATE = "UNDEFINED";
+	private static final int MIN_EXAM_NAME = 0;
+	private static final int MIN_EXAM_DURATION = 0;
+
 	/* model containing exam inforamtion */
 	private Exam examToSecure;
 	private EAUser editor;
+
 	public SecureExam(Exam examToSecure) {
 		this.examToSecure = examToSecure;
 	}
@@ -61,8 +71,10 @@ public class SecureExam {
 	public String getExamStartTime() {
 		if (isExamNew())
 			return DEFAULT_EXAM_START_TIME;
+
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(examToSecure.getStartDateTime());
+		if (examToSecure.getStartDateTime() != null)
+			calendar.setTime(examToSecure.getStartDateTime());
 		return "" + getDateStringFromInt(calendar.get(Calendar.HOUR_OF_DAY)) + ":"
 				+ getDateStringFromInt(calendar.get(Calendar.MINUTE));
 	}
@@ -81,11 +93,11 @@ public class SecureExam {
 
 	/** returs exam id of secure exam */
 	public int getDuration() {
-		if (isExamNew()) 
+		if (isExamNew())
 			return DEFAULT_EXAM_DURATION;
 		return examToSecure.getDuration();
 	}
-	
+
 	/** returns the type of the exam. */
 	public String getType() {
 		return examToSecure.getType();
@@ -95,29 +107,64 @@ public class SecureExam {
 		return examToSecure.getStartDateTime();
 	}
 
-	/** returns the note type of the exam. */
-	public String getNoteType() {
-		return examToSecure.getNoteType();
+	public String getResourceType() {
+		return examToSecure.getResourceType();
 	}
 
 	/**
 	 * returns list of sublecturers
 	 */
 	public List<Lecturer> getSubLecturers() {
-		if (isExamNew()) 
+		if (isExamNew())
 			return new ArrayList<Lecturer>();
 		return examToSecure.getSubLecturers();
 	}
 
-	
-	
 	/********************************/
 	/** permissions on setters ******/
 	/********************************/
-	
-	/** sets editor user for given exam */
+
+	/**
+	 * sets editor user for given exam
+	 */
 	public void setExamEditor(EAUser editor) {
 		this.editor = editor;
+		// throw new SecurityException()
+	}
+
+	public String getExamStatus() {
+		if (isExamNew())
+			return Exam.ExamStatus.NEW;
+		return examToSecure.getStatus();
+	}
+
+	public EAUser getExamEditor() {
+		return editor;
+		// throw new SecurityException()
+	}
+
+	public Exam getEditedExam() {
+		return examToSecure;
+	}
+
+	/* checks if editor of exam is lecturer */
+	private boolean isEditorLecturer() {
+		return editor instanceof Lecturer;
+	}
+
+	/* checks if editor of exam is board */
+	private boolean isEditorBoard() {
+		return editor instanceof ExamBoard;
+	}
+
+	/* chekcs if given editor is admin or not */
+	private boolean isEditorAdmin() {
+		return editor instanceof Admin;
+	}
+
+	/* checks if status of exam is new */
+	private boolean checkStatusNew() {
+		return examToSecure.getStatus().equals(Exam.ExamStatus.NEW);
 	}
 
 	/* sets name of exam if editor has permission on it */
@@ -129,89 +176,196 @@ public class SecureExam {
 
 	/* checks if editor has permission to change name of exam */
 	private boolean hasPermissionChangeName() {
-		boolean canChangeUser = editor instanceof Lecturer;
-		boolean isStatusNew = examToSecure.getStatus() == Exam.ExamStatus.NEW;
+		if (isEditorAdmin())
+			return true;
+		boolean canChangeUser = isEditorLecturer();
+		boolean isStatusNew = checkStatusNew();
 		return canChangeUser && isStatusNew;
 	}
 
-	
-	/* Sets the duration.*/
+	/* Sets the duration. */
 	public void setDuration(int newDuration) {
-		if (!hasPermissionChangeDuration()) 
-			return;		
+		if (!hasPermissionChangeDuration())
+			return;
 		examToSecure.setDuration(newDuration);
 	}
-	
-	/* checks if editor has permission to change Duration of exam 
-	 * it can change duration if editor is lecturer and status is still new */
+
+	/*
+	 * checks if editor has permission to change Duration of exam it can change
+	 * duration if editor is lecturer and status is still new
+	 */
 	private boolean hasPermissionChangeDuration() {
-		boolean canChangeUser = editor instanceof Lecturer;
-		boolean isStatusNew = examToSecure.getStatus().equals(Exam.ExamStatus.NEW);
+		if (isEditorAdmin())
+			return true;
+		boolean canChangeUser = isEditorLecturer();
+
+		boolean isStatusNew = checkStatusNew();
 		return canChangeUser && isStatusNew;
 	}
 
-	/* sets the type.*/
+	/* sets the type. */
 	public void setType(String type) {
-		if (!hasPermissionChangeType()) 
-			return;		
+		if (!hasPermissionChangeType())
+			return;
 		examToSecure.setType(type);
 	}
 
-	/* checks if editor has permission to change Type of exam 
-	 * it can change Type if editor is lecturer */
+	/*
+	 * checks if editor has permission to change Type of exam it can change Type
+	 * if editor is lecturer
+	 */
 	private boolean hasPermissionChangeType() {
-		boolean canChangeUser = editor instanceof Lecturer;
+		if (isEditorAdmin())
+			return true;
+		boolean canChangeUser = isEditorLecturer();
 		return canChangeUser;
 	}
-	
-	/* sets the note type. */
-	public void setNoteType(String newNoteType) {
+
+	public void setResourceType(String newNoteType) {
 		if (!hasPermissionChangeNoteType())
-			return;		
-		examToSecure.setNoteType(newNoteType);		
+			return;
+		examToSecure.setResourceType(newNoteType);
 	}
-	
-	/* checks if editor has permission to change Note Type of exam 
-	 * it can change Type if editor is lecturer */
+
+	/*
+	 * checks if editor has permission to change Note Type of exam it can change
+	 * Type if editor is lecturer
+	 */
 	private boolean hasPermissionChangeNoteType() {
-		boolean canChangeUser = editor instanceof Lecturer;
+		if (isEditorAdmin())
+			return true;
+		boolean canChangeUser = isEditorLecturer();
 		return canChangeUser;
 	}
 
 	public void setStartTime(Timestamp newStartTime) {
 		if (!hasPermissionChangeStartTime())
-			return;		
-		examToSecure.setStartTime(newStartTime);		
+			return;
+		examToSecure.setStartTime(newStartTime);
 	}
 
-	/* checks if editor has permission to change start time 
-	 * he/she has permission if its examboard and exam status is pending */
+	/*
+	 * checks if editor has permission to change start time he/she has
+	 * permission if its examboard and exam status is pending
+	 */
 	private boolean hasPermissionChangeStartTime() {
-		boolean canChangeUser = editor instanceof ExamBoard;
+		if (isEditorAdmin())
+			return true;
+		boolean canChangeUser = isEditorBoard();
 		boolean isStatusNew = examToSecure.getStatus().equals(Exam.ExamStatus.PENDING);
 		return canChangeUser && isStatusNew;
 	}
-	
+
 	/** sets subLecturers if you have permission on it */
 	public void setSubLecturers(List<Lecturer> subLecturers) {
 		if (!hasPermissionChangeSubLecturers())
-			return;		
+			return;
 		examToSecure.setSubLecturers(subLecturers);
 	}
 
-	/* checks if editor has permission to change sub Lecturers 
-	 * he/she can change it if its lecturer */
+	/*
+	 * checks if editor has permission to change sub Lecturers he/she can change
+	 * it if its lecturer
+	 */
 	private boolean hasPermissionChangeSubLecturers() {
-		boolean canChangeUser = editor instanceof Lecturer;
+		if (isEditorAdmin())
+			return true;
+		boolean canChangeUser = isEditorLecturer();
 		return canChangeUser;
 	}
-	
-	
-	//files attached to exam 
-		/*private List<String> variantUrls = new ArrayList<String>();
-		private List<String> materialsUrls =  new ArrayList<String>();
-		private String studentsListUrl = ""; */
 
-	
-	
+	// files attached to exam
+	/*
+	 * private List<String> variantUrls = new ArrayList<String>(); private
+	 * List<String> materialsUrls = new ArrayList<String>(); private String
+	 * studentsListUrl = "";
+	 */
+
+	/********************************/
+	/** changing exam status *******/
+
+	/********************************/
+
+	/**
+	 * checks if its possible to change status to next level and returns
+	 * OpResult of boolean (true) if it's. returns unsucsessful OpResult in case
+	 * of falture with message why Change of status was not avaliable
+	 */
+	public OpResult<Boolean> canChangeStatus() {
+		OpResult<Boolean> result = null;// new OpResult<Boolean>();
+		switch (examToSecure.getStatus()) {
+		case Exam.ExamStatus.NEW:
+			result = canChangeToPending();
+			break;
+		case Exam.ExamStatus.PENDING:
+		case Exam.ExamStatus.LECTURER_READY:
+		case Exam.ExamStatus.BOARD_READY:
+			result = canChangeToReady();
+		default:
+			break;
+		}
+		// if ()
+		return result;
+	}
+
+	/** gets what will became next status after submitting exam one */
+	public String getNextStatus() {
+		String result = "";
+		switch (examToSecure.getStatus()) {
+		case Exam.ExamStatus.NEW:
+			result = Exam.ExamStatus.PENDING;
+			break;
+		case Exam.ExamStatus.PENDING:
+			result = Exam.ExamStatus.LECTURER_READY;
+			if (getExamEditor() instanceof ExamBoard)
+				result = Exam.ExamStatus.BOARD_READY;
+			break;
+		case Exam.ExamStatus.LECTURER_READY:
+		case Exam.ExamStatus.BOARD_READY:
+			result = Exam.ExamStatus.PUBLISHED;
+			break;
+		default:
+			result = "PENDING";
+			LogManager.logErrorException("Asked changing of status of examId= " + examToSecure.getExamID(),
+					new Exception("unsupported next status"));
+			break;
+		}
+		return result;
+	}
+
+	/*
+	 * checks if status can be changed to pending and returns OpResult
+	 * containing answer to it
+	 */
+	private OpResult<Boolean> canChangeToPending() {
+		OpResult<Boolean> result = new OpResult<Boolean>();
+		if (examToSecure.getName().length() < MIN_EXAM_NAME) {
+			// result.setResultObject(new Boolean(false));
+			result.setError(3000, "Can't Change Status of Exam without correct name");
+		} else if (examToSecure.getDuration() < MIN_EXAM_DURATION) {
+			// result.setResultObject(new Boolean(false));
+			result.setError(3001, "Can't Change Status of Exam without correct duration");
+		} else {
+			result.setResultObject(new Boolean(true));
+		}
+		return result;
+	}
+
+	/*
+	 * checks if current user can update status to next level by commiting his
+	 * part as ready for publishing if user changes his/her status to ready all
+	 * fields should be done and he/she can't make any further changes . in addition
+	 * user can not change status anymore if he/she has already changed it to ready 
+	 */
+	private OpResult<Boolean> canChangeToReady() {
+		OpResult<Boolean> result = new OpResult<Boolean>();
+		if (isEditorBoard()) {
+			// return null;
+			// if (examToSecure.getStartDateTime().after(when) < MIN_EXAM_NAME)
+			// {
+		}
+		result.setError(0, "Unimplimneted error");
+		return result;
+	}
+
 }
