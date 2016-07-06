@@ -234,7 +234,8 @@ public class Exam {
 
 	/** Gets the number of variants of the exam. */
 	public int getNumVariants() {
-		return numVariants;
+		return 2;
+		//return numVariants;
 	}
 
 	/** Sets the number of variants of the exam. */

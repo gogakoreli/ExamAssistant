@@ -39,11 +39,14 @@ import helper.OpResult;
 import interfaces.ISecure;
 import listeners.ContextStartupListener;
 import helper.SecurityChecker;
+import helper.SetPlaces;
 import models.EAUser;
 import models.Exam;
+import models.ExamBoard;
 import models.ExamMaterial;
 import models.Lecturer;
 import models.SecureExam;
+import send_mail.SendMail;
 
 /**
  * Servlet implementation class CreateExamServlet
@@ -153,6 +156,8 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 	/* checks if user @user has permission to view exam @examId */
 	private boolean canAccessExam(EAUser user, HttpServletRequest request) {
+		if (user instanceof ExamBoard)
+			return true;
 		int examId = getExamIdFromRequest(request);
 		return ExamManager.getExamManager(request.getSession()).CanUserAccessExam(user, examId);
 	}
@@ -238,6 +243,8 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 	/* handels file uploads and saves them to db */
 	private void handleUplaodedFiles(HttpServletRequest request, int changedExamId, EAUser user, SecureExam sExam) {
+		if (true)
+			return;
 		if (user instanceof Lecturer) {
 			List<String> uploadedMaterials = saveUploadedFiles(request, "materialsmult[]");
 			uploadedMaterials.addAll(getListOfValues("materialslist", request));
@@ -254,12 +261,13 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			sExam.setIsStudentsList(!uploadedStudentsList.isEmpty());
 		}
 	}
-	
-	private void updateMaterialsListInDb(HttpServletRequest request, List<String> uploadedMaterials, String materialType, int examID){
+
+	private void updateMaterialsListInDb(HttpServletRequest request, List<String> uploadedMaterials,
+			String materialType, int examID) {
 		ExamManager eManager = ExamManager.getExamManager(request.getSession());
 		eManager.clearUserMaterialsForExam(examID, materialType);
 		int i = 0;
-		for (String fileName : uploadedMaterials){
+		for (String fileName : uploadedMaterials) {
 			i++;
 			int val = -1;
 			if (materialType.equals(ExamManager.MATERIAL_VARIANTS))
@@ -275,8 +283,8 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		List<String> filenames = new ArrayList<String>();
 		// Check that we have a file upload request
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-		///if (!isMultipart)
-		//	return filenames;
+		/// if (!isMultipart)
+		// return filenames;
 		int maxFileSize = 50 * 1024 * 1024;
 		String filePath = getServletContext().getInitParameter("file-upload");
 
@@ -364,7 +372,8 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		// adding yourself as sublecturer
 		exManager.addSubLecturerToExam(exManager.getExamByExamId(examId).getCreatorId(), examId);
 		String[] subLecturers = request.getParameterValues("sublec[]");
-		if (subLecturers == null) return;
+		if (subLecturers == null)
+			return;
 		for (int i = 0; i < subLecturers.length; i++) {
 			int lecturerId = getIntFromString(subLecturers[i], 0);
 			if (validateIsLecturer(lecturerId, request))
@@ -375,7 +384,8 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	private ArrayList<String> getListOfValues(String paramether, HttpServletRequest request) {
 		ArrayList<String> result = new ArrayList<String>();
 		String[] values = request.getParameterValues(paramether);
-		if(values == null) return result;
+		if (values == null)
+			return result;
 		for (int i = 0; i < values.length; i++) {
 			result.add(values[i]);
 		}
@@ -418,7 +428,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		if (startDate.equals("") || startTime.equals(""))
 			return defaultDate;
 
-		SimpleDateFormat format = new SimpleDateFormat("MM/DD/YYYY hh:mm");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 		java.util.Date parsed = null;
 		try {
 			parsed = format.parse(startDate + " " + startTime);
@@ -444,7 +454,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		ExamManager examManager = ExamManager.getExamManager(request.getSession());
 		Exam editedExam = examToEdit.getEditedExam();
 		EAUser editor = examToEdit.getExamEditor();
-		if (examToEdit.needCreateExam()) {
+		if (examToEdit.isExamNew()) {
 			// creates new exam
 			changedExamId = examManager.createNewExam(editor.getUserID(), editedExam.getName(),
 					editedExam.getResourceType(), editedExam.getDuration(), editedExam.getNumVariants(),
@@ -484,8 +494,10 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			ExamManager eManager = ExamManager.getExamManager(request.getSession());
 			String nextStatus = sExam.getNextStatus();
 			eManager.updateExamStatus(examId, sExam.getNextStatus(), sExam.getExamStatus());
-			if (nextStatus.equals(Exam.ExamStatus.PUBLISHED)){
-				//ExamPublisher publisher = new ExamPublisher()
+			if (nextStatus.equals(Exam.ExamStatus.PUBLISHED)) {
+				SetPlaces.setPlacesForStudentsByExam(examId);
+				SendMail.sendAllMailsForExam(examId, "ammeli14@freeuni.edu.ge", "vgratx123");
+				// ExamPublisher publisher = new ExamPublisher()
 			}
 		}
 	}

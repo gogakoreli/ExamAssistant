@@ -104,6 +104,7 @@
 	}
 
 	function validateLecturer() {
+		return true;
 		if (!$('#examName').val()) {
 			//alert("Cant submit exam without name!");
 			//return false;
@@ -116,6 +117,7 @@
 	}
 
 	function validateBoard() {
+		return true;
 		if (!$('#examStartDate').val()) {
 			alert("Cant submit exam without start date!");
 			return false;

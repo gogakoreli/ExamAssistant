@@ -283,7 +283,7 @@ public class ExamManager {
 	 */
 	public void modifyExamBasicForBoard(int examID, Timestamp startTime) {
 		String updateQuery = "update exam set exam.StartTime='" + startTime.toString() + "' where exam.ExamID='"
-				+ examID;
+				+ examID + "'";
 		DBConnector connector = new DBConnector();
 		connector.updateDatabase(updateQuery);
 		connector.dispose();
@@ -540,7 +540,7 @@ public class ExamManager {
 
 	/* returns sql Query for CanUserAcessExam */
 	private String getSqlQueryForExamSubLecturers(int examId) {
-		String sqlQuery = "select u.* from examassistant.user as u right join (select UserID FROM examassistant.userexam where ExamID = "
+		String sqlQuery = "select u.* from examassistant.user as u join (select UserID FROM examassistant.userexam where ExamID = "
 				+ examId + ") as e on e.UserID = u.UserID and u.Role='lecturer'";
 
 		return sqlQuery;
