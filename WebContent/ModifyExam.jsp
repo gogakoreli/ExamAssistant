@@ -1,3 +1,4 @@
+<%@page import="models.ExamMaterial"%>
 <%@page import="models.EAUser"%>
 <%@page import="models.SecureExam"%>
 <%@page import="models.Lecturer"%>
@@ -38,7 +39,6 @@
 .disabledfieldwidth {
 	width: 200px;
 }
-
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=2">
 <link rel="stylesheet"
@@ -55,77 +55,76 @@
 
 
 <script type="text/javascript">
-	var userType =
-	<%if (user instanceof Lecturer)
-				out.print("'lecturer'");
-			else
-				out.print("'examboard'");%>
-		;
-
-		var examstatus = '<%=sExam.getExamStatus()%>' + '_class';
 	
-		
-	function submitRequested(){
+	<%if (user instanceof Lecturer)
+				out.print("var userType ='lecturer';");
+			else
+				out.print("var userType ='examboard';");%>
+
+	<%out.print("var examstatus = '" + sExam.getExamStatus() + "_class';");%>
+
+	function submitRequested() {
 		if (examstatus === 'new_class')
 			return newExamSubmitRequested();
-		else 
+		else
 			return finalSubmitRequested();
-		
+
 	}
-	
+
 	/* validates user can change status from new */
-	function newExamSubmitRequested(){
-		if (!$('#examName').val()){
+	function newExamSubmitRequested() {
+		if (!$('#examName').val()) {
 			alert("Cant submit exam without name!");
 			return false;
 		}
-		
-		if (!$('#examDuration').val()){
+
+		if (!$('#examDuration').val()) {
 			alert("Cant submit exam without duration!");
 			return false;
 		}
-		
+
 		//alert();
 		return confirm("After submitting You won't be able to change exams name and duration.\n "
 				+ "Board will be able to see your exam and set start time for it. \n Are you sure you want to continue? ");
 	}
-	
+
 	/* validates user can change status from new */
-	function finalSubmitRequested(){
-		if (userType === 'lecturer'){
-			if (!validateLecturer()) return false;
-		}else{
-			if (!validateBoard()) return false;
+	function finalSubmitRequested() {
+		if (userType === 'lecturer') {
+			if (!validateLecturer())
+				return false;
+		} else {
+			if (!validateBoard())
+				return false;
 		}
-		
+
 		return confirm("After submitting You won't be able to make any changes in exam\n "
 				+ "if you still want to continue changin exam info choose save instead. \n Are you sure you want to continue? ");
 	}
-	
-	function validateLecturer(){
-		if (!$('#examName').val()){
+
+	function validateLecturer() {
+		if (!$('#examName').val()) {
 			//alert("Cant submit exam without name!");
 			//return false;
 		}
-		
-		if (!$('#examDuration').val()){
+
+		if (!$('#examDuration').val()) {
 			//alert("Cant submit exam without duration!");
 			//return false;
 		}
 	}
-	
-	function validateBoard(){
-		if (!$('#examStartDate').val()){
+
+	function validateBoard() {
+		if (!$('#examStartDate').val()) {
 			alert("Cant submit exam without start date!");
 			return false;
 		}
-		
-		if (!$('#examStartTime').val()){
+
+		if (!$('#examStartTime').val()) {
 			alert("Cant submit exam without start time!");
 			return false;
 		}
 	}
-
 </script>
 
 <script type="text/javascript">
@@ -138,15 +137,13 @@
 </script>
 
 <script type="text/javascript">
-	$("#file").change(function(){
-         //file uploaded 
+	$("#file").change(function() {
+		//file uploaded 
 	});
-
 </script>
 
 
 <script>
-	
 	function hasClass(elem, klass) {
 		return (" " + elem.className + " ").indexOf(" " + klass + " ") > -1;
 	}
@@ -221,6 +218,27 @@
 		var list = document.getElementById("sublecturerslist");
 		list.removeChild(document.getElementById(id));
 	}
+	
+	//removes @id from list 
+	function removeFromList(id, listid) {
+		var list = document.getElementById(listid);
+		list.removeChild(document.getElementById(id));
+	}
+	
+	function addNewMaterial(id, materialname, materialLocation, listid, paramname){
+		console.log("Adding new Material to list "  + listid + " material= " + materialname);
+		var liid = "material" + id;
+		var ul = document.getElementById(listid);
+		var li = document.createElement("li");
+		li.innerHTML = '<label> '
+				+ '<a href=\'' +  materialLocation +'\'>' + materialname + '</a>'
+				+ ' </label> <input type="hidden" name="' + paramname + '[]" value="' + id
+				+'"> <button type="button" onclick="removeFromList(\''
+				+ liid + '\', \''+listid+'\')">'
+				+ '<i class="glyphicon-remove"></i></button>';
+		li.setAttribute("id", liid); // added line
+		ul.appendChild(li);
+	}
 
 	//adds new lectuer to list 
 	function addNewLecturer(id, name) {
@@ -262,14 +280,29 @@
 </script>
 
 <style>
-.colored_purple{
+.colored_purple {
 	background-color: #af4c9f;
-	    border: none;
-    color: white;
-    padding: 18px 40px;
-    text-decoration: none;
-    margin: 8px 2px;
-    cursor: pointer;
+	border: none;
+	color: white;
+	padding: 18px 40px;
+	text-decoration: none;
+	margin: 8px 2px;
+	cursor: pointer;
+}
+
+.bnt_edit_css {
+	cursor: pointer;
+	background-color: #495884;
+	border: none;
+	color: white;
+	text-decoration: none;
+	margin: 8px 2px;
+	margin-top: 8px;
+	margin-right: 2px;
+	margin-bottom: 8px;
+	margin-left: 2px;
+	width: 60px;
+	height: 40px;
 }
 </style>
 
@@ -297,7 +330,8 @@
 		<div id="startExam">
 			<div class="dispInline">
 				<p class="title">გამოცდა</p>
-				<input onclick="EnibleEditing()" type="button" value="Edit">
+				<input onclick="EnibleEditing()" type="button" class="bnt_edit_css"
+					value="Edit">
 			</div>
 			<table class="detail-car-table">
 				<tbody>
@@ -330,13 +364,18 @@
 							<div class="th-value">
 								<input type="radio" name="examType" value="Final"
 									class="disabledfield lecturer new_class pending_class board_ready_class"
-									<%if (sExam.getType().equals(Exam.ExamType.FINAL)) out.print("checked='checked'");  %>  disabled />Final <input type="radio"
-									name="examType" value="Midterm"
+									<%if (sExam.getType().equals(Exam.ExamType.FINAL))
+				out.print("checked='checked'");%>
+									disabled />Final <input type="radio" name="examType"
+									value="Midterm"
 									class="disabledfield lecturer new_class pending_class board_ready_class"
-									<%if (sExam.getType().equals(Exam.ExamType.MIDTERM)) out.print("checked='checked'");  %> disabled /> Midterm <input type="radio" name="examType"
+									<%if (sExam.getType().equals(Exam.ExamType.MIDTERM))
+				out.print("checked='checked'");%>
+									disabled /> Midterm <input type="radio" name="examType"
 									value="Quizz"
 									class="disabledfield lecturer new_class pending_class board_ready_class"
-									<%if (sExam.getType().equals(Exam.ExamType.QUIZZ)) out.print("checked='checked'");  %>
+									<%if (sExam.getType().equals(Exam.ExamType.QUIZZ))
+				out.print("checked='checked'");%>
 									disabled /> Quizz
 							</div>
 						</th>
@@ -386,34 +425,33 @@
 							<div class="th-value">
 								<input type="checkbox" name="openbookcb" id="openbookcb"
 									class="disabledfield lecturer new_class pending_class board_ready_class"
-									value="
-									<%=Exam.NoteType.OPEN_BOOK%>" disabled>
+									value="<%=Exam.NoteType.OPEN_BOOK%>" disabled>
 								<div id="opennodediv" class="hiddencb">
 									Open Note: <input type="checkbox" name="openNote" id="openNote"
-										value="
-									<%=Exam.NoteType.OPEN_NOTE%>"
+										value="<%=Exam.NoteType.OPEN_NOTE%>"
 										class="disabledfield lecturer new_class pending_class board_ready_class"
 										disabled>
 								</div>
 							</div>
 						</th>
-						
+
 						<!-- values of open book and open note -->
 						<script>
-						
-						var noteType='<%= sExam.getResourceType() %>';
-						function correctNoteTypecb(){
-							if (noteType==='Open Book'){
-								$('#openbookcb').prop('checked', true);
-								$("#opennodediv").toggle();
-							}else if (noteType==='Open Note'){
-								$('#openbookcb').prop('checked', true);
-								$('#openNote').prop('checked', true);
-								$("#opennodediv").toggle();
+							
+						<%out.print("var noteType='" + sExam.getResourceType() + "';");%>
+							
+							function correctNoteTypecb() {
+								if (noteType === '<%=Exam.NoteType.OPEN_BOOK%>') {
+									$('#openbookcb').prop('checked', true);
+									$("#opennodediv").toggle();
+								} else if (noteType === '<%=Exam.NoteType.OPEN_NOTE%>') {
+									$('#openbookcb').prop('checked', true);
+									$('#openNote').prop('checked', true);
+									$("#opennodediv").toggle();
+								}
+
 							}
-								
-						}
-						correctNoteTypecb();
+							correctNoteTypecb();
 						</script>
 					</tr>
 
@@ -488,9 +526,29 @@
 						<th class="th-left">
 							<div class="th-key">გამოსაყენებელი მასალა:</div>
 							<div class="th-value">
-								<input type="file" name="file"
+								<input type="file" name="materialsmult[]"
 									class="disabledfield lecturer disabledfieldwidth new_class pending_class board_ready_class"
 									disabled />
+
+								<div class="selectedlecturers">
+									<!-- list of uploaded materials  -->
+									<ul class="sublecturerslist customlist" id="uploadedmaterialslist">
+									</ul>
+								</div>
+
+
+
+								<script type='text/javascript'>
+									
+								<%/* adding materials to exam */
+			for (ExamMaterial curmaterial : sExam.getExamMaterialsList()) {
+
+				out.append("addNewMaterial(" + curmaterial.getMaterialID() + ",'" + curmaterial.getMaterial() + "','"
+						+ curmaterial.getLocation() + "', 'uploadedmaterialslist', 'materialslist');\n\r");
+			}%>
+									
+								</script>
+
 							</div>
 						</th>
 					</tr>
@@ -498,9 +556,29 @@
 						<th class="th-left">
 							<div class="th-key">ვარიანტები:</div>
 							<div class="th-value">
-								<input type="file" name="file"
+								<input type="file" name="variantssmult[]"
 									class="disabledfield lecturer disabledfieldwidth new_class pending_class board_ready_class"
 									disabled />
+
+
+								<div class="selectedlecturers">
+									<!-- list of uploaded materials  -->
+									<ul class="sublecturerslist customlist" id="uploadedvariantslist">
+									</ul>
+								</div>
+
+
+
+								<script type='text/javascript'>
+									
+								<%/* adding materials to exam */
+			for (ExamMaterial curmaterial : sExam.getExamVariantsList()) {
+
+				out.append("addNewMaterial(" + curmaterial.getMaterialID() + ",'" + curmaterial.getMaterial() + "','"
+						+ curmaterial.getLocation() + "', 'uploadedvariantslist', 'variantsslist');\n\r");
+			}%>
+									
+								</script>
 							</div>
 						</th>
 					</tr>
@@ -508,18 +586,40 @@
 						<th class="th-left">
 							<div class="th-key">სტუდენტების სია:</div>
 							<div class="th-value">
-								<input type="file" name="file"
+								<input type="file" name="studentsList[]"
 									class="disabledfield examboard disabledfieldwidth pending_class lecturer_ready_class"
 									disabled />
+									
+									<div class="selectedlecturers">
+									<!-- list of uploaded materials  -->
+									<ul class="sublecturerslist customlist" id="uploadedstudentslist">
+									</ul>
+								</div>
+
+
+
+								<script type='text/javascript'>
+									
+								<%/* adding materials to exam */
+			for (ExamMaterial curmaterial : sExam.getExamStudentsList()) {
+
+				out.append("addNewMaterial(" + curmaterial.getMaterialID() + ",'" + curmaterial.getMaterial() + "','"
+						+ curmaterial.getLocation() + "', 'uploadedstudentslist', 'studentslist');\n\r");
+			}%>
+									
+								</script>
 
 							</div>
 						</th>
 					</tr>
 				</tbody>
 			</table>
-			<input class="start" type="submit" value="Save " name="saveButton"> <input
-				class="colored_purple" type="submit" name="saveAndSubmitButton" onclick="return submitRequested()"
-				value="Submit">
+			<div id="submitButtons" >
+				<input class="start" type="submit" value="Save " name="saveButton">
+				<input class="colored_purple" type="submit"
+					name="saveAndSubmitButton" onclick="return submitRequested()"
+					value="Submit">
+			</div>
 		</div>
 	</form>
 </body>
