@@ -116,7 +116,7 @@ p.title {
 	content: "\f068";
 }
 
-#sublecturerslist button {
+#sublecturerslist button, .customlist button {
 	width: 18px;
 	height: 18px;
 	text-align: center;
@@ -130,7 +130,9 @@ p.title {
 	border: 1px solid transparent;
 }
 
-#sublecturerslist i {
+
+
+#sublecturerslist i, .customlist i {
 position: relative;
 	top: 1px;
 	display: inline-block;
@@ -140,6 +142,8 @@ position: relative;
 	font-weight: normal;
 	line-height: 1;
 }
+
+
 
 .glyphicon {
 	position: relative;

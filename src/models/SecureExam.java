@@ -25,6 +25,7 @@ public class SecureExam {
 	private static final String DEFAULT_EXAM_START_DATE = "UNDEFINED";
 	private static final int MIN_EXAM_NAME = 0;
 	private static final int MIN_EXAM_DURATION = 0;
+	private static final String DEFAULT_EXAM_TYPE = Exam.ExamType.FINAL;
 
 	/* model containing exam inforamtion */
 	private Exam examToSecure;
@@ -99,6 +100,8 @@ public class SecureExam {
 
 	/** returns the type of the exam. */
 	public String getType() {
+		if (isExamNew())
+			return DEFAULT_EXAM_TYPE;
 		return examToSecure.getType();
 	}
 
@@ -108,6 +111,18 @@ public class SecureExam {
 
 	public String getResourceType() {
 		return examToSecure.getResourceType();
+	}
+
+	public List<ExamMaterial> getExamMaterialsList() {
+		return examToSecure.getMaterialsList();
+	}
+
+	public List<ExamMaterial> getExamVariantsList() {
+		return examToSecure.getMaterialVariantsList();
+	}
+	
+	public List<ExamMaterial> getExamStudentsList() {
+		return examToSecure.getStudentsListForExam();
 	}
 
 	/**
@@ -352,18 +367,47 @@ public class SecureExam {
 	/*
 	 * checks if current user can update status to next level by commiting his
 	 * part as ready for publishing if user changes his/her status to ready all
-	 * fields should be done and he/she can't make any further changes . in addition
-	 * user can not change status anymore if he/she has already changed it to ready 
+	 * fields should be done and he/she can't make any further changes . in
+	 * addition user can not change status anymore if he/she has already changed
+	 * it to ready
 	 */
 	private OpResult<Boolean> canChangeToReady() {
 		OpResult<Boolean> result = new OpResult<Boolean>();
+		result.setResultObject(new Boolean(true));
 		if (isEditorBoard()) {
-			// return null;
 			// if (examToSecure.getStartDateTime().after(when) < MIN_EXAM_NAME)
-			// {
+			if (!isStudentsList) result.setError(0, "Cannot change status to ready of Exam without StudentsList");
+			if (getExamStatus().equals(Exam.ExamStatus.BOARD_READY)) result.setError(0, "You have already submitted!");
+		}else{
+			if (!isVariants || !isMaterials)
+				result.setError(0, "Please Upload Variants And Materials ");
+			if (getExamStatus().equals(Exam.ExamStatus.LECTURER_READY)) result.setError(0, "You have already submitted!");
 		}
-		result.setError(0, "Unimplimneted error");
 		return result;
+	}
+
+	/** checks if we need to create exam or its already created */
+	public boolean needCreateExam() {
+		return (examToSecure.getExamID() > 0);
+	}
+
+	boolean isMaterials = false;
+	boolean isVariants =  false;
+	boolean isStudentsList = false;
+	
+	/** sets boolean indicating if there is at least one material */
+	public void setIsMaaterials(boolean b) {
+		isMaterials = b;
+	}
+
+	/** sets boolean indicating if there is at least one variant */
+	public void setIsVariants(boolean b) {
+		isVariants= b;		
+	}
+
+	/** sets boolean indicating if there is students list */
+	public void setIsStudentsList(boolean b) {
+		isStudentsList = b;
 	}
 
 }

@@ -12,8 +12,8 @@ import helper.LogManager;
 public class Exam {
 
 	public final class NoteType {
-		public static final String OPEN_BOOK = "Open book";
-		public static final String CLOSED_BOOK = "Closed book";
+		public static final String OPEN_BOOK = "Open Book";
+		public static final String CLOSED_BOOK = "Closed Book";
 		public static final String OPEN_NOTE = "Open Note";
 	}
 
@@ -53,9 +53,9 @@ public class Exam {
 	List<Lecturer> subLectuers = new ArrayList<Lecturer>();
 
 	// files attached to exam
-	private List<String> variantUrls = new ArrayList<String>();
-	private List<String> materialsUrls = new ArrayList<String>();
-	private String studentsListUrl = "";
+	private List<ExamMaterial> variantUrls = new ArrayList<ExamMaterial>();
+	private List<ExamMaterial> materialsUrls = new ArrayList<ExamMaterial>();
+	private List<ExamMaterial> studentsListUrls = new ArrayList<ExamMaterial>();
 
 	public Exam(ResultSet rs) {
 		if (rs != null) {
@@ -250,6 +250,34 @@ public class Exam {
 	/** Gets creator id for exam */
 	public int getCreatorId() {
 		return creatorId;
+	}
+	
+	/** gets materials list for exam */
+	public List<ExamMaterial> getMaterialsList(){
+		return materialsUrls;
+	}
+	
+	/** sets materials list for exam*/
+	public void setMaterialsList (List<ExamMaterial> materials){
+		this.materialsUrls = materials;
+	}
+	
+	/** gets materials variants list for exam */
+	public List<ExamMaterial> getMaterialVariantsList(){
+		return variantUrls;
+	}
+	
+	/** sets materials variants list for exam*/
+	public void setMaterialVariantsList (List<ExamMaterial> materialsVar){
+		this.variantUrls = materialsVar;
+	}
+	
+	public List<ExamMaterial> getStudentsListForExam(){
+		return studentsListUrls; 
+	}
+	
+	public void setStudentsListForExam(List<ExamMaterial> listFile){
+		studentsListUrls = listFile; 
 	}
 
 	/** To string the exam object. */

@@ -10,6 +10,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ import listeners.ContextStartupListener;
 import helper.SecurityChecker;
 import models.EAUser;
 import models.Exam;
+import models.ExamMaterial;
 import models.Lecturer;
 import models.SecureExam;
 
@@ -94,6 +96,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			return;
 		setCreatorNameForExam(examToEdit, request);
 		setSubLecturersForExam(examToEdit, request);
+		setMaterialsForExam(examToEdit, request);
 	}
 
 	@Override
@@ -183,6 +186,17 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		examToEdit.setSubLecturers(subLecs);
 	}
 
+	/* sets sub lecturers for exam */
+	private void setMaterialsForExam(Exam examToEdit, HttpServletRequest request) {
+		ExamManager examManager = ExamManager.getExamManager(request.getSession());
+		List<ExamMaterial> materialsList = examManager.downloadMaterialsList(examToEdit);
+		List<ExamMaterial> variantsList = examManager.downloadVariantsList(examToEdit);
+		List<ExamMaterial> sudetnsListURL = examManager.downloadStudentsList(examToEdit);
+		examToEdit.setMaterialsList(materialsList);
+		examToEdit.setMaterialVariantsList(variantsList);
+		examToEdit.setStudentsListForExam(sudetnsListURL);
+	}
+
 	/* sets creator name for given exam */
 	private void setCreatorNameForExam(Exam examToEdit, HttpServletRequest request) {
 		OpResult<EAUser> creatorResult = AccountManager.getAccountManager(request.getSession())
@@ -195,6 +209,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
 		SecurityChecker checker = new SecurityChecker(request, this);
 		if (checker.CheckPermissions()) {
 			if (isSaveCommand(request) || isSaveAndChangeStatusCommand(request)) {
@@ -207,8 +222,9 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 				// editing.
 				sExam.setExamEditor(checker.getUser());
 				int changedExamId = editAndSaveExam(sExam, request);
+				handleUplaodedFiles(request, changedExamId, checker.getUser(), sExam);
 				if (isSaveAndChangeStatusCommand(request)) {
-					//exam updated now we change status 
+					// exam updated now we change status
 					changeExamStatus(sExam, request, changedExamId);
 				}
 				// update finished redirect to new page
@@ -220,17 +236,102 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 
 	}
 
+	/* handels file uploads and saves them to db */
+	private void handleUplaodedFiles(HttpServletRequest request, int changedExamId, EAUser user, SecureExam sExam) {
+		if (user instanceof Lecturer) {
+			List<String> uploadedMaterials = saveUploadedFiles(request, "materialsmult[]");
+			uploadedMaterials.addAll(getListOfValues("materialslist", request));
+			updateMaterialsListInDb(request, uploadedMaterials, ExamManager.MATERIAL_BOOKS, changedExamId);
+			List<String> uploadedVariants = saveUploadedFiles(request, "variantssmult[]");
+			uploadedVariants.addAll(getListOfValues("variantsslist", request));
+			updateMaterialsListInDb(request, uploadedVariants, ExamManager.MATERIAL_VARIANTS, changedExamId);
+			sExam.setIsMaaterials(!uploadedMaterials.isEmpty());
+			sExam.setIsVariants(!uploadedMaterials.isEmpty());
+		} else {
+			List<String> uploadedStudentsList = saveUploadedFiles(request, "studentsList[]");
+			uploadedStudentsList.addAll(getListOfValues("studentslist", request));
+			updateMaterialsListInDb(request, uploadedStudentsList, ExamManager.MATERIAL_STUDENTS_LIST, changedExamId);
+			sExam.setIsStudentsList(!uploadedStudentsList.isEmpty());
+		}
+	}
 	
+	private void updateMaterialsListInDb(HttpServletRequest request, List<String> uploadedMaterials, String materialType, int examID){
+		ExamManager eManager = ExamManager.getExamManager(request.getSession());
+		eManager.clearUserMaterialsForExam(examID, materialType);
+		int i = 0;
+		for (String fileName : uploadedMaterials){
+			i++;
+			int val = -1;
+			if (materialType.equals(ExamManager.MATERIAL_VARIANTS))
+				val = i;
+			eManager.addUserMaterialsForExam(examID, fileName, materialType, val, "\\Download\\" + fileName);
+		}
+	}
+
+	/*
+	 * handles file uploads saves them ftp server and returns list of filenames
+	 */
+	private List<String> saveUploadedFiles(HttpServletRequest request, String filedName) {
+		List<String> filenames = new ArrayList<String>();
+		// Check that we have a file upload request
+		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+		///if (!isMultipart)
+		//	return filenames;
+		int maxFileSize = 50 * 1024 * 1024;
+		String filePath = getServletContext().getInitParameter("file-upload");
+
+		DiskFileItemFactory factory = new DiskFileItemFactory();
+		// maximum size that will be stored in memory
+		factory.setSizeThreshold(maxFileSize);
+		// Location to save data that is larger than maxMemSize.
+		factory.setRepository(new File("c:\\temp"));
+
+		// Create a new file upload handler
+		ServletFileUpload upload = new ServletFileUpload(factory);
+		// maximum file size to be uploaded.
+		upload.setSizeMax(maxFileSize);
+
+		try {
+			// Parse the request to get file items.
+			List<FileItem> fileItems = upload.parseRequest(request);
+
+			// Process the uploaded file items
+			Iterator<FileItem> i = fileItems.iterator();
+			File file;
+			while (i.hasNext()) {
+				FileItem fi = (FileItem) i.next();
+				if (!fi.isFormField()) {
+					// Get the uploaded file parameters
+					String fieldName = fi.getFieldName();
+					if (fieldName.equals(filedName)) {
+						String fileName = fi.getName();
+						// Write the file
+						if (fileName.lastIndexOf("\\") >= 0) {
+							file = new File(filePath + fileName.substring(fileName.lastIndexOf("\\")));
+						} else {
+							file = new File(filePath + fileName.substring(fileName.lastIndexOf("\\") + 1));
+						}
+
+						fi.write(file);
+						filenames.add(fileName);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+		return filenames;
+	}
 
 	private boolean isSaveAndChangeStatusCommand(HttpServletRequest request) {
 		String submit = getParametherFromRequest(request, "saveAndSubmitButton", null);
-		//LogManager.logInfoMessage("submit pressed " + submit);
+		// LogManager.logInfoMessage("submit pressed " + submit);
 		return (submit != null);
 	}
 
 	private boolean isSaveCommand(HttpServletRequest request) {
 		String save = getParametherFromRequest(request, "saveButton", null);
-		//LogManager.logInfoMessage("save pressed " + save);
+		// LogManager.logInfoMessage("save pressed " + save);
 		return (save != null);
 	}
 
@@ -240,6 +341,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	}
 
 	/***************************************************************/
+
 	/*********** functions for modifying exam and saving ************/
 	/***************************************************************/
 
@@ -250,7 +352,40 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 	private int editAndSaveExam(SecureExam examToEdit, HttpServletRequest request) {
 		setNewBasicValues(examToEdit, request);
 		int updatedExamId = updateExamInDb(examToEdit, request);
+		updateSubLecturersInDb(updatedExamId, request);
 		return updatedExamId;
+	}
+
+	/* updates list of sublecturers for exam @examId */
+	private void updateSubLecturersInDb(int examId, HttpServletRequest request) {
+
+		ExamManager exManager = ExamManager.getExamManager(request.getSession());
+		exManager.clearUserExamForExam(examId);
+		// adding yourself as sublecturer
+		exManager.addSubLecturerToExam(exManager.getExamByExamId(examId).getCreatorId(), examId);
+		String[] subLecturers = request.getParameterValues("sublec[]");
+		if (subLecturers == null) return;
+		for (int i = 0; i < subLecturers.length; i++) {
+			int lecturerId = getIntFromString(subLecturers[i], 0);
+			if (validateIsLecturer(lecturerId, request))
+				exManager.addSubLecturerToExam(lecturerId, examId);
+		}
+	}
+
+	private ArrayList<String> getListOfValues(String paramether, HttpServletRequest request) {
+		ArrayList<String> result = new ArrayList<String>();
+		String[] values = request.getParameterValues(paramether);
+		if(values == null) return result;
+		for (int i = 0; i < values.length; i++) {
+			result.add(values[i]);
+		}
+		return result;
+	}
+
+	/* validates given id is lecturers or not */
+	private boolean validateIsLecturer(int lecturerId, HttpServletRequest request) {
+		AccountManager accManager = AccountManager.getAccountManager(request.getSession());
+		return ((accManager.getUserById(lecturerId).getOpResult()) instanceof Lecturer);
 	}
 
 	/*
@@ -309,7 +444,7 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		ExamManager examManager = ExamManager.getExamManager(request.getSession());
 		Exam editedExam = examToEdit.getEditedExam();
 		EAUser editor = examToEdit.getExamEditor();
-		if (examToEdit.isExamNew()) {
+		if (examToEdit.needCreateExam()) {
 			// creates new exam
 			changedExamId = examManager.createNewExam(editor.getUserID(), editedExam.getName(),
 					editedExam.getResourceType(), editedExam.getDuration(), editedExam.getNumVariants(),
@@ -338,118 +473,27 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 		return paramVals[0];
 	}
 
-	/* handles file uploads saves them ftp server and on writes url in db */
-	private void handleFileUplaods(HttpServletRequest request) {
-		// Check that we have a file upload request
-		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-		int maxFileSize = 50 * 1024 * 1024;
-		int maxMemSize = 4 * 1024;
-		String filePath = getServletContext().getInitParameter("file-upload");
-
-		DiskFileItemFactory factory = new DiskFileItemFactory();
-		// maximum size that will be stored in memory
-		factory.setSizeThreshold(maxFileSize);
-		// Location to save data that is larger than maxMemSize.
-		factory.setRepository(new File("c:\\temp"));
-
-		// Create a new file upload handler
-		ServletFileUpload upload = new ServletFileUpload(factory);
-		// maximum file size to be uploaded.
-		upload.setSizeMax(maxFileSize);
-
-		try {
-			// Parse the request to get file items.
-			List<FileItem> fileItems = upload.parseRequest(request);
-
-			// Process the uploaded file items
-			Iterator<FileItem> i = fileItems.iterator();
-			File file;
-			while (i.hasNext()) {
-				FileItem fi = (FileItem) i.next();
-				if (!fi.isFormField()) {
-					// Get the uploaded file parameters
-					String fieldName = fi.getFieldName();
-					String fileName = fi.getName();
-					String contentType = fi.getContentType();
-					boolean isInMemory = fi.isInMemory();
-					long sizeInBytes = fi.getSize();
-					// Write the file
-					if (fileName.lastIndexOf("\\") >= 0) {
-						file = new File(filePath + fileName.substring(fileName.lastIndexOf("\\")));
-					} else {
-						file = new File(filePath + fileName.substring(fileName.lastIndexOf("\\") + 1));
-					}
-					fi.write(file);
-				}
-			}
-
-		} catch (Exception ex) {
-			System.out.println(ex);
-		}
-	}
-	
-	
 	/**************************/
+
 	/*** changing status ******/
 	/**************************/
-	/*changes exam status after user presses submit */
+	/* changes exam status after user presses submit */
 	private void changeExamStatus(SecureExam sExam, HttpServletRequest request, int examId) {
 		OpResult<Boolean> result = sExam.canChangeStatus();
-		if (result.isSuccess()){
+		if (result.isSuccess()) {
 			ExamManager eManager = ExamManager.getExamManager(request.getSession());
+			String nextStatus = sExam.getNextStatus();
 			eManager.updateExamStatus(examId, sExam.getNextStatus(), sExam.getExamStatus());
+			if (nextStatus.equals(Exam.ExamStatus.PUBLISHED)){
+				//ExamPublisher publisher = new ExamPublisher()
+			}
 		}
 	}
 
 	/***************************************************************/
+
 	/*********** end of functions for modifying exam ***************/
 	/***************************************************************/
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doPost1(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		SecurityChecker checker = new SecurityChecker(request, null);
-		if (checker.CheckPermissions()) {
-
-			handleFileUplaods(request);
-			if (true)
-				return;// testing purpose
-			if (checkExamSavedButtonCliqued(request)) {
-				EAUser user = checker.getUser();
-				ExamManager manager = ExamManager.getExamManager(request.getSession());
-				saveModifiedExam(request, manager, user);
-				// TODO Auto-generated constructor stub
-				// gadavushveb tavis sawyis gverdze ogond ak marto
-				// lektoristvisaa
-				response.sendRedirect("/ExamAssistant/Lecturer");
-			} else if (saveFileButtonClicked(request)) {
-				Part filePart = null;
-				try {
-					filePart = request.getPart("uploadFile"); // Retrieves
-																// <input
-																// type="file"
-																// name="file">
-					String fileName = filePart.getSubmittedFileName();
-					InputStream fileContent = filePart.getInputStream();
-					System.out.println(fileName);
-				} catch (Exception e) {
-					LogManager.logErrorException("Error Uploading file", e);
-				}
-			}
-
-		} else {
-			checker.redirectToValidPage(response);
-		}
-
-	}
-
-	private boolean saveFileButtonClicked(HttpServletRequest request) {
-		request.getParameter("uploadFile");
-		return request.getParameter("saveFile") != null;
-	}
 
 	private int getExamDuration(HttpServletRequest request) {
 		if (request.getParameter("examDuration") != null) {
@@ -475,10 +519,6 @@ public class ModifyExamServlet extends HttpServlet implements ISecure {
 			return request.getParameter("examName");
 		} else
 			return Exam.EXAM_NAME_UNDEFINED;
-	}
-
-	private boolean checkExamSavedButtonCliqued(HttpServletRequest request) {
-		return request.getParameter("saveExam") != null;
 	}
 
 	public static boolean checkNewExam(HttpServletRequest request) {

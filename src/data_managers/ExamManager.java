@@ -32,6 +32,10 @@ public class ExamManager {
 	public static final int NEW_EXAM_ID = 0;// id of new empty exam
 	public static final Exam EMPTY_EXAM = new Exam(NEW_EXAM_ID);
 
+	public static final String MATERIAL_BOOKS = "book";
+	public static final String MATERIAL_VARIANTS = "variant";
+	public static final String MATERIAL_STUDENTS_LIST = "student_list";
+
 	private Map<Integer, Exam> exams;
 
 	public ExamManager() {
@@ -256,9 +260,7 @@ public class ExamManager {
 		}
 		return result;
 	}
-	
-	
-	
+
 	/**
 	 * Modify exam : updates basic info of exam for lecturers
 	 * 
@@ -332,6 +334,35 @@ public class ExamManager {
 		return examId;
 	}
 
+	/** deletes all subLecturers for exam */
+	public void clearUserExamForExam(int examID) {
+		String updateQuery = "DELETE ue	FROM examassistant.userexam as ue left join examassistant.user as  u on ue.UserID = u.UserID"
+				+ " Where (ue.ExamID = " + examID + ") AND (u.Role = 'lecturer');";
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(updateQuery);
+		connector.dispose();
+	}
+
+	/** deletes all materials for examID where material Type = @materialType */
+	public void clearUserMaterialsForExam(int examID, String materialType) {
+		String updateQuery = "delete from examassistant.exammaterial where (ExamID = " + examID
+				+ ") and (MaterialType='" + materialType + "')";
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(updateQuery);
+		connector.dispose();
+	}
+
+	/** deletes all materials for examID where material Type = @materialType */
+	public void addUserMaterialsForExam(int examID, String materialName, String materialType, int materialVar,
+			String location) {
+		String updateQuery = "insert into examassistant.exammaterial (ExamID, Material, MaterialType, Variant, Location)"
+				+ "values(" + examID + ", '" + materialName + "', '" + materialType + "', " + materialVar + ", '"
+				+ location + "');";
+		DBConnector connector = new DBConnector();
+		connector.updateDatabase(updateQuery);
+		connector.dispose();
+	}
+
 	/**
 	 * Modify exam : update info in the exam table after board or lecturer
 	 * pressed modify button
@@ -351,9 +382,25 @@ public class ExamManager {
 		return getExamByExamId(examID);
 	}
 
-	
-
+	/**
+	 * Adds new row in the base in the userexam table, which connects each user
+	 * to the exam.
+	 * 
+	 * @param userId
+	 * @param examId
+	 */
 	public void addExamForStudent(int userId, int examId) {
+		addRowInUserExam(userId, examId);
+	}
+
+	/**
+	 * Adds new row in the base in the userexam table, which connects each user
+	 * to the exam.
+	 * 
+	 * @param userId
+	 * @param examId
+	 */
+	public void addSubLecturerToExam(int userId, int examId) {
 		addRowInUserExam(userId, examId);
 	}
 
@@ -419,7 +466,6 @@ public class ExamManager {
 		removeFromUserPlaces(userExamIDs);
 	}
 
-	
 	private void removeFromUserPlaces(ArrayList<Integer> userExamIDs) {
 		DBConnector connector = new DBConnector();
 		for (int i = 0; i < userExamIDs.size(); i++) {
@@ -535,6 +581,49 @@ public class ExamManager {
 	}
 
 	/**
+	 * gets list of materilas for exam @param exam with materialsTypeId
+	 * id @param id list of. returns empty list in case of error
+	 */
+	public ArrayList<ExamMaterial> downloadMaterialsList(Exam exam, String materialType) {
+		ArrayList<ExamMaterial> result = new ArrayList<ExamMaterial>();
+		String sqlQuery = "select * from examassistant.exammaterial where ExamID = " + exam.getExamID()
+				+ " AND (MaterialType = '" + materialType + "');";
+		DBConnector connector = new DBConnector();
+		SqlQueryResult queryResult = connector.getQueryResult(sqlQuery);
+		if (queryResult.isSuccess()) {
+			ResultSet rs = queryResult.getResultSet();
+			try {
+				if (rs.next()) {
+					rs.beforeFirst();
+					while (!rs.isLast()) {
+						ExamMaterial tmpExamMaterial = new ExamMaterial(queryResult.getResultSet());
+						result.add(tmpExamMaterial);
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		connector.dispose();
+		return result;
+	}
+
+	/** downlaods materials for given exam @param exam */
+	public List<ExamMaterial> downloadMaterialsList(Exam examToEdit) {
+		return downloadMaterialsList(examToEdit, MATERIAL_BOOKS);
+	}
+
+	/** downlaods variants for given exam @param exam */
+	public List<ExamMaterial> downloadVariantsList(Exam examToEdit) {
+		return downloadMaterialsList(examToEdit, MATERIAL_VARIANTS);
+	}
+
+	/** downlaods file name for list of students taking exam */
+	public List<ExamMaterial> downloadStudentsList(Exam examToEdit) {
+		return downloadMaterialsList(examToEdit, MATERIAL_STUDENTS_LIST);
+	}
+
+	/**
 	 * @param exam
 	 * @return list of students who write this exam
 	 */
@@ -587,4 +676,5 @@ public class ExamManager {
 		connector.dispose();
 		return res;
 	}
+
 }
