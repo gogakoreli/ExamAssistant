@@ -12,6 +12,11 @@
 	boolean uploaded = session.getAttribute("uploaded") != null ? (boolean)session.getAttribute("uploaded"):false;
 %>
 <head>
+
+
+<%@ include file="includes/logoutscripts.html" %>
+<jsp:include page="includes/chat.jsp" />
+
 <script type="text/javascript">
 <%
 	if(uploaded){
@@ -76,6 +81,7 @@ h1 {
 
 
 <body>
+
 
 	<%
 		for (int i = 0; i < materials.size(); i++) {
