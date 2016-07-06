@@ -20,6 +20,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;" charset="UTF-8">
+<title>Exam</title>
 <title>Student Page</title>
 
 
@@ -414,7 +415,7 @@
 
 								<input type="text" id="examStartTime" name="examStartTime"
 									class="disabledfield examboard disabledfieldwidth pending_class lecturer_ready_class"
-									value="<%=sExam.getExamStartTime()%>" disabled>
+									value="<%=sExam.getStartDateTime()%>" disabled>
 							</div>
 						</th>
 					</tr>

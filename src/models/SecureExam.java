@@ -1,6 +1,5 @@
 package models;
 
-import java.util.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -319,7 +318,6 @@ public class SecureExam {
 		default:
 			break;
 		}
-		// if ()
 		return result;
 	}
 
@@ -332,7 +330,7 @@ public class SecureExam {
 			break;
 		case Exam.ExamStatus.PENDING:
 			result = Exam.ExamStatus.LECTURER_READY;
-			if (getExamEditor() instanceof ExamBoard)
+			if (getExamEditor() instanceof ExamBoard)  
 				result = Exam.ExamStatus.BOARD_READY;
 			break;
 		case Exam.ExamStatus.LECTURER_READY:
@@ -340,7 +338,7 @@ public class SecureExam {
 			result = Exam.ExamStatus.PUBLISHED;
 			break;
 		default:
-			result = "PENDING";
+			result = "pending";
 			LogManager.logErrorException("Asked changing of status of examId= " + examToSecure.getExamID(),
 					new Exception("unsupported next status"));
 			break;
@@ -354,10 +352,10 @@ public class SecureExam {
 	 */
 	private OpResult<Boolean> canChangeToPending() {
 		OpResult<Boolean> result = new OpResult<Boolean>();
-		if (examToSecure.getName().length() < MIN_EXAM_NAME) {
+		if (examToSecure.getName().length() <= MIN_EXAM_NAME) {
 			// result.setResultObject(new Boolean(false));
 			result.setError(3000, "Can't Change Status of Exam without correct name");
-		} else if (examToSecure.getDuration() < MIN_EXAM_DURATION) {
+		} else if (examToSecure.getDuration() <= MIN_EXAM_DURATION) {
 			// result.setResultObject(new Boolean(false));
 			result.setError(3001, "Can't Change Status of Exam without correct duration");
 		} else {

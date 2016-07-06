@@ -35,6 +35,11 @@ input[type=submit] {
 	font-size: 18px;
 }
 
+input[type=submit]:hover {
+    background-color: #ffb31a;
+}
+
+
 input:focus {
 	box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.4), 0 1px 1px
 		rgba(255, 255, 255, 0.2);
@@ -48,7 +53,6 @@ input {
 	padding: 10px;
 	font-size: 14px;
  	color: #fff; 
- 	text-shadow: red;
 	border: 1px solid rgba(0, 0, 0, 0.3);
 	border-radius: 4px;
 	box-shadow: inset 0 -5px 45px rgba(100, 100, 100, 0.2), 0 1px 1px
@@ -65,7 +69,7 @@ div {
 	text-align: center;
 	width: 420px;
 	border: 3px solid #ffaa00;
-	border-radius: 5px;
+	border-radius: 8px;
  	background-color: white; 
 	padding: 25px;
 	margin: auto;

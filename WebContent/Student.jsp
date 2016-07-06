@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, models.*"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html >
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -10,6 +10,49 @@
 
 <%@ include file="includes/logoutscripts.html" %>
 <jsp:include page="includes/chat.jsp" />
+
+<style>
+#header {
+	background-color: #ffaa00;
+	color: white;
+	text-align: center;
+	padding: 25px;
+	font-size: 30px;
+}
+
+#nav {
+	line-height: 30px;
+	background-color: #eeeeee;
+	height: 700px;
+	width: 250px;
+	float: left;
+	padding: 9px;
+}
+
+#section {
+	width: 70%;
+	float: left;
+	padding: 1px;
+}
+
+p {
+	font-family: "Arial", cursive, sans-serif;
+	font-size: 17px;
+	margin: 0px 0px;
+}
+
+input[type=submit] {
+    width: 47%;
+    background-color: green;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+</style>
 
 <style>
 body {
@@ -26,6 +69,7 @@ body {
 	background-color: white;
 	padding: 25px;
 	margin: auto;
+	margin-top: 20px;
 }
 
 #sudentmaindiv  input.start {
@@ -64,17 +108,36 @@ body {
 <jsp:directive.include file="includes/LogoutButton.jsp"/>
     
 
-<body>
+<body>    
+    <div id="header">
+		<h1>Student</h1>
+
+	</div>
+	
+	<div id="nav">
+		<br />
+		
+			<%
+				Student student = (Student) request.getAttribute("student");
+				Exam exam = (Exam) request.getAttribute("exam");
+				request.getSession().setAttribute("exam", exam);
+			%>
+
+		<img src="Display?image=<%=student.getImage()%>">
+
+		<h2 class="font-semibold mgbt-xs-5"><%=student.getFirstName() + " " + student.getLastName()%></h2>
+		<h4>
+			<%=student.getRole()%>
+		</h4>
+		<h4>
+			EMail:
+			<%=student.getMail()%>
+		</h4>
+
+	</div>
+		
 	<div id="sudentmaindiv">    
-    <jsp:directive.include file="includes/UserProfile.jsp"/>
-    
-    <p> </p>
-	<%
-		Student student = (Student) request.getAttribute("student");
-		Exam exam = (Exam) request.getAttribute("exam");
-		request.getSession().setAttribute("exam", exam);
-	%>
-	<form action="Student" method="post">
+		<form action="Student" method="post">
 		<div id="startExam" class="divclass">
 			<p class="title">${exam.getType() } გამოცდა</p>
 			<br>
@@ -84,7 +147,12 @@ body {
 			<br /> <br /> <input class="start" type="submit"
 				value="გამოცდის დაწყება">
 		</div>
+		
 	</form>
-	</div>
+			</div>
+	
+	
+</body>   
+
 </body>
 </html>

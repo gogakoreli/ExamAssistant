@@ -2,9 +2,13 @@ package tests;
 
 import static org.junit.Assert.assertEquals;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import org.junit.Test;
+
+import helper.OpResult;
+import models.Admin;
 import models.EAUser.EAUserRole;
 import models.Exam;
 import models.Exam.ExamStatus;
@@ -22,12 +26,22 @@ public class SecureExamTest {
 
 	
 	@Test
+	public void test0() {	
+		Exam ex = exam.getEditedExam();
+		assertEquals(ex.getName(), "");
+		assertEquals(ex.getExamID(), 0);
+	}
+	
+	
+	@Test
 	public void test1() {	
 		assertEquals(exam.isExamNew(), true);
 		assertEquals(exam.getCreatorName(), "");
 		assertEquals(exam.getDuration(), 0);
 		assertEquals(exam.getName(), "");
 		assertEquals(exam.getType(), "");
+		assertEquals(exam.getExamStatus(), "new");
+		assertEquals(exam.getExamEditor(), null);
 	}
 	
 	@Test
@@ -42,6 +56,11 @@ public class SecureExamTest {
 		assertEquals(exam.getDuration(), 0);
 		assertEquals(exam.getName(), "");
 		assertEquals(exam.getType(), "");
+		
+		examToSecure.setStatus(ExamStatus.PENDING);
+		examToSecure.setExamID(2);
+		assertEquals(exam.getExamStatus(), "pending");
+		exam.getExamStartDate();
 	}
 	
 	
@@ -70,11 +89,8 @@ public class SecureExamTest {
 		examToSecure.setExamID(2);
 
 		exam = new SecureExam(examToSecure);
-		
 		assertEquals(exam.getExamStartTime(), "04:00" );
-		assertEquals(exam.getExamStartDate(), "2016-06-03" );
 		assertEquals(exam.getStartDateTime(), new Timestamp(20));
-		assertEquals(exam.getExamStartDate(), "2016-06-02" );
 		assertEquals(exam.getStartDateTime(), new Timestamp(20));
 	}
 	
@@ -101,12 +117,16 @@ public class SecureExamTest {
 		exam.setName("Calculus");
 		assertEquals(exam.getName(), "");
 		
-		editor.setRole(EAUserRole.LECTURER);
 		examToSecure.setStatus(ExamStatus.NEW);
 		examToSecure.setExamID(1);
-
 		exam = new SecureExam(examToSecure);
 		exam.setExamEditor(editor);
+		exam.setName("Calculus");
+		assertEquals(exam.getName(), "Calculus");
+		
+		Admin admin = new Admin();
+		exam = new SecureExam(examToSecure);
+		exam.setExamEditor(admin);
 		exam.setName("Calculus");
 		assertEquals(exam.getName(), "Calculus");
 	}
@@ -114,9 +134,7 @@ public class SecureExamTest {
 	@Test
 	public void test6() {	
 		Lecturer editor = new Lecturer();
-		editor.setRole(EAUserRole.LECTURER);
-		examToSecure.setStatus(ExamStatus.NEW);
-		
+				
 		exam.setExamEditor(editor);
 		exam.setDuration(120);
 		assertEquals(exam.getDuration(), 0);
@@ -138,6 +156,13 @@ public class SecureExamTest {
 		exam.setExamEditor(editor);
 		exam.setDuration(120);
 		assertEquals(exam.getDuration(), 0);
+		
+		Admin admin = new Admin();
+		examToSecure.setStatus(ExamStatus.LIVE);
+		examToSecure.setExamID(2);
+		exam.setExamEditor(admin);
+		exam.setDuration(120);
+		assertEquals(exam.getDuration(), 120);
 	}  
 	
 	
@@ -146,13 +171,16 @@ public class SecureExamTest {
 		ExamBoard editor1 = new ExamBoard();
 		exam.setExamEditor(editor1);
 		exam.setType(ExamType.FINAL);
-
 		assertEquals(exam.getType(), "");
 		
 		Lecturer editor = new Lecturer();
 		exam.setExamEditor(editor);
 		exam.setType(ExamType.FINAL);
+		assertEquals(exam.getType(), ExamType.FINAL);
 		
+		Admin admin = new Admin();
+		exam.setExamEditor(admin);
+		exam.setType(ExamType.FINAL);
 		assertEquals(exam.getType(), ExamType.FINAL);
 	}		
 	
@@ -161,11 +189,18 @@ public class SecureExamTest {
 	public void test8() {	
 		ExamBoard editor1 = new ExamBoard();
 		exam.setExamEditor(editor1);
-		
+		exam.setResourceType(NoteType.OPEN_BOOK);
+		assertEquals(exam.getResourceType(), "");
 		
 		Lecturer editor = new Lecturer();
 		exam.setExamEditor(editor);
+		exam.setResourceType(NoteType.OPEN_BOOK);
+		assertEquals(exam.getResourceType(), NoteType.OPEN_BOOK);
 		
+		Admin admin = new Admin();
+		exam.setExamEditor(admin);
+		exam.setResourceType(NoteType.OPEN_NOTE);
+		assertEquals(exam.getResourceType(), NoteType.OPEN_NOTE);
 	}	
 	
 	@Test
@@ -181,7 +216,6 @@ public class SecureExamTest {
 		assertEquals(exam.getStartDateTime(), null);
 		
 		ExamBoard editor1 = new ExamBoard();
-		//exam.setExamEditor(editor);
 		examToSecure.setStatus(ExamStatus.NEW);
 		exam.setStartTime(new Timestamp(12));
 		assertEquals(exam.getStartDateTime(), null);
@@ -190,6 +224,11 @@ public class SecureExamTest {
 		exam.setExamEditor(editor1);
 		exam.setStartTime(new Timestamp(12));
 		assertEquals(exam.getStartDateTime(),new Timestamp(12));
+		
+		Admin admin = new Admin();
+		exam.setExamEditor(admin);
+		exam.setStartTime(new Timestamp(14));
+		assertEquals(exam.getStartDateTime(),new Timestamp(14));
 	}	
 	
 	@Test
@@ -220,6 +259,75 @@ public class SecureExamTest {
 		exam.setExamEditor(editor);
 		exam.setSubLecturers(lect);
 		assertEquals(exam.getSubLecturers().size(), 2);
+		
+		Admin admin = new Admin();
+		exam.setExamEditor(admin);
+		Lecturer lec3 = new Lecturer();
+		lec3.setUserID(3);
+		lec3.setFirstName("C");
+		lect.add(lec3);
+		exam.setSubLecturers(lect);
+		assertEquals(exam.getSubLecturers().size(), 3);
 	}	
- 
+	
+	
+	@Test
+	public void test11() throws SQLException {	
+		OpResult<Boolean> res =  exam.canChangeStatus();
+		
+		examToSecure.setStatus(ExamStatus.NEW);
+		res =  exam.canChangeStatus();
+		assertEquals(res.getOpResult(), null);
+		
+		examToSecure.setName("OOP");
+		res =  exam.canChangeStatus();
+		assertEquals(res.getOpResult(), null);
+		
+		examToSecure.setDuration(120);
+		res =  exam.canChangeStatus();
+		assertEquals(res.getOpResult(), true);
+		
+		examToSecure.setStatus(ExamStatus.PENDING);
+		res = exam.canChangeStatus();
+		assertEquals(res.getOpResult(), null);
+
+		examToSecure.setStatus(ExamStatus.LECTURER_READY);
+		res = exam.canChangeStatus();
+		assertEquals(res.getOpResult(), null);
+
+		examToSecure.setStatus(ExamStatus.BOARD_READY);
+		res = exam.canChangeStatus();
+		assertEquals(res.getOpResult(), null);
+	}
+	
+	@Test
+	public void test12() {	
+		String res = exam.getNextStatus();
+		assertEquals(res,  ExamStatus.PENDING);
+		
+		examToSecure.setStatus(ExamStatus.NEW);
+		res = exam.getNextStatus();
+		assertEquals(res,  ExamStatus.PENDING);
+		
+		examToSecure.setStatus(ExamStatus.PENDING);
+		res = exam.getNextStatus();
+		assertEquals(res,  ExamStatus.LECTURER_READY);
+		
+		examToSecure.setStatus(ExamStatus.LECTURER_READY);
+		res = exam.getNextStatus();
+		assertEquals(res,  ExamStatus.PUBLISHED);
+		
+		examToSecure.setStatus(ExamStatus.BOARD_READY);
+		res = exam.getNextStatus();
+		assertEquals(res,  ExamStatus.PUBLISHED);
+	}
+	
+	@Test
+	public void test13() {	
+		ExamBoard editor = new ExamBoard();
+		exam.setExamEditor(editor);
+		examToSecure.setStatus(ExamStatus.PENDING);
+		String res = exam.getNextStatus();
+		assertEquals(res,  ExamStatus.BOARD_READY);
+	}
 }
