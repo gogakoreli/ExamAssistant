@@ -44,6 +44,16 @@ p {
 	margin: 0px 0px;
 }
 
+input[type=submit] {
+    width: 47%;
+    background-color: green;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
 
 </style>
 </head>
