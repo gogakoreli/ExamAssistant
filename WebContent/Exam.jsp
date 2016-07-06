@@ -8,8 +8,20 @@
 	Student student = (Student) request.getAttribute("student");
 	ArrayList<ExamMaterial> materials = (ArrayList<ExamMaterial>) request.getAttribute("materials");
 	Date timeLeft = student.getExamInformation().getTimeLeft(exam);
+	session.setAttribute("exam", exam);
+	boolean uploaded = session.getAttribute("uploaded") != null ? (boolean)session.getAttribute("uploaded"):false;
 %>
 <head>
+<script type="text/javascript">
+<%
+	if(uploaded){
+%>
+	
+    alert("File uploaded");
+<%
+	}
+%>
+</script>
 
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 
@@ -101,6 +113,7 @@ h1 {
             <input type="file" name="file" id="file" />
             <br>
             <br>
+            <input type="hidden" name="exam" value="${exam}" />
             <input type="submit" value="Upload" name="upload" id="upload" />
        </form>
 

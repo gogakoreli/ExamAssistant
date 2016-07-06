@@ -23,6 +23,8 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.output.*;
 
+import models.Exam;
+
 /**
  * Servlet implementation class UploadServlet
  */
@@ -66,6 +68,8 @@ public class UploadServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// Check that we have a file upload request
+			Exam exam = (Exam)request.getSession().getAttribute("exam");
+			request.getSession().removeAttribute("exam");
 	      isMultipart = ServletFileUpload.isMultipartContent(request);
 	      response.setContentType("text/html");
 	      PrintWriter out = response.getWriter( );
@@ -117,6 +121,8 @@ public class UploadServlet extends HttpServlet {
 	            String contentType = fi.getContentType();
 	            boolean isInMemory = fi.isInMemory();
 	            long sizeInBytes = fi.getSize();
+	            filePath = filePath + "\\" + exam.getExamID() + "\\";
+	            boolean success = (new File(filePath)).mkdirs();
 	            // Write the file
 	            if( fileName.lastIndexOf("\\") >= 0 ){
 	               file = new File( filePath + 
@@ -128,6 +134,7 @@ public class UploadServlet extends HttpServlet {
 	            fi.write( file ) ;
 	         }
 	      }
+	      request.getSession().setAttribute("uploaded", true);
 	   }catch(Exception ex) {
 	       System.out.println(ex);
 	   }
